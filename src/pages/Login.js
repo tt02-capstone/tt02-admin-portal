@@ -3,7 +3,7 @@ import { FormLabel, Button, TextField } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 
 function Login() {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
@@ -18,25 +18,24 @@ function Login() {
     }
   
     function validateForm() {
-      return username.length > 0 && password.length > 0;
+      return email.length > 0 && password.length > 0;
     }
   
     function handleSubmit(event) {
       event.preventDefault();
-
-      if (username && password) {
-        console.log(username,password)
+      if (email && password) {
+        console.log(email,password)
       }
     }
   
     return (
       <div className="Login">
         <form onSubmit={handleSubmit} style={formStyle}>
-            <FormLabel>Username</FormLabel>
+            <FormLabel>Email</FormLabel>
             <TextField
-                type="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 fullWidth
                 sx={{mb: 3}}

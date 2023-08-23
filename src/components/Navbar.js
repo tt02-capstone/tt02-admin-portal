@@ -6,7 +6,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 function Navbar() {
     const navBarStyle ={
         border: "1px solid #ccc",
-        color : "darkblue"
+        backgroundColor: "#f8f8f8"
     }
 
     const logout = {
@@ -15,17 +15,15 @@ function Navbar() {
     }
 
     return (
-        <nav style={navBarStyle}>
-            <Tabs>
-                <div>
-                    <Tab icon={<HomeIcon />} to="/home" component={Link}/>
-                </div>
-                <div style={logout}>
-                    <Tab label="Welcome Back" disabled/>
-                    <Tab icon={<LogoutIcon />} to="/" component={Link}/>
-                </div>
-            </Tabs>
-        </nav>
+        <Tabs style={navBarStyle}>
+            <div>
+                <Tab icon={<HomeIcon />} value="/home" to="/home" component={Link}/>
+            </div>
+            <div style={logout}>
+                <Tab label="Welcome Back" disabled/>
+                <Tab icon={<LogoutIcon />} value="/" to="/" component={Link}/>
+            </div>
+        </Tabs>
     )
 }
 
