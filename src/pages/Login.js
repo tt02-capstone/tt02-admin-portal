@@ -13,8 +13,8 @@ function Login() {
 
     const formStyle ={
       maxWidth: "800px",
-      margin: "300px auto",
-      padding: "20px",
+      margin: "10% auto",
+      padding: "20px"
     }
   
     function validateForm() {
@@ -32,7 +32,6 @@ function Login() {
     return (
       <div className="Login">
         <form onSubmit={handleSubmit} style={formStyle}>
-
             <FormLabel>Username</FormLabel>
             <TextField
                 type="username"
