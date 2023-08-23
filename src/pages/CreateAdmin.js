@@ -33,7 +33,7 @@ export default function CreateAdmin() {
     }
   
     return (
-        <div className="Login">
+        <div className="createAdmin">
             <Navbar />
             <form onSubmit={handleSubmit} style={formStyle}>
                 <FormLabel>Staff Name</FormLabel>

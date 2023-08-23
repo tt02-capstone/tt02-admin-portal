@@ -51,14 +51,13 @@ function Login() {
                 sx={{mb: 3}}
             />
             
-            <Button fullWidth variant="contained" type="submit" onSubmit={handleSubmit} disabled={!validateForm()} 
+            <Button fullWidth variant="contained" type="submit" disabled={!validateForm()} 
             onClick={navigateHome}>
               Login
             </Button>
-  
+
         </form>
       </div>
-  
     );
   }
 
