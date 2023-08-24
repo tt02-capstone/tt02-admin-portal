@@ -10,10 +10,6 @@ export default function CreateAdmin() {
 
     const navigate = useNavigate();
 
-    const navigateHome = () => {
-      navigate('/home');
-    };
-
     const formStyle ={
       maxWidth: "800px",
       margin: "10% auto",
@@ -29,6 +25,7 @@ export default function CreateAdmin() {
 
       if (email && password && staffName) {
         console.log(email,password,staffName)
+        navigate('/home');
       }
     }
   
@@ -66,8 +63,7 @@ export default function CreateAdmin() {
                     sx={{mb: 3}}
                 />
                 
-                <Button fullWidth variant="contained" type="submit" disabled={!validateForm()} 
-                onClick={navigateHome}>
+                <Button fullWidth variant="contained" type="submit" disabled={!validateForm()}>
                     Submit
                 </Button>
     

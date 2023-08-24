@@ -1,29 +1,57 @@
-import { Link } from 'react-router-dom';
-import {Tabs, Tab} from '@mui/material';
+import { Link , useNavigate} from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { Button } from '@mui/material';
 
 function Navbar() {
+    const navigate = useNavigate();
+
+    const navigateHome = () => {
+      navigate('/home');
+    };
+
     const navBarStyle ={
         border: "1px solid #ccc",
-        backgroundColor: "#f8f8f8"
+        backgroundColor: "#edf3fa",
+        height: "40px"
+    }
+
+    const home = {
+        display: "inline-block",
+        padding: "10px",
+        color: "black"
     }
 
     const logout = {
-        position: "absolute",
-        right: 0
+        position:"absolute",
+        display: "inline-block",
+        right: 20,
+        top: 10,
+    }
+
+    const welcome = {
+        display: "inline-block",
+        position:"absolute",
+        top : -5,
+        right : 100
     }
 
     return (
-        <Tabs style={navBarStyle}>
-            <div>
-                <Tab icon={<HomeIcon />} value="/home" to="/home" component={Link}/>
+        <div style={navBarStyle}>
+            <div style={home}>
+                {/* <Button variant="text" onClick={navigateHome}><HomeIcon /></Button> */}
+                <Link to ="/home"><HomeIcon /></Link>
             </div>
+            
+            <div style={welcome}>  
+                <p><strong>Welcome Back</strong></p>
+            </div>
+
             <div style={logout}>
-                <Tab label="Welcome Back" disabled/>
-                <Tab icon={<LogoutIcon />} value="/" to="/" component={Link}/>
+                <Link to ="/" ><LogoutIcon /></Link>
             </div>
-        </Tabs>
+
+        </div>
     )
 }
 

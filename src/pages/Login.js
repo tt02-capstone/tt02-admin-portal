@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import { FormLabel, Button, TextField } from '@mui/material';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-
-    const navigateHome = () => {
-      navigate('/home');
-    };
 
     const formStyle ={
       maxWidth: "800px",
@@ -25,6 +21,7 @@ function Login() {
       event.preventDefault();
       if (email && password) {
         console.log(email,password)
+        navigate('/home');
       }
     }
   
@@ -51,8 +48,7 @@ function Login() {
                 sx={{mb: 3}}
             />
             
-            <Button fullWidth variant="contained" type="submit" disabled={!validateForm()} 
-            onClick={navigateHome}>
+            <Button fullWidth variant="contained" type="submit" disabled={!validateForm()}>
               Login
             </Button>
 
