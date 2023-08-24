@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { FormLabel, Button, TextField } from '@mui/material';
 import {useNavigate } from 'react-router-dom';
+import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate();
+
+    const navigate = useNavigate(); // route navigation 
+
+    const baseURL = "http://localhost:8080/staff";
 
     const formStyle ={
       maxWidth: "800px",
@@ -20,8 +26,25 @@ function Login() {
     function handleSubmit(event) {
       event.preventDefault();
       if (email && password) {
-        console.log(email,password)
-        navigate('/home');
+        axios.post(`${baseURL}/staffLogin/${email}/${password}`).then((response) => {
+          if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404) {
+            toast.error(response.data.errorMessage, {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 1500
+            });
+
+          } else {
+            toast.success('Login Successful!', {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 1500
+            });
+
+            navigate('/home');  
+          }
+        })
+        .catch((error) => {
+          console.error("Axios Error : ", error)
+        });
       }
     }
   

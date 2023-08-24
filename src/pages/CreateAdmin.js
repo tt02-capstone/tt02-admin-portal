@@ -2,6 +2,9 @@ import Navbar from "../components/Navbar"
 import React, { useState } from "react";
 import { FormLabel, Button, TextField } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
+import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function CreateAdmin() {
     const [staffName, setName] = useState("");
@@ -9,6 +12,8 @@ export default function CreateAdmin() {
     const [password, setPassword] = useState("");
 
     const navigate = useNavigate();
+
+    const baseURL = "http://localhost:8080/staff";
 
     const formStyle ={
       maxWidth: "800px",
@@ -24,8 +29,28 @@ export default function CreateAdmin() {
       event.preventDefault();
 
       if (email && password && staffName) {
-        console.log(email,password,staffName)
-        navigate('/home');
+        axios.post(`${baseURL}/createStaff`, {
+          staff_name : staffName,
+          email : email,
+          password : password
+        }).then((response) => {
+          if (response.data.httpStatusCode === 400) {
+            toast.error(response.data.errorMessage, {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 1500
+            });
+          } else {
+            toast.success('Staff Created!', {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 1500
+            });
+
+            navigate('/home');  
+          }
+        })
+        .catch((error) => {
+          console.error("Axios Error : ", error)
+        });
       }
     }
   
