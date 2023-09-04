@@ -1,55 +1,40 @@
-import { Link , useNavigate} from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
+import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Button } from '@mui/material';
+import { Menu } from "antd";
+import { MailOutlined } from '@ant-design/icons';
 
 function Navbar() {
     const navigate = useNavigate();
 
-    const navigateHome = () => {
-      navigate('/home');
+    const [currentTab, setCurrentTab] = useState('/home');
+
+    const menuItems = [
+        {key: '/home', label: 'Home', icon: <MailOutlined />},
+        {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
+        {key: '/', label: 'Logout',icon: <LogoutIcon />,}
+    ];
+  
+    const onClickNewTab = (tab) => {
+        console.log(tab.key);
+        setCurrentTab(tab.key);
+        navigate(tab.key);
     };
 
-    const navBarStyle ={
-        border: "1px solid #ccc",
-        backgroundColor: "#edf3fa",
-        height: "40px"
-    }
-
-    const home = {
-        display: "inline-block",
-        padding: "10px",
-        color: "black"
-    }
-
-    const logout = {
-        position:"absolute",
-        display: "inline-block",
-        right: 20,
-        top: 10,
-    }
-
-    const welcome = {
-        display: "inline-block",
-        position:"absolute",
-        top : -5,
-        right : 100
-    }
-
     return (
-        <div style={navBarStyle}>
-            <div style={home}>
-                {/* <Button variant="text" onClick={navigateHome}><HomeIcon /></Button> */}
-                <Link to ="/home"><HomeIcon /></Link>
-            </div>
-            
-            <div style={welcome}>  
-                <p><strong>Welcome Back</strong></p>
-            </div>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <Menu
+                selectedKeys={[currentTab]} 
+                items={menuItems}
+                onClick={onClickNewTab}
+                style={{display: 'flex', flexDirection: 'column', width: '100%'}}
+            />
 
-            <div style={logout}>
-                <Link to ="/" ><LogoutIcon /></Link>
-            </div>
+            {/* <div style={{paddingRight: '1%', paddingTop: '1%'}}>
+                <Link to ="/" >
+                    <LogoutIcon />
+                </Link>
+            </div> */}
 
         </div>
     )
