@@ -1,42 +1,22 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { Menu } from "antd";
-import { MailOutlined } from '@ant-design/icons';
+import { Menu, Button } from "antd";
+import Sider from "antd/es/layout/Sider";
 
 function Navbar(props) {
-    const navigate = useNavigate();
-
-    // const [currentTab, setCurrentTab] = useState('/home');
-
-    // const menuItems = [
-    //     {key: '/home', label: 'Home', icon: <MailOutlined />},
-    //     {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
-    //     {key: '/', label: 'Logout',icon: <LogoutIcon />,}
-    // ];
-  
-    // const onClickNewTab = (tab) => {
-    //     console.log(tab.key);
-    //     setCurrentTab(tab.key);
-    //     navigate(tab.key);
-    // };
-
+    const [collapsed, setCollapsed] = useState(false);
     return (
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        <Sider theme="light" collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+            {/*<div className="demo-logo-vertical" />*/}
             <Menu
-                selectedKeys={[props.currentTab]} 
+                theme="light"
+                defaultSelectedKeys={['1']}
+                mode="inline"
+                selectedKeys={[props.currentTab]}
                 items={props.menuItems}
                 onClick={props.onClickNewTab}
                 style={{display: 'flex', flexDirection: 'column', width: '100%'}}
             />
-
-            {/* <div style={{paddingRight: '1%', paddingTop: '1%'}}>
-                <Link to ="/" >
-                    <LogoutIcon />
-                </Link>
-            </div> */}
-
-        </div>
+        </Sider>
     )
 }
 

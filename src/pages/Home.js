@@ -1,33 +1,23 @@
 import Navbar from "../components/Navbar"
 import {Layout} from 'antd';
+import React from "react";
 
 export default function Home() {
 
     const { Header, Content, Sider, Footer } = Layout;
 
     return (
-        <div>
-            <Layout style={{height: '100%'}}>
-                <Sider width={200} style={{backgroundColor: 'white'}}>
-                    <Navbar />
-                </Sider>
+            <Layout style={{minHeight: '100vh'}}>
+                <Header style={{ padding: 0, background: 'blue' }} />
 
-                <Layout>
-                    <Header style={{ backgroundColor: 'white' }}>
-                        Header
-                    </Header>
                     
-                    <Layout style={{ padding: '0 24px 24px' }}>
                         <Content style={{ padding: 24, margin: 0, minHeight: 280 }}>
                             Content
                         </Content>
-                    
-                        <Footer>
+
+                <Footer>
                             Footer
-                        </Footer>
-                    </Layout>
-                </Layout>
+                </Footer>
             </Layout>
-        </div>
     )
 }

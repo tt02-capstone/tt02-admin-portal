@@ -52,12 +52,8 @@ export default function CreateAdmin() {
     }
   
     return (
-        <div className="createAdmin">
+        // <div className="createAdmin">
           <Layout style={{height: '100%'}}>
-            <Sider width={200} style={{backgroundColor: 'white'}}>
-                <Navbar />
-            </Sider>
-
             <Layout>
                 <Header style={{ backgroundColor: 'white' }}>
                     Header
@@ -108,6 +104,6 @@ export default function CreateAdmin() {
                 </Layout>
             </Layout>
         </Layout>
-      </div>
+      // </div>
     );
   }

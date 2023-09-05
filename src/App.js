@@ -4,8 +4,8 @@ import Home from "./pages/Home";
 import CreateAdmin from "./pages/CreateAdmin";
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "./components/Navbar";
-import { Layout } from "antd";
-import { useEffect, useState } from "react";
+import {Layout, Menu} from "antd";
+import React, { useEffect, useState } from "react";
 import { MailOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -29,18 +29,20 @@ function App() {
   };
 
   return (
-    <div>
-      {location.pathname !== '/' && <Navbar 
-        currentTab={currentTab}
-        menuItems={menuItems}
-        onClickNewTab={onClickNewTab}
-      />}
+    <Layout>
+      {location.pathname !== '/' &&
+          <Navbar
+              currentTab={currentTab}
+              menuItems={menuItems}
+              onClickNewTab={onClickNewTab}
+          />
+      }
       <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
           <Route path="/createAdmin" element={<CreateAdmin />} />
       </Routes>
-    </div>
+    </Layout>
   );
 }
 
