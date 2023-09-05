@@ -7,6 +7,7 @@ export async function createAdmin(admin) {
     await axios.post(`${staffURL}/createStaff`, admin)
     .then((response) => {
       if (response.data.httpStatusCode === 400) { // error
+          console.log('fail')
         return false;
       } else { // success
         console.log("success in adminRedux");

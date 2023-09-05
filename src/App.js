@@ -8,6 +8,7 @@ import {Layout, Menu} from "antd";
 import React, { useEffect, useState } from "react";
 import { MailOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
+import {Footer} from "antd/es/layout/layout";
 
 function App() {
 
@@ -42,6 +43,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/createAdmin" element={<CreateAdmin />} />
       </Routes>
+        {/*<Footer style={{ textAlign: 'center' }}>TT02 Captsone ©2023</Footer>*/}
     </Layout>
   );
 }

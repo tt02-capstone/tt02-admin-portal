@@ -1,23 +1,19 @@
-import Navbar from "../components/Navbar"
 import {Layout} from 'antd';
 import React from "react";
+import CustomHeader from "../components/CustomHeader";
+import {Content} from "antd/es/layout/layout";
 
 export default function Home() {
 
-    const { Header, Content, Sider, Footer } = Layout;
 
     return (
             <Layout style={{minHeight: '100vh'}}>
-                <Header style={{ padding: 0, background: 'blue' }} />
+                <CustomHeader text={"Header"} />
 
-                    
-                        <Content style={{ padding: 24, margin: 0, minHeight: 280 }}>
-                            Content
-                        </Content>
+                <Content style={{ margin: '24px 16px 0' }}>
+                    <div style={{ padding: 24, minHeight: 360 }}>content</div>
+                </Content>
 
-                <Footer>
-                            Footer
-                </Footer>
             </Layout>
     )
 }
