@@ -5,7 +5,7 @@ import CreateAdmin from "./pages/CreateAdmin";
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "./components/Navbar";
 import { Layout } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
 

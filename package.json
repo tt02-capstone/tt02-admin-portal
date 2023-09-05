@@ -13,6 +13,7 @@
     "antd": "^5.8.6",
     "axios": "^1.4.0",
     "axois": "^0.0.1-security",
+    "local-storage": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0",

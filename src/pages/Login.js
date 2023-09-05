@@ -27,6 +27,7 @@ function Login() {
       event.preventDefault();
       if (email && password) {
         axios.post(`${baseURL}/staffLogin/${email}/${password}`).then((response) => {
+          console.log(response);
           if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404) {
             toast.error(response.data.errorMessage, {
               position: toast.POSITION.TOP_RIGHT,
@@ -38,7 +39,7 @@ function Login() {
               position: toast.POSITION.TOP_RIGHT,
               autoClose: 1500
             });
-
+            localStorage.setItem("user_id", JSON.stringify(response.data.user_id));
             navigate('/home');  
           }
         })

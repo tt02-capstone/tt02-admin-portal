@@ -3,14 +3,15 @@ import React, { useState } from "react";
 import { FormLabel, Button, TextField } from '@mui/material';
 import { Layout } from 'antd';
 import {useNavigate} from 'react-router-dom';
-import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { createAdmin } from "../redux/adminRedux";
 
 export default function CreateAdmin() {
     const [staffName, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [createAdminMsg, setCreateAdminMsg] = useState();
 
     const navigate = useNavigate();
     const { Header, Content, Sider, Footer } = Layout;
@@ -31,28 +32,22 @@ export default function CreateAdmin() {
       event.preventDefault();
 
       if (email && password && staffName) {
-        axios.post(`${baseURL}/createStaff`, {
-          staff_name : staffName,
-          email : email,
-          password : password
-        }).then((response) => {
-          if (response.data.httpStatusCode === 400) {
-            toast.error(response.data.errorMessage, {
-              position: toast.POSITION.TOP_RIGHT,
-              autoClose: 1500
-            });
-          } else {
-            toast.success('Staff Created!', {
-              position: toast.POSITION.TOP_RIGHT,
-              autoClose: 1500
-            });
+        let staff = {
+          staff_num: "9",
+          role: "ADMIN",
+          name: staffName,
+          email: email, 
+          password: password,
+          is_blocked: false
+        };
 
-            navigate('/home');  
-          }
-        })
-        .catch((error) => {
-          console.error("Axios Error : ", error)
-        });
+        let createAdminStatus = createAdmin(staff);
+        console.log(createAdminStatus);
+        if (createAdminStatus) {
+          setCreateAdminMsg(true);
+        } else {
+          createAdminMsg(false);
+        }
       }
     }
   
@@ -67,7 +62,7 @@ export default function CreateAdmin() {
                 <Header style={{ backgroundColor: 'white' }}>
                     Header
                 </Header>
-                
+                {createAdminMsg && <p>Admin Created Successfully!</p>}
                 <Layout style={{ padding: '0 24px 24px' }}>
                     <Content style={{ padding: 24, margin: 0, minHeight: 280 }}>
                       <form onSubmit={handleSubmit} style={formStyle}>
