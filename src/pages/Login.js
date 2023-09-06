@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FormLabel, Button, TextField } from '@mui/material';
 import {useNavigate } from 'react-router-dom';
 import axios from "axios";
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
@@ -18,6 +18,8 @@ function Login() {
       margin: "10% auto",
       padding: "20px"
     }
+    
+    localStorage.removeItem("user");
   
     function validateForm() {
       return email.length > 0 && password.length > 0;
@@ -39,8 +41,10 @@ function Login() {
               position: toast.POSITION.TOP_RIGHT,
               autoClose: 1500
             });
-            localStorage.setItem("user_id", JSON.stringify(response.data.user_id));
-            navigate('/home');  
+            localStorage.setItem("user", JSON.stringify(response.data));
+            setTimeout(() => {
+              navigate('/home')
+            }, 700);
           }
         })
         .catch((error) => {
@@ -75,7 +79,7 @@ function Login() {
             <Button fullWidth variant="contained" type="submit" disabled={!validateForm()}>
               Login
             </Button>
-
+            <ToastContainer />
         </form>
       </div>
     );
