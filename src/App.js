@@ -9,7 +9,6 @@ import React, { useEffect, useState } from "react";
 import { MailOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
-
 function App() {
 
   const navigate = useNavigate();
@@ -30,7 +29,7 @@ function App() {
   };
 
   return (
-    <Layout>
+    <Layout hasSider={location.pathname !== '/'}>
       {location.pathname !== '/' &&
           <Navbar
               currentTab={currentTab}

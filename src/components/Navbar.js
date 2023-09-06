@@ -1,32 +1,29 @@
 import React, { useState } from "react";
-import { Menu, Button } from "antd";
+import {Menu, Button, Layout} from "antd";
 import Sider from "antd/es/layout/Sider";
+import {MenuOutlined} from "@ant-design/icons";
 
 function Navbar(props) {
     const [collapsed, setCollapsed] = useState(false);
+
     return (
         <Sider
-            theme="light"
+            theme="dark"
             breakpoint="lg"
-            collapsedWidth="0"
-            onBreakpoint={(broken) => {
-                console.log(broken);
-            }}
+            collapsedWidth="80"
             onCollapse={(collapsed, type) => {
                 console.log(collapsed, type);
                 setCollapsed(collapsed)
             }}
             collapsible collapsed={collapsed}
         >
-            {/*<div className="demo-logo-vertical" />*/}
             <Menu
-                theme="light"
+                theme="dark"
                 defaultSelectedKeys={['1']}
                 mode="inline"
                 selectedKeys={[props.currentTab]}
                 items={props.menuItems}
                 onClick={props.onClickNewTab}
-                style={{display: 'flex', flexDirection: 'column', width: '100%'}}
             />
         </Sider>
     )

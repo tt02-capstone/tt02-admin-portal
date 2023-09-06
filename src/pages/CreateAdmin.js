@@ -53,12 +53,11 @@ export default function CreateAdmin() {
     }
   
     return (
-        // <div className="createAdmin">
-          <Layout style={{minHeight: '100vh'}}>
+          <Layout style={styles.layout}>
                 <CustomHeader text={"Header"}/>
                 {createAdminMsg && <p>Admin Created Successfully!</p>}
                 <Layout style={{ padding: '0 24px 24px' }}>
-                    <Content style={{ padding: 24, margin: 0, minHeight: 280 }}>
+                    <Content style={styles.content}>
                       <form onSubmit={handleSubmit} style={formStyle}>
                           <FormLabel>Staff Name</FormLabel>
                           <TextField
@@ -97,6 +96,17 @@ export default function CreateAdmin() {
                     </Content>
             </Layout>
         </Layout>
-      // </div>
     );
   }
+
+const styles = {
+    layout: {
+        minHeight: '100vh',
+    },
+    content: {
+        margin: '24px 16px 0',
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+}
