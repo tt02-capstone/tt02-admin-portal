@@ -9,6 +9,9 @@ import React, { useEffect, useState } from "react";
 import { MailOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
+import PasswordReset from "./pages/PasswordReset";
+import ForgetPassword from "./pages/ForgetPassword";
+
 function App() {
 
   const navigate = useNavigate();
@@ -29,8 +32,8 @@ function App() {
   };
 
   return (
-    <Layout hasSider={location.pathname !== '/'}>
-      {location.pathname !== '/' &&
+    <Layout hasSider={location.pathname !== '/' && location.pathname !== '/passwordreset' && location.pathname !== '/forgetpassword'}>
+      {location.pathname !== '/' && location.pathname !== '/passwordreset' && location.pathname !== '/forgetpassword' &&
           <Navbar
               currentTab={currentTab}
               menuItems={menuItems}
@@ -41,6 +44,8 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
           <Route path="/createAdmin" element={<CreateAdmin />} />
+          <Route path="/passwordreset" element={<PasswordReset />} />
+          <Route path="/forgetpassword" element={<ForgetPassword />} />
       </Routes>
         {/*<Footer style={{ textAlign: 'center' }}>TT02 Captsone ©2023</Footer>*/}
     </Layout>
