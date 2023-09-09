@@ -9,7 +9,13 @@ import React, { useEffect, useState } from "react";
 import { MailOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
+<<<<<<< HEAD
 import ViewProfile from "./pages/Profile";
+=======
+import PasswordReset from "./pages/PasswordReset";
+import ForgetPassword from "./pages/ForgetPassword";
+
+>>>>>>> b941d880aaca642beea7bc589186d3383981cf92
 function App() {
 
   const navigate = useNavigate();
@@ -31,8 +37,8 @@ function App() {
   };
 
   return (
-    <Layout hasSider={location.pathname !== '/'}>
-      {location.pathname !== '/' &&
+    <Layout hasSider={location.pathname !== '/' && location.pathname !== '/passwordreset' && location.pathname !== '/forgetpassword'}>
+      {location.pathname !== '/' && location.pathname !== '/passwordreset' && location.pathname !== '/forgetpassword' &&
           <Navbar
               currentTab={currentTab}
               menuItems={menuItems}
@@ -43,7 +49,12 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
           <Route path="/createAdmin" element={<CreateAdmin />} />
+<<<<<<< HEAD
           <Route path="/viewProfile" element={<ViewProfile />} />
+=======
+          <Route path="/passwordreset" element={<PasswordReset />} />
+          <Route path="/forgetpassword" element={<ForgetPassword />} />
+>>>>>>> b941d880aaca642beea7bc589186d3383981cf92
       </Routes>
         {/*<Footer style={{ textAlign: 'center' }}>TT02 Captsone ©2023</Footer>*/}
     </Layout>
