@@ -83,7 +83,7 @@ export default function User() {
             key: 'is_blocked',
             rowKey: 'user_id',
             render: (text) => {
-                if (text === "true") {
+                if (text === true) {
                     return <p>No</p>
                 } else {
                     return <p>Yes</p>
