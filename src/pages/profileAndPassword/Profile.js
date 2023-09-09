@@ -3,9 +3,11 @@ import { Layout, Spin, Form, Input, Button, Modal } from 'antd';
 import { EditFilled } from "@ant-design/icons";
 import {useNavigate} from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import { editAdminProfile, getAdminProfile, editAdminPassword } from "../redux/adminRedux";
-import CustomHeader from "../components/CustomHeader";
-import CustomButton from "../components/CustomButton";
+import { editAdminProfile, getAdminProfile, editAdminPassword } from "../../redux/adminRedux";
+import CustomHeader from "../../components/CustomHeader";
+import CustomButton from "../../components/CustomButton";
+import { ToastContainer, toast } from 'react-toastify';
+import EditPasswordModal from "./EditPasswordModal";
 
 export default function ViewProfile() {
 
@@ -20,7 +22,8 @@ export default function ViewProfile() {
     // fetch admin profile details
     useEffect(() => {
         const fetchData = async () => {
-            const response = await getAdminProfile(1); // need to replace with id from local storage
+            let user_id = JSON.parse(localStorage.getItem("user"))["user_id"];
+            const response = await getAdminProfile(user_id); // need to replace with id from local storage
             if (response.status) {
                 setAdmin(response.data);
                 // console.log(response.data);
@@ -30,11 +33,6 @@ export default function ViewProfile() {
         }
 
         fetchData();
-
-        console.log(localStorage.length)
-        for (var i = 0; i < localStorage.length; i++){
-            console.log(localStorage.getItem(localStorage.key(i)));
-        }
     }, [])
 
     // when the edit profile button is clicked
@@ -48,11 +46,19 @@ export default function ViewProfile() {
         let response = await editAdminProfile({...values, user_id: admin.user_id});
         if (response.status) {
             setAdmin(response.data);
-            // console.log(response.data);
+            toast.success('Admin profile changed successfully!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+            setIsViewProfile(true);
+
         } else {
             console.log("Admin profile not editted!");
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
         }
-        setIsViewProfile(true);
     }
 
     // when cancel edit profile details
@@ -65,25 +71,35 @@ export default function ViewProfile() {
         setIsChangePasswordModalOpen(true);
     }
 
+    // close edit password modal
+    function onClickCancelEditPasswordButton() {
+        setIsChangePasswordModalOpen(false);
+    }
+
     // when user edits password
     async function onClickSubmitNewPassword(val) {
         if (val.oldPassword && val.newPasswordOne === val.newPasswordTwo) {
             let response = await editAdminPassword(admin.user_id, val.oldPassword, val.newPasswordOne);
             if (response.status) {
-                console.log(response.data);
-                console.log("Admin password changed!");
+                toast.success('Admin password changed successfully!', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 1500
+                });
+                setIsChangePasswordModalOpen(false);
+            
             } else {
-                console.log("Admin password not changed!");
+                toast.error(response.data.errorMessage, {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 1500
+                });
             }
-            setIsChangePasswordModalOpen(false);
-        } else {
-            console.log("New password does not match!");
-        }
-    }
 
-    // when user cancels new password editting
-    function onClickCancelNewPassword() {
-        setIsChangePasswordModalOpen(false);
+        } else {
+            toast.error('New password does not match!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
     }
 
     return (
@@ -186,56 +202,15 @@ export default function ViewProfile() {
 
             {/* edit password pop-up */}
             {admin && isChangePasswordModalOpen && 
-                <Modal
-                    title="Change Password"
-                    centered
-                    open={isChangePasswordModalOpen}
-                    onCancel={onClickCancelNewPassword}
-                >
-                    <Form 
-                        name="basic"
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        style={{ maxWidth: 600 }}
-                        required={true}
-                        requiredMark={true}
-                        onFinish={onClickSubmitNewPassword}
-                    >
-                        <Form.Item
-                        label="Old Password"
-                        name="oldPassword"
-                        placeholder="Old Password"
-                        rules={[{ required: true, message: 'Please enter your old password!' }]}
-                        >
-                        <Input.Password />
-                        </Form.Item>
-
-                        <Form.Item
-                        label="New Password"
-                        name="newPasswordOne"
-                        placeholder="New Password"
-                        rules={[{ required: true, message: 'Please enter your new password!' }]}
-                        >
-                        <Input.Password />
-                        </Form.Item>
-
-                        <Form.Item
-                        label="Repeat New Password"
-                        name="newPasswordTwo"
-                        placeholder="Repeat new Password"
-                        rules={[{ required: true, message: 'Please enter your new password again!' }]}
-                        >
-                        <Input.Password />
-                        </Form.Item>
-
-                        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                            <Button type="primary" htmlType="submit">
-                                Submit
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                </Modal>
+                <EditPasswordModal 
+                    isChangePasswordModalOpen={isChangePasswordModalOpen}
+                    onClickSubmitNewPassword={onClickSubmitNewPassword}
+                    onClickCancelEditPasswordButton={onClickCancelEditPasswordButton}
+                />
             }
+
+            {/* Edit profile & password toast */}
+            <ToastContainer />
         </div>
     );
 }

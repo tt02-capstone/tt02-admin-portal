@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import { MailOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
-import ViewProfile from "./pages/Profile";
+import ViewProfile from "./pages/profileAndPassword/Profile";
 import PasswordReset from "./pages/PasswordReset";
 import ForgetPassword from "./pages/ForgetPassword";
 function App() {

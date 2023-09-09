@@ -4,13 +4,13 @@ const staffURL = "http://localhost:8080/staff";
 
 export async function createAdmin(admin) {
     console.log(admin);
-    await axios.post(`${staffURL}/createStaff`, admin)
+    return await axios.post(`${staffURL}/createStaff`, admin)
     .then((response) => {
-      if (response.data.httpStatusCode === 400) { // error
-          console.log('fail')
+      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
+        console.log('failure in adminRedux :: createAdmin')
         return false;
       } else { // success
-        console.log("success in adminRedux");
+        console.log("success in adminRedux :: createAdmin");
         return true;
       }
     })
@@ -23,8 +23,8 @@ export async function getAdminProfile(staffId) {
   console.log("Enter getAdminProfile function");
   return await axios.get(`${staffURL}/getStaffProfile/${staffId}`)
   .then((response) => {
-    if (response.data.httpStatusCode === 400) { // error
-        console.log('failure in adminRedux :: getAdminProfile')
+    if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
+      console.log('failure in adminRedux :: getAdminProfile')
       return {status: false, data: response.data};
     } else { // success
       console.log("success in adminRedux :: getAdminProfile");
@@ -40,8 +40,8 @@ export async function editAdminProfile(editedStaffProfile) {
   console.log("Enter editAdminProfile function");
   return await axios.post(`${staffURL}/editAdminProfile`, editedStaffProfile)
   .then((response) => {
-    if (response.data.httpStatusCode === 400) { // error
-        console.log('failure in adminRedux :: editAdminProfile')
+    if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
+      console.log('failure in adminRedux :: editAdminProfile')
       return {status: false, data: response.data};
     } else { // success
       console.log("success in adminRedux :: editAdminProfile");
@@ -57,8 +57,9 @@ export async function editAdminPassword(staffId, oldPassword, newPassword) {
   console.log("Enter editAdminProfile function");
   return await axios.post(`${staffURL}/editAdminPassword/${staffId}/${oldPassword}/${newPassword}`)
   .then((response) => {
-    if (response.data.httpStatusCode === 400) { // error
-        console.log('failure in adminRedux :: editAdminPassword')
+    console.log(response);
+    if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
+      console.log('failure in adminRedux :: editAdminPassword')
       return {status: false, data: response.data};
     } else { // success
       console.log("success in adminRedux :: editAdminPassword");
