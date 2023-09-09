@@ -1,7 +1,6 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import CreateAdmin from "./pages/CreateAdmin";
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "./components/Navbar";
 import {Layout, Menu} from "antd";
@@ -12,6 +11,9 @@ import {Footer} from "antd/es/layout/layout";
 import ViewProfile from "./pages/profileAndPassword/Profile";
 import PasswordReset from "./pages/PasswordReset";
 import ForgetPassword from "./pages/ForgetPassword";
+import User from "./pages/user/User";
+
+
 function App() {
 
   const navigate = useNavigate();
@@ -21,7 +23,7 @@ function App() {
 
   const menuItems = [
       {key: '/home', label: 'Home', icon: <MailOutlined />},
-      {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
+      {key: '/user', label: 'User', icon: <MailOutlined />},
       {key: '/viewProfile', label: 'Profile', icon: <MailOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
@@ -44,7 +46,7 @@ function App() {
       <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/createAdmin" element={<CreateAdmin />} />
+          <Route path="/user" element={<User />} />
           <Route path="/viewProfile" element={<ViewProfile />} />
           <Route path="/passwordreset" element={<PasswordReset />} />
           <Route path="/forgetpassword" element={<ForgetPassword />} />

@@ -24,28 +24,25 @@ export default function EditPasswordModal(props) {
                     <Form.Item
                     label="Old Password"
                     name="oldPassword"
-                    placeholder="Old Password"
                     rules={[{ required: true, message: 'Please enter your old password!' }]}
                     >
-                    <Input.Password />
+                    <Input.Password placeholder="Old Password"/>
                     </Form.Item>
 
                     <Form.Item
                     label="New Password"
                     name="newPasswordOne"
-                    placeholder="New Password"
                     rules={[{ required: true, message: 'Please enter your new password!' }]}
                     >
-                    <Input.Password />
+                    <Input.Password placeholder="New Password" />
                     </Form.Item>
 
                     <Form.Item
                     label="Repeat New Password"
                     name="newPasswordTwo"
-                    placeholder="Repeat new Password"
                     rules={[{ required: true, message: 'Please enter your new password again!' }]}
                     >
-                    <Input.Password />
+                    <Input.Password placeholder="Repeat new Password" />
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

@@ -3,20 +3,38 @@ import axios from "axios";
 const staffURL = "http://localhost:8080/staff";
 
 export async function createAdmin(admin) {
+    console.log("Enter createAdmin function");
     console.log(admin);
-    return await axios.post(`${staffURL}/createStaff`, admin)
+    return await axios.put(`${staffURL}/createStaff`, admin)
     .then((response) => {
       if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
         console.log('failure in adminRedux :: createAdmin')
-        return false;
+        return {status: false, data: response.data};
       } else { // success
         console.log("success in adminRedux :: createAdmin");
-        return true;
+        return {status: true, data: response.data};
       }
     })
     .catch((error) => {
       console.error("AdminRedux createAdmin Error : ", error);
     });
+}
+
+export async function getAllStaff() {
+  console.log("Enter getAllStaff function");
+  return await axios.get(`${staffURL}/getAllStaff`)
+  .then((response) => {
+    if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
+      console.log('failure in adminRedux :: getAllStaff')
+      return {status: false, data: response.data};
+    } else { // success
+      console.log("success in adminRedux :: getAllStaff");
+      return {status: true, data: response.data};
+    }
+  })
+  .catch((error) => {
+    console.error("AdminRedux getAllStaff Error : ", error);
+  });
 }
 
 export async function getAdminProfile(staffId) {
