@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { MailOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
+import ViewProfile from "./pages/Profile";
 function App() {
 
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ function App() {
   const menuItems = [
       {key: '/home', label: 'Home', icon: <MailOutlined />},
       {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
+      {key: '/viewProfile', label: 'Profile', icon: <MailOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
 
@@ -41,6 +43,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
           <Route path="/createAdmin" element={<CreateAdmin />} />
+          <Route path="/viewProfile" element={<ViewProfile />} />
       </Routes>
         {/*<Footer style={{ textAlign: 'center' }}>TT02 Captsone ©2023</Footer>*/}
     </Layout>
