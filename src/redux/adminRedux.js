@@ -5,7 +5,7 @@ const staffURL = "http://localhost:8080/staff";
 export async function createAdmin(admin) {
     console.log("Enter createAdmin function");
     console.log(admin);
-    return await axios.put(`${staffURL}/createStaff`, admin)
+    return await axios.post(`${staffURL}/createStaff`, admin)
     .then((response) => {
       if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
         console.log('failure in adminRedux :: createAdmin')
@@ -56,7 +56,7 @@ export async function getAdminProfile(staffId) {
 
 export async function editAdminProfile(editedStaffProfile) {
   console.log("Enter editAdminProfile function");
-  return await axios.post(`${staffURL}/editAdminProfile`, editedStaffProfile)
+  return await axios.put(`${staffURL}/editStaffProfile`, editedStaffProfile)
   .then((response) => {
     if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
       console.log('failure in adminRedux :: editAdminProfile')
@@ -73,7 +73,7 @@ export async function editAdminProfile(editedStaffProfile) {
 
 export async function editAdminPassword(staffId, oldPassword, newPassword) {
   console.log("Enter editAdminProfile function");
-  return await axios.post(`${staffURL}/editAdminPassword/${staffId}/${oldPassword}/${newPassword}`)
+  return await axios.put(`${staffURL}/editUserPassword/${staffId}/${oldPassword}/${newPassword}`)
   .then((response) => {
     console.log(response);
     if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
