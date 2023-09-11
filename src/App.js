@@ -19,13 +19,15 @@ function App() {
   const menuItems = [
       {key: '/home', label: 'Home', icon: <MailOutlined />},
       {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
-      {key: '/', label: 'Logout',icon: <LogoutIcon />,}
+      {key: '/', label: 'Logout',icon: <LogoutIcon />}
   ];
 
   const onClickNewTab = (tab) => {
-      console.log(tab.key);
       setCurrentTab(tab.key);
-      navigate(tab.key);
+      if (tab.key == '/') {
+        localStorage.removeItem("user");
+        navigate(tab.key);
+      }
   };
 
   return (
