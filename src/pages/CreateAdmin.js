@@ -1,13 +1,10 @@
-import Navbar from "../components/Navbar"
 import React, { useState } from "react";
 import { FormLabel, Button, TextField } from '@mui/material';
 import { Layout } from 'antd';
-import {useNavigate} from 'react-router-dom';
-import { toast } from 'react-toastify';
+import {useNavigate, Navigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { createAdmin } from "../redux/adminRedux";
 import CustomHeader from "../components/CustomHeader";
-import { Navigate } from 'react-router-dom';
 
 export default function CreateAdmin() {
     const [staffName, setName] = useState("");

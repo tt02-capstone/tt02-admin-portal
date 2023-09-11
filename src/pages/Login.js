@@ -5,13 +5,13 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  Button,
-  Space
+  Button
 } from 'antd';
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate(); // route navigation 
   const passwordResetRouteChange = () => {
@@ -36,6 +36,7 @@ function Login() {
   function handleSubmit(event) {
     event.preventDefault();
     if (email && password) {
+      setLoading(true);
       axios.post(`${baseURL}/staffLogin/${email}/${password}`).then((response) => {
         console.log(response);
         if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404) {
@@ -43,7 +44,7 @@ function Login() {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 1500
           });
-
+          setLoading(false);
         } else {
           toast.success('Login Successful!', {
             position: toast.POSITION.TOP_RIGHT,
@@ -53,6 +54,7 @@ function Login() {
           setTimeout(() => {
             navigate('/home')
           }, 700);
+          setLoading(false);
         }
       })
         .catch((error) => {
@@ -85,7 +87,7 @@ function Login() {
         />
 
         <div style={{ textAlign: "right" }}>
-          <Button type="primary" htmlType="submit" disabled={!validateForm()}>Login</Button>
+          <Button type="primary" htmlType="submit" loading={loading} disabled={!validateForm()}>Login</Button>
           <br /><br />
           <Button type="link" onClick={passwordResetRouteChange}>Forgotten your password?</Button>
         </div>
