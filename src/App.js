@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { MailOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
+import Attraction from "./pages/Attraction";
 function App() {
 
   const navigate = useNavigate();
@@ -23,9 +24,12 @@ function App() {
   ];
 
   const onClickNewTab = (tab) => {
-      setCurrentTab(tab.key);
+      console.log(tab.key);
       if (tab.key == '/') {
         localStorage.removeItem("user");
+        navigate(tab.key);
+      } else {
+        setCurrentTab(tab.key);
         navigate(tab.key);
       }
   };
@@ -43,6 +47,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
           <Route path="/createAdmin" element={<CreateAdmin />} />
+          <Route path="/attraction" element={<Attraction />} />
       </Routes>
         {/*<Footer style={{ textAlign: 'center' }}>TT02 Captsone ©2023</Footer>*/}
     </Layout>
