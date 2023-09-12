@@ -1,9 +1,7 @@
-import Navbar from "../components/Navbar"
 import React, { useState } from "react";
 import { FormLabel, Button, TextField } from '@mui/material';
 import { Layout } from 'antd';
-import {useNavigate} from 'react-router-dom';
-import { toast } from 'react-toastify';
+import {useNavigate, Navigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { createAdmin } from "../redux/adminRedux";
 import CustomHeader from "../components/CustomHeader";
@@ -52,7 +50,9 @@ export default function CreateAdmin() {
       }
     }
   
-    return (
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    return user ? (
           <Layout style={styles.layout}>
                 <CustomHeader text={"Header"}/>
                 {createAdminMsg && <p>Admin Created Successfully!</p>}
@@ -96,7 +96,10 @@ export default function CreateAdmin() {
                     </Content>
             </Layout>
         </Layout>
-    );
+    ) :
+    (
+        <Navigate to="/" />
+    )
   }
 
 const styles = {
