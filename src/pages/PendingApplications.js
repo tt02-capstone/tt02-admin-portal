@@ -7,15 +7,13 @@ import { Navigate } from 'react-router-dom';
 import { getPendingApplications, updateApplicationStatus } from '../redux/adminRedux';
 import { Table } from 'antd';
 import {
-    Button,
-    Spin,
+    Button
 } from 'antd';
 
 export default function PendingApplications() {
     const user = JSON.parse(localStorage.getItem("user"));
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [loading2, setLoading2] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -48,10 +46,10 @@ export default function PendingApplications() {
         };
     });
 
-    function updateApplication(vendorId, newStatus) {
+    async function updateApplication(vendorId, newStatus) {
         setLoading(true);
-        let successMessage = updateApplicationStatus(vendorId, newStatus);
-        if (newStatus == 'APPROVED') {
+        let successMessage = await updateApplicationStatus(vendorId, newStatus);
+        if (newStatus === 'APPROVED') {
             successMessage = 'Application approved successfully';
         } else {
             successMessage = 'Application rejected successfully';

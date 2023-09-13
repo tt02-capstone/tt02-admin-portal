@@ -20,26 +20,57 @@ export async function createAdmin(admin) {
 }
 
 export async function getPendingApplications() {
-  try {
-    const response = await axios.get(`${staffURL}/getPendingApplications`);
-    if (response.data != []) {
-      return response.data;
-    }
-  } catch (error) {
-    console.error("AdminRedux getPendingApplications Error : ", error);
-  }
-}
-
-export async function updateApplicationStatus(vendorId, applicationStatus) {
-  await axios.put(`${staffURL}/updateApplicationStatus/${vendorId}/${applicationStatus}`)
+  return await axios.get(`${staffURL}/getPendingApplications`)
     .then((response) => {
       if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404) {
         return response.data.errorMessage
-      } else { 
+      } else {
+        return response.data;
+      }
+    })
+    .catch((error) => {
+      console.error("AdminRedux getPendingApplications Error : ", error);
+    });
+}
+
+export async function updateApplicationStatus(vendorId, applicationStatus) {
+  return await axios.put(`${staffURL}/updateApplicationStatus/${vendorId}/${applicationStatus}`)
+    .then((response) => {
+      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404) {
+        return response.data.errorMessage
+      } else {
         return response.data;
       }
     })
     .catch((error) => {
       console.error("AdminRedux updateApplicationStatus Error : ", error);
+    });
+}
+
+export async function passwordResetStageOne(email) {
+  return await axios.post(`${staffURL}/passwordResetStageOne/${email}`)
+    .then((response) => {
+      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
+        return { status: false, data: response.data };
+      } else {
+        return { status: true, data: response.data };
+      }
+    })
+    .catch((error) => {
+      console.error("AdminRedux passwordResetStageOne Error : ", error);
+    });
+}
+
+export async function passwordResetStageTwo(token, password) {
+  return await axios.post(`${staffURL}/passwordResetStageTwo/${token}/${password}`)
+    .then((response) => {
+      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
+        return { status: false, data: response.data };
+      } else {
+        return { status: true, data: response.data };
+      }
+    })
+    .catch((error) => {
+      console.error("AdminRedux passwordResetStageTwo Error : ", error);
     });
 }
