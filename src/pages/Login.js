@@ -27,7 +27,7 @@ function Login() {
     padding: "20px"
   }
 
-  localStorage.removeItem("user");
+  // localStorage.removeItem("user");
 
   function validateForm() {
     return email.length > 0 && password.length > 0;

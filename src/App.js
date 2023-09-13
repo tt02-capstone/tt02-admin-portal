@@ -6,11 +6,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "./components/Navbar";
 import {Layout, Menu} from "antd";
 import React, { useEffect, useState } from "react";
-import { MailOutlined } from '@ant-design/icons';
+import { MailOutlined, FileOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
 import PasswordReset from "./pages/PasswordReset";
 import ForgetPassword from "./pages/ForgetPassword";
+import PendingApplications from "./pages/PendingApplications";
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
   const menuItems = [
       {key: '/home', label: 'Home', icon: <MailOutlined />},
       {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
+      {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
 
@@ -44,6 +46,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
           <Route path="/createAdmin" element={<CreateAdmin />} />
+          <Route path="/pendingApplications" element={<PendingApplications />} />
           <Route path="/passwordreset" element={<PasswordReset />} />
           <Route path="/forgetpassword" element={<ForgetPassword />} />
       </Routes>
