@@ -3,7 +3,7 @@ import { Layout, Spin, Form, Input, Button, Modal } from 'antd';
 import { EditFilled } from "@ant-design/icons";
 import {useNavigate} from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import { editAdminProfile, getAdminProfile, editAdminPassword } from "../../redux/adminRedux";
+import { editProfile, editPassword } from "../../redux/adminRedux";
 import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";
 import { ToastContainer, toast } from 'react-toastify';
@@ -14,26 +14,10 @@ export default function ViewProfile() {
     // const navigate = useNavigate();
     const { Header, Content, Sider, Footer } = Layout;
 
-    const [admin, setAdmin] = useState(); // admin object
+    const [admin, setAdmin] = useState(JSON.parse(localStorage.getItem("user"))); // admin object
     const [isViewProfile, setIsViewProfile] = useState(true); // view or edit profile
 
     const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false); // change password boolean
-
-    // fetch admin profile details
-    useEffect(() => {
-        const fetchData = async () => {
-            let user_id = JSON.parse(localStorage.getItem("user"))["user_id"];
-            const response = await getAdminProfile(user_id); // need to replace with id from local storage
-            if (response.status) {
-                setAdmin(response.data);
-                // console.log(response.data);
-            } else {
-                console.log("Admin profile data not fetched!");
-            }
-        }
-
-        fetchData();
-    }, [])
 
     // when the edit profile button is clicked
     function onClickEditProfileButton() {
@@ -43,7 +27,7 @@ export default function ViewProfile() {
     // when user submits the edit profile details form
     async function onClickSubmitProfileButton(values) {
         
-        let response = await editAdminProfile({...values, user_id: admin.user_id});
+        let response = await editProfile({...values, user_id: admin.user_id});
         if (response.status) {
             setAdmin(response.data);
             toast.success('Admin profile changed successfully!', {
@@ -79,7 +63,7 @@ export default function ViewProfile() {
     // when user edits password
     async function onClickSubmitNewPassword(val) {
         if (val.oldPassword && val.newPasswordOne === val.newPasswordTwo) {
-            let response = await editAdminPassword(admin.user_id, val.oldPassword, val.newPasswordOne);
+            let response = await editPassword(admin.user_id, val.oldPassword, val.newPasswordOne);
             if (response.status) {
                 toast.success('Admin password changed successfully!', {
                     position: toast.POSITION.TOP_RIGHT,

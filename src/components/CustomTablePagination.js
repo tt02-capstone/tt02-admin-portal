@@ -13,7 +13,7 @@ export default function CustomTablePagination(props) {
     //         dataIndex: 'is_blocked',
     //         key: 'is_blocked',
     //         rowKey: 'user_id',
-    //         render: (text) => {
+    //         render: (text, record) => {
     //             if (text === "true") {
     //                 return <p>No</p>
     //             } else {

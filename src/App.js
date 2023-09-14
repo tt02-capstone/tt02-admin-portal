@@ -23,8 +23,8 @@ function App() {
 
   const menuItems = [
       {key: '/home', label: 'Home', icon: <MailOutlined />},
-      {key: '/user', label: 'User', icon: <MailOutlined />},
       {key: '/viewProfile', label: 'Profile', icon: <MailOutlined />},
+      {key: '/user', label: 'User', icon: <MailOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
 

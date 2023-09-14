@@ -3,12 +3,16 @@ import { Layout, Menu, Form } from 'antd';
 import {useNavigate} from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { createAdmin, getAllStaff } from "../../redux/adminRedux";
 import CustomHeader from "../../components/CustomHeader";
 import { Navigate } from 'react-router-dom';
 import CreateAdminModal from './CreateAdminModal';
 import CustomButton from '../../components/CustomButton'
 import CustomTablePagination from "../../components/CustomTablePagination";
+import { toggleUserBlock } from "../../redux/userRedux";
+import { createAdmin, getAllAdmin } from "../../redux/adminRedux";
+import { getAllVendorStaff } from '../../redux/vendorStaffRedux';
+import { getAllLocal } from "../../redux/localRedux";
+import { getAllTourist } from "../../redux/touristRedux";
 
 export default function User() {
 
@@ -48,19 +52,19 @@ export default function User() {
 
     const adminColumns = [
         {
-            title: 'Admin Id',
+            title: 'Id',
             dataIndex: 'user_id',
             key: 'user_id',
-        },
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
         },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: 'Role',
@@ -92,46 +96,10 @@ export default function User() {
         },
     ];
 
-    // vendor staff
-    const [getVendorStaffData, setGetVendorStaffData] = useState(true);
-    const [vendorStaffData, setVendorStaffData] = useState([]); // list of vendor staff
-
-    const vendorStaffColumns = [
-        {
-            title: 'Vendor Staff Id',
-            dataIndex: 'user_id',
-            key: 'user_id',
-        },
-    ];
-
-    // locals
-    const [getLocalData, setGetLocalData] = useState(true);
-    const [localData, setLocalData] = useState([]); // list of locals
-
-    const localColumns = [
-        {
-            title: 'Local Id',
-            dataIndex: 'user_id',
-            key: 'user_id',
-        },
-    ];
-
-    // tourist
-    const [getTouristData, setGetTouristData] = useState(true);
-    const [touristData, setTouristData] = useState([]); // list of tourists
-
-    const touristColumns = [
-        {
-            title: 'Tourist Id',
-            dataIndex: 'user_id',
-            key: 'user_id',
-        },
-    ];
-
     useEffect(() => { // fetch list of admin
         if (getAdminData) { // if we want to fetch the most updated data
             const fetchData = async () => {
-                const response = await getAllStaff(); // need to replace with id from local storage
+                const response = await getAllAdmin();
                 if (response.status) {
                     var tempData = response.data.map((val) => ({
                         ...val, 
@@ -147,6 +115,260 @@ export default function User() {
             fetchData();
         }
     },[getAdminData]);
+
+    // vendor staff
+    const [getVendorStaffData, setGetVendorStaffData] = useState(true);
+    const [vendorStaffData, setVendorStaffData] = useState([]); // list of vendor staff
+
+    const vendorStaffColumns = [
+        {
+            title: 'Id',
+            dataIndex: 'user_id',
+            key: 'user_id',
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Position',
+            dataIndex: 'position',
+            key: 'position',
+        },
+        {
+            title: 'Master Account',
+            dataIndex: 'is_master_account',
+            key: 'is_master_account',
+            render: (text, record) => {
+                if (text === "true") {
+                    return <p>Yes</p>
+                } else {
+                    return <p>No</p>
+                }
+            }
+        },
+        {
+            title: 'Allowed Login Access',
+            dataIndex: 'is_blocked',
+            key: 'is_blocked',
+            render: (text, record) => {
+                if (text === "true") {
+                    return <p>No</p>
+                } else {
+                    return <p>Yes</p>
+                }
+            }
+        },
+        {
+            title: 'Action(s)',
+            dataIndex: 'user_id',
+            key: 'user_id',
+            render: (text, record) => {
+                if (record.is_blocked) {
+                    return <CustomButton
+                        text="Unblock" 
+                        onClick={() => toggleBlock(record.user_id)}
+                        />
+                } else {
+                    return <CustomButton
+                        text="Block"
+                        onClick={() => toggleBlock(record.user_id)}
+                        />
+                }
+            }
+        }
+    ];
+
+    useEffect(() => { // fetch list of vendor staff
+        if (getVendorStaffData) { // if we want to fetch the most updated data
+            const fetchData = async () => {
+                const response = await getAllVendorStaff();
+                if (response.status) {
+                    var tempData = response.data.map((val) => ({
+                        ...val, 
+                        key: val.user_id,
+                    }));
+                    setVendorStaffData(tempData);
+                    setGetVendorStaffData(false);
+                } else {
+                    console.log("List of vendor staff not fetched!");
+                }
+            }
+    
+            fetchData();
+        }
+    },[getVendorStaffData]);
+
+    // locals
+    const [getLocalData, setGetLocalData] = useState(true);
+    const [localData, setLocalData] = useState([]); // list of locals
+
+    const localColumns = [
+        {
+            title: 'Id',
+            dataIndex: 'user_id',
+            key: 'user_id',
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Mobile Number',
+            dataIndex: 'country_code',
+            key: 'country_code',
+            render: (text, record) => {
+                return '+' + record.country_code + ' ' + record.mobile_num;
+            }
+        },
+        {
+            title: 'Allowed Login Access',
+            dataIndex: 'is_blocked',
+            key: 'is_blocked',
+            render: (text, record) => {
+                if (text === "true") {
+                    return <p>No</p>
+                } else {
+                    return <p>Yes</p>
+                }
+            }
+        },
+        {
+            title: 'Action(s)',
+            dataIndex: 'user_id',
+            key: 'user_id',
+            render: (text, record) => {
+                if (record.is_blocked) {
+                    return <CustomButton
+                        text="Unblock" 
+                        onClick={() => toggleBlock(record.user_id)}
+                        />
+                } else {
+                    return <CustomButton
+                        text="Block"
+                        onClick={() => toggleBlock(record.user_id)}
+                        />
+                }
+            }
+        }
+    ];
+
+    useEffect(() => { // fetch list of locals
+        if (getLocalData) { // if we want to fetch the most updated data
+            const fetchData = async () => {
+                const response = await getAllLocal();
+                if (response.status) {
+                    var tempData = response.data.map((val) => ({
+                        ...val, 
+                        key: val.user_id,
+                    }));
+                    setLocalData(tempData);
+                    setGetLocalData(false);
+                } else {
+                    console.log("List of locals not fetched!");
+                }
+            }
+    
+            fetchData();
+        }
+    },[getLocalData]);
+
+    // tourist
+    const [getTouristData, setGetTouristData] = useState(true);
+    const [touristData, setTouristData] = useState([]); // list of tourists
+
+    const touristColumns = [
+        {
+            title: 'Tourist Id',
+            dataIndex: 'user_id',
+            key: 'user_id',
+        },
+        {
+            title: 'Id',
+            dataIndex: 'user_id',
+            key: 'user_id',
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Mobile Number',
+            dataIndex: 'country_code',
+            key: 'country_code',
+            render: (text, record) => {
+                return '+' + record.country_code + ' ' + record.mobile_num;
+            }
+        },
+        {
+            title: 'Allowed Login Access',
+            dataIndex: 'is_blocked',
+            key: 'is_blocked',
+            render: (text, record) => {
+                if (text === "true") {
+                    return <p>No</p>
+                } else {
+                    return <p>Yes</p>
+                }
+            }
+        },
+        {
+            title: 'Action(s)',
+            dataIndex: 'user_id',
+            key: 'user_id',
+            render: (text, record) => {
+                if (record.is_blocked) {
+                    return <CustomButton
+                        text="Unblock" 
+                        onClick={() => toggleBlock(record.user_id)}
+                        />
+                } else {
+                    return <CustomButton
+                        text="Block"
+                        onClick={() => toggleBlock(record.user_id)}
+                        />
+                }
+            }
+        }
+    ];
+    
+    useEffect(() => { // fetch list of tourist
+        if (getTouristData) { // if we want to fetch the most updated data
+            const fetchData = async () => {
+                const response = await getAllTourist();
+                if (response.status) {
+                    var tempData = response.data.map((val) => ({
+                        ...val, 
+                        key: val.user_id,
+                    }));
+                    setTouristData(tempData);
+                    setGetTouristData(false);
+                } else {
+                    console.log("List of tourists not fetched!");
+                }
+            }
+    
+            fetchData();
+        }
+    },[getTouristData]);
     
     // form inputs for admin creation
     const [createAdminForm] = Form.useForm();
@@ -191,6 +413,44 @@ export default function User() {
             });
         }
     }
+
+    // blocking related
+    const [blockedId, setBlockedId] = useState();
+
+    function toggleBlock(id) {
+        setBlockedId(id);
+    }
+
+    useEffect(() => {
+        if (blockedId) {
+            async function innerToggleBlock(blockedId) {
+                let response = await toggleUserBlock(blockedId);
+                if (response.status) {
+                    console.log("User toggle block success!");
+                    if (currentTab === '2') {
+                        setGetVendorStaffData(true);
+                    } else if (currentTab === '3') {
+                        setGetLocalData(true);
+                    } else if (currentTab === '4') {
+                        setGetTouristData(true);
+                    }
+                    toast.success('User login access successfully updated!', {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: 1500
+                    });
+                } else {
+                    console.log("User toggle block failed!");
+                    toast.error(response.data.errorMessage, {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: 1500
+                    });
+                }
+            }
+
+            innerToggleBlock(blockedId);
+            setBlockedId(undefined);
+        }
+    },[blockedId])
 
     return admin ? (
         <div>
