@@ -8,11 +8,15 @@ import { getPendingApplications, updateApplicationStatus } from '../redux/adminR
 import { Table, Input, Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
+import ConfirmationDialog from '../components/ConfirmationDialog';
 
 export default function PendingApplications() {
     const user = JSON.parse(localStorage.getItem("user"));
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isDialogVisible, setDialogVisible] = useState(false);
+    const [vendorId, setVendorId] = useState("");
+    const [newStatus, setNewStatus] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,7 +49,7 @@ export default function PendingApplications() {
         };
     });
 
-    async function updateApplication(vendorId, newStatus) {
+    async function updateApplication() {
         setLoading(true);
         let successMessage = await updateApplicationStatus(vendorId, newStatus);
         if (newStatus === 'APPROVED') {
@@ -61,6 +65,21 @@ export default function PendingApplications() {
             window.location.reload();
         }, 1500);
     }
+
+    const showConfirmationDialog = (vendorId, newStatus) => {
+        setVendorId(vendorId);
+        setNewStatus(newStatus);
+        setDialogVisible(true);
+    };
+
+    const handleCancel = () => {
+        setDialogVisible(false);
+    };
+
+    const handleConfirm = () => {
+        updateApplication();
+        setDialogVisible(false);
+    };
 
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
@@ -226,11 +245,11 @@ export default function PendingApplications() {
             align: 'center',
             render: (text, record) => (
                 <div>
-                    <Button type="primary" onClick={() => updateApplication(record.vendor_id, 'APPROVED')} loading={loading} style={styles.button}>
+                    <Button type="primary" onClick={() => showConfirmationDialog(record.vendor_id, 'APPROVED')} loading={loading} style={styles.button}>
                         Approve
                     </Button>
                     <br /><br />
-                    <Button type="primary" onClick={() => updateApplication(record.vendor_id, 'REJECTED')} loading={loading} style={styles.button}>
+                    <Button type="primary" onClick={() => showConfirmationDialog(record.vendor_id, 'REJECTED')} loading={loading} style={styles.button}>
                         Reject
                     </Button>
                 </div>
@@ -245,6 +264,11 @@ export default function PendingApplications() {
                 <div>
                     <h1>List of Pending Applications</h1>
                     <Table dataSource={datasource} columns={columns} style={{ width: '98%' }} loading={loading} />
+                    <ConfirmationDialog
+                        visible={isDialogVisible}
+                        onCancel={handleCancel}
+                        onConfirm={handleConfirm}
+                    />
                     <ToastContainer />
                 </div>
             </Content>
