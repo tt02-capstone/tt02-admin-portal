@@ -143,7 +143,7 @@ export default function ViewProfile() {
                             label="Email"
                             name="email"
                             initialValue={admin.email}
-                            rules={[{ required: true, message: 'Please enter a valid email!' }]}
+                            rules={[{ required: true, message: 'Email is required!' }]}
                             >
                             <Input />
                             </Form.Item>
@@ -152,7 +152,7 @@ export default function ViewProfile() {
                             label="Name"
                             name="name"
                             initialValue={admin.name}
-                            rules={[{ required: true, message: 'Please enter a valid name!' }]}
+                            rules={[{ required: true, message: 'Name is required!' }]}
                             >
                             <Input />
                             </Form.Item>
@@ -161,7 +161,6 @@ export default function ViewProfile() {
                             label="Role"
                             name="role"
                             initialValue={admin.role}
-                            rules={[{ required: true, message: 'Please enter a valid name!' }]}
                             >
                             <Input disabled={true}/>
                             </Form.Item>
