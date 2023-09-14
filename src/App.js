@@ -9,8 +9,8 @@ import React, { useEffect, useState } from "react";
 import { MailOutlined, FileOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
-import PasswordReset from "./pages/PasswordReset";
-import ForgetPassword from "./pages/ForgetPassword";
+import PasswordReset from "./pages/PasswordReset/PasswordReset";
+import ForgetPassword from "./pages/PasswordReset/ForgetPassword";
 import PendingApplications from "./pages/PendingApplications";
 
 function App() {

@@ -61,16 +61,30 @@ export async function passwordResetStageOne(email) {
     });
 }
 
-export async function passwordResetStageTwo(token, password) {
-  return await axios.post(`${staffURL}/passwordResetStageTwo/${token}/${password}`)
-    .then((response) => {
-      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
-        return { status: false, data: response.data };
-      } else {
-        return { status: true, data: response.data };
-      }
-    })
-    .catch((error) => {
-      console.error("AdminRedux passwordResetStageTwo Error : ", error);
-    });
+export async function passwordResetStageTwo(email, otp) {
+  return await axios.post(`${staffURL}/passwordResetStageTwo/${email}/${otp}`)
+      .then((response) => {
+          if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404 || response.data.httpStatusCode === 422) {
+              return { status: false, data: response.data };
+          } else {
+              return { status: true, data: response.data };
+          }
+      })
+      .catch((error) => {
+          console.error("AdminRedux passwordResetStageTwo Error : ", error);
+      });
+}
+
+export async function passwordResetStageThree(email, password) {
+  return await axios.post(`${staffURL}/passwordResetStageThree/${email}/${password}`)
+      .then((response) => {
+          if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404 || response.data.httpStatusCode === 422) {
+              return { status: false, data: response.data };
+          } else {
+              return { status: true, data: response.data };
+          }
+      })
+      .catch((error) => {
+          console.error("AdminRedux passwordResetStageThree Error : ", error);
+      });
 }
