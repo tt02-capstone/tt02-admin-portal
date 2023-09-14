@@ -8,7 +8,7 @@ function Navbar(props) {
 
     return (
         <Sider
-            theme="dark"
+            theme="light"
             breakpoint="lg"
             collapsedWidth="80"
             onCollapse={(collapsed, type) => {
@@ -18,7 +18,7 @@ function Navbar(props) {
             collapsible collapsed={collapsed}
         >
             <Menu
-                theme="dark"
+                theme="light"
                 defaultSelectedKeys={['1']}
                 mode="inline"
                 selectedKeys={[props.currentTab]}
