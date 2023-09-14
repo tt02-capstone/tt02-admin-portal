@@ -65,6 +65,8 @@ function Login() {
 
   return (
     <div className="Login">
+      <br /><br /><br />
+      <center><h1>WithinSG Admin Portal</h1></center>
       <form onSubmit={handleSubmit} style={formStyle}>
         <FormLabel>Email</FormLabel>
         <TextField
