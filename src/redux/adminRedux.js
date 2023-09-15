@@ -69,3 +69,73 @@ export async function editPassword(userId, oldPassword, newPassword) {
     console.error("adminRedux editPassword Error : ", error);
   });
 }
+
+export async function getPendingApplications() {
+  return await adminApi.get(`/getPendingApplications`)
+    .then((response) => {
+      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404) {
+        return response.data.errorMessage
+      } else {
+        return response.data;
+      }
+    })
+    .catch((error) => {
+      console.error("AdminRedux getPendingApplications Error : ", error);
+    });
+}
+
+export async function updateApplicationStatus(vendorId, applicationStatus) {
+  return await adminApi.put(`/updateApplicationStatus/${vendorId}/${applicationStatus}`)
+    .then((response) => {
+      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404) {
+        return response.data.errorMessage
+      } else {
+        return response.data;
+      }
+    })
+    .catch((error) => {
+      console.error("AdminRedux updateApplicationStatus Error : ", error);
+    });
+}
+
+export async function passwordResetStageOne(email) {
+  return await adminApi.post(`/passwordResetStageOne/${email}`)
+    .then((response) => {
+      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 422) { // error
+        return { status: false, data: response.data };
+      } else {
+        return { status: true, data: response.data };
+      }
+    })
+    .catch((error) => {
+      console.error("AdminRedux passwordResetStageOne Error : ", error);
+    });
+}
+
+export async function passwordResetStageTwo(email, otp) {
+  return await adminApi.post(`/passwordResetStageTwo/${email}/${otp}`)
+      .then((response) => {
+          if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404 || response.data.httpStatusCode === 422) {
+              return { status: false, data: response.data };
+          } else {
+              return { status: true, data: response.data };
+          }
+      })
+      .catch((error) => {
+          console.error("AdminRedux passwordResetStageTwo Error : ", error);
+      });
+}
+
+export async function passwordResetStageThree(email, password) {
+  return await adminApi.post(`/passwordResetStageThree/${email}/${password}`)
+      .then((response) => {
+          if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404 || response.data.httpStatusCode === 422) {
+              return { status: false, data: response.data };
+          } else {
+              return { status: true, data: response.data };
+          }
+      })
+      .catch((error) => {
+          console.error("AdminRedux passwordResetStageThree Error : ", error);
+      });
+}

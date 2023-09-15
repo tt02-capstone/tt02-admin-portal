@@ -1,5 +1,5 @@
-import { Layout, theme } from 'antd';
-import { useEffect, React } from 'react';
+import { Layout } from 'antd';
+import { React } from 'react';
 import CustomHeader from "../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
 import { Navigate } from 'react-router-dom';

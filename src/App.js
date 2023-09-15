@@ -5,14 +5,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "./components/Navbar";
 import {Layout, Menu} from "antd";
 import React, { useEffect, useState } from "react";
-import { MailOutlined } from '@ant-design/icons';
+import { MailOutlined, FileOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
-import ViewProfile from "./pages/profileAndPassword/Profile";
-import PasswordReset from "./pages/PasswordReset";
-import ForgetPassword from "./pages/ForgetPassword";
-import User from "./pages/user/User";
-
+import PasswordReset from "./pages/PasswordReset/PasswordReset";
+import ForgetPassword from "./pages/PasswordReset/ForgetPassword";
+import PendingApplications from "./pages/PendingApplications";
+import User from './pages/user/User';
+import CreateAdmin from "./pages/CreateAdmin";
+import Profile from "./pages/profileAndPassword/Profile"
 
 function App() {
 
@@ -25,6 +26,8 @@ function App() {
       {key: '/home', label: 'Home', icon: <MailOutlined />},
       {key: '/viewProfile', label: 'Profile', icon: <MailOutlined />},
       {key: '/user', label: 'User', icon: <MailOutlined />},
+      {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
+      {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
 
@@ -47,7 +50,9 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
           <Route path="/user" element={<User />} />
-          <Route path="/viewProfile" element={<ViewProfile />} />
+          <Route path="/viewProfile" element={<Profile />} />
+          <Route path="/createAdmin" element={<CreateAdmin />} />
+          <Route path="/pendingApplications" element={<PendingApplications />} />
           <Route path="/passwordreset" element={<PasswordReset />} />
           <Route path="/forgetpassword" element={<ForgetPassword />} />
       </Routes>
