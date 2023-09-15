@@ -8,11 +8,12 @@ import { Navigate } from 'react-router-dom';
 import CreateAdminModal from './CreateAdminModal';
 import CustomButton from '../../components/CustomButton'
 import CustomTablePagination from "../../components/CustomTablePagination";
-import { toggleUserBlock } from "../../redux/userRedux";
+import { toggleUserBlock, viewUserProfile } from "../../redux/userRedux";
 import { createAdmin, getAllAdmin } from "../../redux/adminRedux";
 import { getAllVendorStaff } from '../../redux/vendorStaffRedux';
 import { getAllLocal } from "../../redux/localRedux";
 import { getAllTourist } from "../../redux/touristRedux";
+import UserModal from "./UserModal";
 
 export default function User() {
 
@@ -94,6 +95,17 @@ export default function User() {
                 }
             }
         },
+        {
+            title: 'Action(s)',
+            dataIndex: 'user_id',
+            key: 'user_id',
+            render: (text, record) => {
+                return <CustomButton
+                    text="View"
+                    onClick={() => viewProfile(record.user_id)}
+                />
+            }
+        }
     ];
 
     useEffect(() => { // fetch list of admin
@@ -170,17 +182,28 @@ export default function User() {
             dataIndex: 'user_id',
             key: 'user_id',
             render: (text, record) => {
+                let actions = [];
                 if (record.is_blocked) {
-                    return <CustomButton
+                    actions.push(<CustomButton
+                        key={1}
                         text="Unblock" 
                         onClick={() => toggleBlock(record.user_id)}
-                        />
+                        />)
                 } else {
-                    return <CustomButton
+                    actions.push(<CustomButton
+                        key={1}
                         text="Block"
                         onClick={() => toggleBlock(record.user_id)}
-                        />
+                        />)
                 }
+
+                actions.push(<CustomButton
+                    key={2}
+                    text="View"
+                    onClick={() => viewProfile(record.user_id)}
+                />)
+
+                return actions;
             }
         }
     ];
@@ -190,7 +213,6 @@ export default function User() {
             const fetchData = async () => {
                 const response = await getAllVendorStaff();
                 if (response.status) {
-                    console.log(response.data)
                     var tempData = response.data.map((val) => ({
                         ...val, 
                         key: val.user_id,
@@ -251,17 +273,28 @@ export default function User() {
             dataIndex: 'user_id',
             key: 'user_id',
             render: (text, record) => {
+                let actions = [];
                 if (record.is_blocked) {
-                    return <CustomButton
+                    actions.push(<CustomButton
+                        key={1}
                         text="Unblock" 
                         onClick={() => toggleBlock(record.user_id)}
-                        />
+                        />)
                 } else {
-                    return <CustomButton
+                    actions.push(<CustomButton
+                        key={1}
                         text="Block"
                         onClick={() => toggleBlock(record.user_id)}
-                        />
+                        />)
                 }
+
+                actions.push(<CustomButton
+                    key={2}
+                    text="View"
+                    onClick={() => viewProfile(record.user_id)}
+                />)
+
+                return actions;
             }
         }
     ];
@@ -336,17 +369,28 @@ export default function User() {
             dataIndex: 'user_id',
             key: 'user_id',
             render: (text, record) => {
+                let actions = [];
                 if (record.is_blocked) {
-                    return <CustomButton
-                        text="Unblock" 
+                    actions.push(<CustomButton
+                        key={1}
+                        text="Unblock"
                         onClick={() => toggleBlock(record.user_id)}
-                        />
+                        />)
                 } else {
-                    return <CustomButton
+                    actions.push(<CustomButton
+                        key={1}
                         text="Block"
                         onClick={() => toggleBlock(record.user_id)}
-                        />
+                        />)
                 }
+
+                actions.push(<CustomButton
+                    key={2}
+                    text="View"
+                    onClick={() => viewProfile(record.user_id)}
+                />)
+
+                return actions;
             }
         }
     ];
@@ -452,6 +496,43 @@ export default function User() {
         }
     },[blockedId])
 
+    // view user profile related
+    const [profileId, setProfileId] = useState();
+    const [profileUser, setProfileUser] = useState();
+    const [showUserCard, setShowUserCard] = useState(false);
+
+    function viewProfile(id) {
+        setProfileId(id);
+    }
+
+    useEffect(() => {
+        if (profileId) {
+            async function innerViewProfile(profileId) {
+                let response = await viewUserProfile(profileId);
+                if (response.status) {
+                    console.log("User profile fetch success!");
+                    console.log(response.data);
+                    setProfileUser(response.data);
+                    setShowUserCard(true);
+                } else {
+                    console.log("User profile fetch failed!");
+                    toast.error(response.data.errorMessage, {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: 1500
+                    });
+                }
+            }
+
+            innerViewProfile(profileId);
+            setProfileId(undefined);
+        }
+    },[profileId])
+
+    // close edit password modal
+    function onCancelProfile() {
+        setShowUserCard(false);
+    }
+
     return admin ? (
         <div>
             <Layout style={styles.layout}>
@@ -509,6 +590,13 @@ export default function User() {
                                 isCreateAdminModalOpen={isCreateAdminModalOpen}
                                 onClickCancelAdminModal={onClickCancelAdminModal}
                                 onClickSubmitAdminCreate={onClickSubmitAdminCreate}
+                            />
+
+                            {/* Modal to view user profile */}
+                            <UserModal
+                                user={profileUser}
+                                showUserCard={showUserCard}
+                                onCancelProfile={onCancelProfile}
                             />
                         </Content>
                 </Layout>
