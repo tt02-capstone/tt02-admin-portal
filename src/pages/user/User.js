@@ -190,6 +190,7 @@ export default function User() {
             const fetchData = async () => {
                 const response = await getAllVendorStaff();
                 if (response.status) {
+                    console.log(response.data)
                     var tempData = response.data.map((val) => ({
                         ...val, 
                         key: val.user_id,
@@ -389,7 +390,6 @@ export default function User() {
         let adminObj = {
             name: values.name,
             email: values.email,
-            password: values.password,
             is_blocked: values.is_blocked === "true" ? true : false,
             role: values.role
         }

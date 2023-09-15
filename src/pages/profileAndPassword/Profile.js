@@ -63,16 +63,24 @@ export default function ViewProfile() {
     // when user edits password
     async function onClickSubmitNewPassword(val) {
         if (val.oldPassword && val.newPasswordOne === val.newPasswordTwo) {
-            let response = await editPassword(admin.user_id, val.oldPassword, val.newPasswordOne);
-            if (response.status) {
-                toast.success('Admin password changed successfully!', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    autoClose: 1500
-                });
-                setIsChangePasswordModalOpen(false);
-            
+            var passwordChecker=  /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,15}$/;
+            if (val.newPasswordOne.match(passwordChecker)) {
+                let response = await editPassword(admin.user_id, val.oldPassword, val.newPasswordOne);
+                if (response.status) {
+                    toast.success('Admin password changed successfully!', {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: 1500
+                    });
+                    setIsChangePasswordModalOpen(false);
+                
+                } else {
+                    toast.error(response.data.errorMessage, {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: 1500
+                    });
+                }
             } else {
-                toast.error(response.data.errorMessage, {
+                toast.error('New password must be 8 characters long, and contain 1 letter, number and symbol each!', {
                     position: toast.POSITION.TOP_RIGHT,
                     autoClose: 1500
                 });

@@ -40,7 +40,16 @@ export default function EditPasswordModal(props) {
                     <Form.Item
                     label="Repeat New Password"
                     name="newPasswordTwo"
-                    rules={[{ required: true, message: 'Please enter your new password again!' }]}
+                    rules={[
+                        { required: true, message: 'Please enter your new password again!' },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                            if (!value || getFieldValue('newPasswordOne') === value) {
+                                return Promise.resolve();
+                            }
+                            return Promise.reject(new Error('New password do not match!'));
+                            },
+                        }),]}
                     >
                     <Input.Password placeholder="Repeat new Password" />
                     </Form.Item>

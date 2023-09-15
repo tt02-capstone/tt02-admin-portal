@@ -19,7 +19,7 @@ function Login() {
     navigate(path);
   }
 
-  const baseURL = "http://localhost:8080/staff";
+  const baseURL = "http://localhost:8080/admin";
 
   const formStyle = {
     maxWidth: "800px",
