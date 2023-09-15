@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Form, Input, Button } from "antd";
+import { validatePassword } from "../../helper/validation";
 
 export default function EditPasswordModal(props) {
 
@@ -32,7 +33,7 @@ export default function EditPasswordModal(props) {
                     <Form.Item
                     label="New Password"
                     name="newPasswordOne"
-                    rules={[{ required: true, message: 'Please enter your new password!' }]}
+                    rules={[{ required: true, message: 'Please enter your new password!' }, { validator: validatePassword },]}
                     >
                     <Input.Password placeholder="New Password" />
                     </Form.Item>
@@ -41,7 +42,7 @@ export default function EditPasswordModal(props) {
                     label="Repeat New Password"
                     name="newPasswordTwo"
                     rules={[
-                        { required: true, message: 'Please enter your new password again!' },
+                        { required: true, message: 'Please enter your new password again!' }, { validator: validatePassword },
                         ({ getFieldValue }) => ({
                             validator(_, value) {
                             if (!value || getFieldValue('newPasswordOne') === value) {
