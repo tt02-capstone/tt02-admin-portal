@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "./components/Navbar";
 import {Layout, Menu} from "antd";
 import React, { useEffect, useState } from "react";
-import { MailOutlined, FileOutlined } from '@ant-design/icons';
+import { MailOutlined, FileOutlined, HomeOutlined, UserOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
 import PasswordReset from "./pages/PasswordReset/PasswordReset";
@@ -23,10 +23,10 @@ function App() {
   const [currentTab, setCurrentTab] = useState('/home');
 
   const menuItems = [
-      {key: '/home', label: 'Home', icon: <MailOutlined />},
-      {key: '/viewProfile', label: 'Profile', icon: <MailOutlined />},
-      {key: '/user', label: 'User', icon: <MailOutlined />},
-      {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
+      {key: '/home', label: 'Home', icon: <HomeOutlined />},
+      {key: '/viewProfile', label: 'Profile', icon: <UserOutlined />},
+      {key: '/user', label: 'User', icon: <UsergroupAddOutlined />},
+      // {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];

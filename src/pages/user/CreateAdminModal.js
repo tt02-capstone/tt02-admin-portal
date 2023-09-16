@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Form, Input, Button, Select } from "antd";
+import { Modal, Form, Input, Button, Select, Spin, Row } from "antd";
 
 export default function CreateAdminModal(props) {
 
@@ -14,6 +14,10 @@ export default function CreateAdminModal(props) {
                 onCancel={props.onClickCancelAdminModal}
                 footer={[]} // hide default buttons of modal
             >
+                <Row align='middle' justify='center'>
+                    <Spin tip="Creating" size="small" spinning={props.loading}></Spin>
+                </Row>
+                
                 <Form 
                     name="basic"
                     form={props.form}
@@ -26,6 +30,7 @@ export default function CreateAdminModal(props) {
                 >
                     <Form.Item
                     label="Admin Name"
+                    labelAlign="left"
                     name="name"
                     rules={[{ required: true, message: 'Please enter new admin name!' }]}
                     >
@@ -34,6 +39,7 @@ export default function CreateAdminModal(props) {
 
                     <Form.Item
                     label="Admin Email"
+                    labelAlign="left"
                     name="email"
                     placeholder="Admin Email"
                     rules={[{ required: true, message: 'Please enter new admin email!' }]}
@@ -43,6 +49,7 @@ export default function CreateAdminModal(props) {
 
                     <Form.Item
                         label="Current Login Access"
+                        labelAlign="left"
                         name="is_blocked"
                         rules={[{ required: true, message: 'Please select a login access right!' }]}
                     >
@@ -50,13 +57,14 @@ export default function CreateAdminModal(props) {
                             placeholder="Please select a login access right"
                             allowClear
                         >
-                            <Option value="false">Allow Login</Option>
-                            <Option value="true">Deny Login</Option>
+                            <Option value="false">Allow</Option>
+                            <Option value="true">Deny</Option>
                         </Select>
                     </Form.Item>
 
                     <Form.Item
                         label="Role"
+                        labelAlign="left"
                         name="role"
                         rules={[{ required: true, message: 'Please select a role!' }]}
                     >
@@ -70,8 +78,8 @@ export default function CreateAdminModal(props) {
                         </Select>
                     </Form.Item>
 
-                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                        <Button type="primary" htmlType="submit">
+                    <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
+                        <Button type="primary" htmlType="submit" loading={props.loading}>
                             Create
                         </Button>
                     </Form.Item>

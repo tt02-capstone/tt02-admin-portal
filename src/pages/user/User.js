@@ -14,12 +14,19 @@ import { getAllVendorStaff } from '../../redux/vendorStaffRedux';
 import { getAllLocal } from "../../redux/localRedux";
 import { getAllTourist } from "../../redux/touristRedux";
 import UserModal from "./UserModal";
+import { UserAddOutlined }  from "@ant-design/icons";
 
 export default function User() {
 
     const navigate = useNavigate();
     const { Header, Content, Sider, Footer } = Layout;
     const admin = JSON.parse(localStorage.getItem("user"));
+
+    const breadcrumbItems = [
+        {
+            title: 'User',
+        },
+    ];
 
     // menu
     const menuItems = [
@@ -158,7 +165,7 @@ export default function User() {
             dataIndex: 'is_master_account',
             key: 'is_master_account',
             render: (text, record) => {
-                if (text === "true") {
+                if (text === true) {
                     return <p>Yes</p>
                 } else {
                     return <p>No</p>
@@ -200,6 +207,7 @@ export default function User() {
                 actions.push(<CustomButton
                     key={2}
                     text="View"
+                    style={{marginLeft: '10px'}}
                     onClick={() => viewProfile(record.user_id)}
                 />)
 
@@ -253,7 +261,7 @@ export default function User() {
             dataIndex: 'country_code',
             key: 'country_code',
             render: (text, record) => {
-                return '+' + record.country_code + ' ' + record.mobile_num;
+                return record.country_code + ' ' + record.mobile_num;
             }
         },
         {
@@ -291,6 +299,7 @@ export default function User() {
                 actions.push(<CustomButton
                     key={2}
                     text="View"
+                    style={{marginLeft: '10px'}}
                     onClick={() => viewProfile(record.user_id)}
                 />)
 
@@ -325,11 +334,6 @@ export default function User() {
 
     const touristColumns = [
         {
-            title: 'Tourist Id',
-            dataIndex: 'user_id',
-            key: 'user_id',
-        },
-        {
             title: 'Id',
             dataIndex: 'user_id',
             key: 'user_id',
@@ -349,7 +353,7 @@ export default function User() {
             dataIndex: 'country_code',
             key: 'country_code',
             render: (text, record) => {
-                return '+' + record.country_code + ' ' + record.mobile_num;
+                return record.country_code + ' ' + record.mobile_num;
             }
         },
         {
@@ -387,6 +391,7 @@ export default function User() {
                 actions.push(<CustomButton
                     key={2}
                     text="View"
+                    style={{marginLeft: '10px'}}
                     onClick={() => viewProfile(record.user_id)}
                 />)
 
@@ -418,6 +423,7 @@ export default function User() {
     // form inputs for admin creation
     const [createAdminForm] = Form.useForm();
     const [isCreateAdminModalOpen, setIsCreateAdminModalOpen] = useState(false); // boolean to open modal
+    const [createLoading, setCreateLoading] = useState(false);
     
     // create new admin modal open button
     function onClickOpenCreateAdminModal() {
@@ -430,6 +436,7 @@ export default function User() {
 
     // create new admin modal create button
     async function onClickSubmitAdminCreate(values) {
+        setCreateLoading(true);
 
         let adminObj = {
             name: values.name,
@@ -443,7 +450,8 @@ export default function User() {
             createAdminForm.resetFields();
             setGetAdminData(true);
             setIsCreateAdminModalOpen(false);
-            toast.success('Admin creation successfully!', {
+            setCreateLoading(false);
+            toast.success('Admin successfully created!', {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 1500
             });
@@ -451,6 +459,7 @@ export default function User() {
         } else {
             console.log("Admin creation failed!");
             console.log(response.data);
+            setCreateLoading(false);
             toast.error(response.data.errorMessage, {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 1500
@@ -536,70 +545,66 @@ export default function User() {
     return admin ? (
         <div>
             <Layout style={styles.layout}>
-                    <CustomHeader text={"Header"}/>
-                    <Layout style={{ padding: '0 24px 24px' }}>
-                        <Content style={styles.content}>
-                            <CustomButton 
-                                text="Create Admin"
-                                // icon=
-                                onClick={onClickOpenCreateAdminModal}
-                            />
+                <CustomHeader items={breadcrumbItems} />
+                <Content style={styles.content}>
+                    <CustomButton 
+                        text="Create Admin"
+                        style={{marginLeft: '3px', marginBottom: '20px'}}
+                        icon={<UserAddOutlined />}
+                        onClick={onClickOpenCreateAdminModal}
+                    />
 
-                            {/* Tab and Tables to view various users */}
-                            <Menu 
-                                onClick={onClickTab} 
-                                selectedKeys={[currentTab]}
-                                mode="horizontal"
-                                items={menuItems}
-                            >
-                            </Menu>
-                            {currentTab === '1' && 
-                                <CustomTablePagination
-                                    title="Admin Staff"
-                                    column={adminColumns}
-                                    data={adminData}
-                                />
-                            }
-                            {currentTab === '2' && 
-                                <CustomTablePagination
-                                    title="Vendor Staff"
-                                    column={vendorStaffColumns}
-                                    data={vendorStaffData}
-                                />
-                            }
-                            {/* locals */}
-                            {currentTab === '3' && 
-                                <CustomTablePagination
-                                    title="Locals"
-                                    column={localColumns}
-                                    data={localData}
-                                />
-                            }
-                            {/* tourist */}
-                            {currentTab === '4' && 
-                                <CustomTablePagination
-                                    title="Tourists"
-                                    column={touristColumns}
-                                    data={touristData}
-                                />
-                            }
+                    {/* Tab and Tables to view various users */}
+                    <Menu 
+                        onClick={onClickTab} 
+                        selectedKeys={[currentTab]}
+                        mode="horizontal"
+                        items={menuItems}
+                    >
+                    </Menu>
+                    {currentTab === '1' && 
+                        <CustomTablePagination
+                            column={adminColumns}
+                            data={adminData}
+                        />
+                    }
+                    {currentTab === '2' && 
+                        <CustomTablePagination
+                            column={vendorStaffColumns}
+                            data={vendorStaffData}
+                        />
+                    }
+                    {/* locals */}
+                    {currentTab === '3' && 
+                        <CustomTablePagination
+                            column={localColumns}
+                            data={localData}
+                        />
+                    }
+                    {/* tourist */}
+                    {currentTab === '4' && 
+                        <CustomTablePagination
+                            column={touristColumns}
+                            data={touristData}
+                        />
+                    }
 
-                            {/* Modal to create new admin account */}
-                            <CreateAdminModal
-                                form={createAdminForm}
-                                isCreateAdminModalOpen={isCreateAdminModalOpen}
-                                onClickCancelAdminModal={onClickCancelAdminModal}
-                                onClickSubmitAdminCreate={onClickSubmitAdminCreate}
-                            />
+                    {/* Modal to create new admin account */}
+                    <CreateAdminModal
+                        form={createAdminForm}
+                        loading={createLoading}
+                        isCreateAdminModalOpen={isCreateAdminModalOpen}
+                        onClickCancelAdminModal={onClickCancelAdminModal}
+                        onClickSubmitAdminCreate={onClickSubmitAdminCreate}
+                    />
 
-                            {/* Modal to view user profile */}
-                            <UserModal
-                                user={profileUser}
-                                showUserCard={showUserCard}
-                                onCancelProfile={onCancelProfile}
-                            />
-                        </Content>
-                </Layout>
+                    {/* Modal to view user profile */}
+                    <UserModal
+                        user={profileUser}
+                        showUserCard={showUserCard}
+                        onCancelProfile={onCancelProfile}
+                    />
+                </Content>
             </Layout>
 
             <ToastContainer />
@@ -613,6 +618,7 @@ export default function User() {
 const styles = {
     layout: {
         minHeight: '100vh',
+        backgroundColor: 'white'
     },
     content: {
         margin: '24px 16px 0',

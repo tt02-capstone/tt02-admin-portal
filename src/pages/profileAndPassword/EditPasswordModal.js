@@ -24,6 +24,7 @@ export default function EditPasswordModal(props) {
                 >
                     <Form.Item
                     label="Old Password"
+                    labelAlign="left"
                     name="oldPassword"
                     rules={[{ required: true, message: 'Please enter your old password!' }]}
                     >
@@ -32,6 +33,7 @@ export default function EditPasswordModal(props) {
 
                     <Form.Item
                     label="New Password"
+                    labelAlign="left"
                     name="newPasswordOne"
                     rules={[{ required: true, message: 'Please enter your new password!' }, { validator: validatePassword },]}
                     >
@@ -40,6 +42,7 @@ export default function EditPasswordModal(props) {
 
                     <Form.Item
                     label="Repeat New Password"
+                    labelAlign="left"
                     name="newPasswordTwo"
                     rules={[
                         { required: true, message: 'Please enter your new password again!' }, { validator: validatePassword },
@@ -55,7 +58,7 @@ export default function EditPasswordModal(props) {
                     <Input.Password placeholder="Repeat new Password" />
                     </Form.Item>
 
-                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                    <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
                         <Button type="primary" htmlType="submit">
                             Submit
                         </Button>

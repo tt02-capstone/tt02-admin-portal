@@ -4,7 +4,8 @@ import { Radio, Space, Table, Tag } from 'antd';
 export default function CustomTablePagination(props) {
 
     // data --> actual data to be put in table. Must be in [{}, {}] format
-    // title --> table header
+    // showHeader --> true / false to show table header text
+    // style --> css style
     // column --> header for each column
     // e.g.
     // const column = [
@@ -24,14 +25,16 @@ export default function CustomTablePagination(props) {
     // ];
 
     const pagination = {
+        pageSize: 10,
     }
 
     return(
         <div>
             <Table
-                title={() => props.title}
+                style={props.style}
                 bordered={true}
                 columns={props.column}
+                tableLayout="fixed"
                 pagination={pagination} 
                 dataSource={props.data} />
         </div>
