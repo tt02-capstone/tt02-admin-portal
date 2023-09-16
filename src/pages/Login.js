@@ -13,7 +13,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate(); // route navigation 
+  const navigate = useNavigate(); // route navigation
   const passwordResetRouteChange = () => {
     let path = `/forgetpassword`;
     navigate(path);
