@@ -12,6 +12,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CustomButton from '../../components/CustomButton';
 import { passwordResetStageOne } from '../../redux/adminRedux';
 
 const formItemLayout = {
@@ -122,7 +123,8 @@ function PasswordReset() {
 
                             <Form.Item {...tailFormItemLayout}>
                                 <div style={{ textAlign: "right" }}>
-                                    <Button type="primary" htmlType="submit" loading={loading}>
+                                    <CustomButton text="Back" style={{width: '75px'}} onClick={() => {return navigate('/')}} />
+                                    <Button type="primary" htmlType="submit" style={{marginLeft: '20px'}} loading={loading}>
                                         Submit
                                     </Button>
                                 </div>

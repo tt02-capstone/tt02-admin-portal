@@ -6,15 +6,20 @@ import { Navigate, Link } from 'react-router-dom';
 import { Card, Col, Row } from 'antd';
 
 export default function Home() {
+    
     const user = JSON.parse(localStorage.getItem("user"));
     const { Meta } = Card;
 
-    console.log(user);
+    const breadCrumbItems = [
+        {
+            title: 'Home',
+        },
+    ]
 
-    return  user ? 
+    return user ?
         (
             <Layout style={styles.layout}>
-                <CustomHeader text={"Home"}/>
+                <CustomHeader items={breadCrumbItems} />
 
                 <Content style={styles.content}>
                     <div>

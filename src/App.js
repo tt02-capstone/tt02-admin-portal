@@ -1,18 +1,20 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import CreateAdmin from "./pages/CreateAdmin";
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "./components/Navbar";
 import {Layout, Menu} from "antd";
 import React, { useEffect, useState } from "react";
-import { MailOutlined, FileOutlined } from '@ant-design/icons';
+import { MailOutlined, FileOutlined, HomeOutlined, UserOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
 import Attraction from "./pages/Attraction";
 import PasswordReset from "./pages/PasswordReset/PasswordReset";
 import ForgetPassword from "./pages/PasswordReset/ForgetPassword";
 import PendingApplications from "./pages/PendingApplications";
+import User from './pages/user/User';
+import CreateAdmin from "./pages/CreateAdmin";
+import Profile from "./pages/profileAndPassword/Profile"
 
 function App() {
 
@@ -22,8 +24,10 @@ function App() {
   const [currentTab, setCurrentTab] = useState('/home');
 
   const menuItems = [
-      {key: '/home', label: 'Home', icon: <MailOutlined />},
-      {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
+      {key: '/home', label: 'Home', icon: <HomeOutlined />},
+      {key: '/viewProfile', label: 'Profile', icon: <UserOutlined />},
+      {key: '/user', label: 'User', icon: <UsergroupAddOutlined />},
+      // {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
@@ -51,6 +55,8 @@ function App() {
       <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/user" element={<User />} />
+          <Route path="/viewProfile" element={<Profile />} />
           <Route path="/createAdmin" element={<CreateAdmin />} />
           <Route path="/attraction" element={<Attraction />} />
           <Route path="/pendingApplications" element={<PendingApplications />} />

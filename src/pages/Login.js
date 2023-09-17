@@ -13,13 +13,13 @@ function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate(); // route navigation 
+  const navigate = useNavigate(); // route navigation
   const passwordResetRouteChange = () => {
     let path = `/forgetpassword`;
     navigate(path);
   }
 
-  const baseURL = "http://localhost:8080/staff";
+  const baseURL = "http://localhost:8080/admin";
 
   const formStyle = {
     maxWidth: "800px",
@@ -64,7 +64,7 @@ function Login() {
   }
 
   return (
-    <div className="Login">
+    <div className="Login" style={{backgroundColor: 'white'}}>
       <br /><br /><br />
       <center><h1>WithinSG Admin Portal</h1></center>
       <form onSubmit={handleSubmit} style={formStyle}>
