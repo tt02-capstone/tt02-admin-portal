@@ -13,6 +13,12 @@ export default function Attraction() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    const breadCrumbItems = [
+        {
+            title: 'Attraction List',
+        },
+    ]
+
     useEffect(() => {
         const fetchData = async() => {
             try {
@@ -192,7 +198,7 @@ export default function Attraction() {
             title: 'Description',
             dataIndex: 'description',
             key: 'description', 
-            width: 800,
+            width: 500,
             sorter: (a, b) => a.description.localeCompare(b.description),
             ...getColumnSearchProps('description')
         },
@@ -207,7 +213,7 @@ export default function Attraction() {
             title: 'Price List',
             dataIndex: 'price_list',
             key: 'price_list', 
-            width: 220,
+            width: 300,
             sorter: (a, b) => a.price_list.localeCompare(b.price_list),
             ...getColumnSearchProps('price_list'),
         }
@@ -215,10 +221,9 @@ export default function Attraction() {
     
     return user ? (
         <Layout style={styles.layout}>
-             <CustomHeader text={"Attractions"}/>
+             <CustomHeader items={breadCrumbItems} />
              <Content style={styles.content}>
              <div>
-                <h1>List of Attractions</h1>
                 <Table dataSource={datasource} columns={columns} style={{ width : '98%' }} />
             </div>
              </Content>
