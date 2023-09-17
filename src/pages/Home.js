@@ -28,7 +28,7 @@ export default function Home() {
                                             height: 400,
                                             margin: '15px 0'
                                         }}
-                                        cover={<img alt="attractions" src="image/attractions.png" style={{width:300, height:300}}/>}
+                                        cover={<img alt="attractions" src="http://tt02.s3-ap-southeast-1.amazonaws.com/static/web/attractions.png" style={{width:300, height:300}}/>}
                                         bordered={false}
                                     >
                                         <Meta 
@@ -46,7 +46,7 @@ export default function Home() {
                                             height: 400,
                                             margin: '15px 0'
                                         }}
-                                        cover={<img alt="example" src="image/hotel.png" style={{width:300, height:300}}/>}
+                                        cover={<img alt="example" src="http://tt02.s3-ap-southeast-1.amazonaws.com/static/web/hotel.png" style={{width:300, height:300}}/>}
                                         bordered={false}
                                     >
                                         <Meta title="Accomodation" description="Accomodation Overview"/>
@@ -62,7 +62,7 @@ export default function Home() {
                                             height: 400,
                                             margin: '15px 0'
                                         }}
-                                        cover={<img alt="restaurant" src="image/restaurant.png" style={{width:300, height:300}} />}
+                                        cover={<img alt="restaurant" src="http://tt02.s3-ap-southeast-1.amazonaws.com/static/web/restaurant.png" style={{width:300, height:300}} />}
                                         bordered={false}
                                     >
                                         <Meta title="Restaurant" description="Restaurant Overview"/>
@@ -80,7 +80,7 @@ export default function Home() {
                                             height: 400,
                                             margin: '100px 0'
                                         }}
-                                        cover={<img alt="telecom" src="image/telecom.png" style={{width:300, height:300}}/>}
+                                        cover={<img alt="telecom" src="http://tt02.s3-ap-southeast-1.amazonaws.com/static/web/telecom.png" style={{width:300, height:300}}/>}
                                         bordered={false}
                                     >
                                         <Meta 
@@ -98,7 +98,7 @@ export default function Home() {
                                             height: 400,
                                             margin: '100px 0'
                                         }}
-                                        cover={<img alt="deals" src="image/discount.png" style={{width:300, height:300}}/>}
+                                        cover={<img alt="deals" src="http://tt02.s3-ap-southeast-1.amazonaws.com/static/web/discount.png" style={{width:300, height:300}}/>}
                                         bordered={false}
                                     >
                                         <Meta 
