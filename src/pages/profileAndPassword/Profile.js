@@ -9,6 +9,11 @@ import CustomButton from "../../components/CustomButton";
 import { ToastContainer, toast } from 'react-toastify';
 import EditPasswordModal from "./EditPasswordModal";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
+import { uploadNewProfilePic } from "../../redux/userRedux";
+import CustomFileUpload from "../../components/CustomFileUpload";
+import AWS from 'aws-sdk';
+
+window.Buffer = window.Buffer || require("buffer").Buffer;
 
 export default function ViewProfile() {
 
@@ -132,6 +137,81 @@ export default function ViewProfile() {
         }
     }
 
+    // upload image
+  const S3BUCKET ='tt02/user'; // if you want to save in a folder called 'attraction', your S3BUCKET will instead be 'tt02/attraction'
+  const TT02REGION ='ap-southeast-1';
+  const ACCESS_KEY ='AKIART7KLOHBGOHX2Y7T';
+  const SECRET_ACCESS_KEY ='xsMGhdP0XsZKAzKdW3ED/Aa5uw91Ym5S9qz2HiJ0';
+
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+  };
+
+  const uploadFile = async () => {
+      if (file) {
+          const S3_BUCKET = S3BUCKET;
+          const REGION = TT02REGION;
+      
+          AWS.config.update({
+              accessKeyId: ACCESS_KEY,
+              secretAccessKey: SECRET_ACCESS_KEY,
+          });
+          const s3 = new AWS.S3({
+              params: { Bucket: S3_BUCKET },
+              region: REGION,
+          });
+      
+          const params = {
+              Bucket: S3_BUCKET,
+              Key: file.name,
+              Body: file,
+          };
+      
+          var upload = s3
+              .putObject(params)
+              .on("httpUploadProgress", (evt) => {
+              console.log(
+                  "Uploading " + parseInt((evt.loaded * 100) / evt.total) + "%"
+              );
+              })
+              .promise();
+      
+          await upload.then((err, data) => {
+              console.log(err);
+          });
+
+          let str = 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/' + file.name;
+          const fetchData = async (userId, str) => {
+              const response = await uploadNewProfilePic({user_id: userId, profile_pic: str});
+              if (response.status) {
+                  console.log("image url saved in database")
+                  localStorage.setItem("user", JSON.stringify(response.data));
+                  setAdmin(response.data);
+                  // change local storage
+                  setFile(null);
+                  toast.success('User profile image successfully uploaded!', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 1500
+                });
+
+              } else {
+                  console.log("User image URL in database not updated!");
+              }
+          }
+
+          fetchData(admin.user_id, str);
+          setFile(null);
+      } else {
+        toast.error('Please select an image!', {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1500
+        });
+      }
+    };
+
     return (
         <div>
             {/* view profile data fetching */}
@@ -144,26 +224,39 @@ export default function ViewProfile() {
                     <Divider orientation="left" style={{fontSize: '150%' }} >User Profile</Divider>
                     <Content style={styles.content}>
                         <Row>
-                            <Col span={8} style={{fontSize: '150%'}}>Name: {admin.name}</Col>
-                            <Col span={8} style={{fontSize: '150%'}}>Email: {admin.email}</Col>
-                            <Col span={8} style={{fontSize: '150%'}}>
-                                <CustomButton
-                                text="Edit Profile"
-                                icon={<UserOutlined />}
-                                onClick={onClickEditProfileButton}
+                            <Col span={8} style={{marginLeft: '50px'}}>
+                                <img 
+                                    src={admin.profile_pic ? admin.profile_pic : 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg'}
+                                    style={{borderRadius: '50%', width: '200px', height: '200px'}}
                                 />
                             </Col>
-                        </Row>
-                        <Row>
-                            {admin.role && admin.role === 'ADMIN' && <Col span={16} style={{fontSize: '150%'}}>Role: Admin</Col>}
-                            {admin.role && admin.role === 'OPERATION' && <Col span={16} style={{fontSize: '150%'}}>Role: Operation</Col>}
-                            {admin.role && admin.role === 'SUPPORT' && <Col span={16} style={{fontSize: '150%'}}>Role: Support</Col>}
-                            <Col>    
+                            <Col span={8} >
+                                <Row style={{fontSize: '150%', marginBottom: '5px'}}>Name: {admin.name}</Row>
+                                <Row style={{fontSize: '150%', marginBottom: '5px'}}>Email: {admin.email}</Row>
+                                {admin.role && admin.role === 'ADMIN' && <Row style={{fontSize: '150%'}}>Role: Admin</Row>}
+                                {admin.role && admin.role === 'OPERATION' && <Row style={{fontSize: '150%'}}>Role: Operation</Row>}
+                                {admin.role && admin.role === 'SUPPORT' && <Row style={{fontSize: '150%'}}>Role: Support</Row>}
+                            </Col>
+                            <Col>
+                                <Row>
+                                <CustomFileUpload handleFileChange={handleFileChange} uploadFile={uploadFile}/>
+                                </Row>
+                                <Row>
+                                <CustomButton
+                                    text="Edit Profile"
+                                    style={{marginBottom: '5px', marginTop: '5px'}}
+                                    icon={<UserOutlined />}
+                                    onClick={onClickEditProfileButton}
+                                />
+                                </Row>
+                                <Row>
                                 <CustomButton
                                     text="Edit Password"
+                                    style={{marginBottom: '5px'}}
                                     icon={<KeyOutlined />}
                                     onClick={onClickEditPasswordButton}
                                 />
+                                </Row>
                             </Col>
                         </Row>
                         
