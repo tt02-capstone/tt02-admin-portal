@@ -1,4 +1,4 @@
-import {Routes, Route, useNavigate, useLocation} from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import CreateAdmin from "./pages/CreateAdmin";
@@ -6,28 +6,35 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "./components/Navbar";
 import {Layout, Menu} from "antd";
 import React, {useContext, useEffect, useState} from "react";
-import {MailOutlined, FileOutlined} from '@ant-design/icons';
+import {MailOutlined, FileOutlined, HomeOutlined, UserOutlined, UsergroupAddOutlined} from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
 import PasswordReset from "./pages/PasswordReset/PasswordReset";
 import ForgetPassword from "./pages/PasswordReset/ForgetPassword";
 import PendingApplications from "./pages/PendingApplications";
 import {AuthContext, AuthProvider} from "./redux/AuthContext";
+import Attraction from "./pages/Attraction";
+import User from "./pages/user/User";
 
+
+function Profile() {
+    return null;
+}
 
 export function AppLayout() {
 
     const navigate = useNavigate();
-    const location = useLocation();
     const {authState, logout} = useContext(AuthContext);
     const [currentTab, setCurrentTab] = useState('/home');
 
-    const menuItems = [
-        {key: '/home', label: 'Home', icon: <MailOutlined/>},
-        {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined/>},
-        {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined/>},
-        {key: '/', label: 'Logout', icon: <LogoutIcon/>,}
-    ];
+  const menuItems = [
+      {key: '/home', label: 'Home', icon: <HomeOutlined />},
+      {key: '/viewProfile', label: 'Profile', icon: <UserOutlined />},
+      {key: '/user', label: 'User', icon: <UsergroupAddOutlined />},
+      // {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
+      {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
+      {key: '/', label: 'Logout',icon: <LogoutIcon />,}
+  ];
 
     const onClickNewTab = async (tab) => {
         if (tab.key === '/') {
@@ -53,7 +60,10 @@ export function AppLayout() {
                 {authState?.authenticated ? (
                     <>
                         <Route path="/home" element={<Home/>}/>
+                        <Route path="/user" element={<User />} />
                         <Route path="/createAdmin" element={<CreateAdmin/>}/>
+                        <Route path="/viewProfile" element={<Profile />} />
+                        <Route path="/attraction" element={<Attraction />} />
                         <Route path="/pendingApplications" element={<PendingApplications/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>

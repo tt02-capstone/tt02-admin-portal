@@ -13,10 +13,10 @@ export default function CreateAdmin() {
     const [password, setPassword] = useState("");
     const [createAdminMsg, setCreateAdminMsg] = useState();
 
+    const user = secureLocalStorage.getItem("user"); // check if the user is logged in
+
     const navigate = useNavigate();
     const { Header, Content, Sider, Footer } = Layout;
-
-    const baseURL = "http://localhost:8080/staff";
 
     const formStyle ={
       maxWidth: "800px",
@@ -51,7 +51,6 @@ export default function CreateAdmin() {
       }
     }
   
-    const user = secureLocalStorage.getItem("user")
 
     return (
           <Layout style={styles.layout}>
@@ -100,14 +99,15 @@ export default function CreateAdmin() {
     )
   }
 
-const styles = {
+  const styles = {
     layout: {
         minHeight: '100vh',
+        backgroundColor: 'white'
     },
     content: {
         margin: '24px 16px 0',
         alignSelf: 'center',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'center'
     },
 }

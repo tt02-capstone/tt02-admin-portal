@@ -20,6 +20,12 @@ export default function PendingApplications() {
     const [vendorId, setVendorId] = useState("");
     const [newStatus, setNewStatus] = useState("");
 
+    const breadcrumbItems = [
+        {
+            title: 'Pending Applications',
+        },
+    ];
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -262,11 +268,15 @@ export default function PendingApplications() {
 
     return (
         <Layout style={styles.layout}>
-            <CustomHeader text={"Pending Applications"} />
+            <CustomHeader items={breadcrumbItems} />
             <Content style={styles.content}>
                 <div>
-                    <h1>List of Pending Applications</h1>
-                    <Table dataSource={datasource} columns={columns} style={{ width: '98%' }} loading={loading} />
+                    <Table 
+                        dataSource={datasource}
+                        tableLayout='fixed'
+                        columns={columns}
+                        style={{ width: '98%' }}
+                        loading={loading} />
                     <ConfirmationDialog
                         visible={isDialogVisible}
                         onCancel={handleCancel}

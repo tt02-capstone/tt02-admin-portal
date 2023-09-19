@@ -1,6 +1,7 @@
 import {createContext, useEffect, useState} from "react";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
+import {updateApiInstances} from "./api";
 
 const TOKEN_KEY= 'token'
 const AuthContext = createContext(null);
@@ -31,6 +32,7 @@ const AuthProvider = ({children}) => {
 
     const logout = async () => {
         await secureLocalStorage.clear()
+        updateApiInstances('')
         axios.defaults.headers.common['Authorization'] =  ``;
         setAuthState({
             accessToken: null,

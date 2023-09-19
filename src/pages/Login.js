@@ -16,17 +16,17 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const authContext = useContext(AuthContext);
 
-  const navigate = useNavigate(); // route navigation 
+  const navigate = useNavigate(); // route navigation
   const passwordResetRouteChange = () => {
     let path = `/forgetpassword`;
     navigate(path);
   }
 
-  const baseURL = "http://localhost:8080/staff";
+  const baseURL = "http://localhost:8080/admin";
 
   const formStyle = {
     maxWidth: "800px",
-    margin: "0% auto",
+    margin: "10% auto",
     padding: "20px"
   }
 
@@ -66,6 +66,9 @@ function Login() {
             accessToken: response.data.token,
             authenticated: true
           });
+          setTimeout(() => {
+            navigate('/home')
+          }, 2000);
         }
       })
         .catch((error) => {
@@ -76,7 +79,7 @@ function Login() {
   }
 
   return (
-    <div className="Login">
+    <div className="Login" style={{backgroundColor: 'white'}}>
       <br /><br /><br />
       <center><h1>WithinSG Admin Portal</h1></center>
       <form onSubmit={handleSubmit} style={formStyle}>
