@@ -12,7 +12,6 @@ import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import { uploadNewProfilePic } from "../../redux/userRedux";
 import CustomFileUpload from "../../components/CustomFileUpload";
 import AWS from 'aws-sdk';
-import secureLocalStorage from "react-secure-storage";
 import {adminApi} from "../../redux/api";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
@@ -40,7 +39,7 @@ export default function ViewProfile() {
         },
     ];
 
-    const [admin, setAdmin] = useState(secureLocalStorage.getItem("user")); // admin object
+    const [admin, setAdmin] = useState(JSON.parse(localStorage.getItem("user"))); // admin object
     const [isViewProfile, setIsViewProfile] = useState(true); // view or edit profile
     const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false); // change password boolean
 
@@ -189,7 +188,7 @@ export default function ViewProfile() {
               const response = await uploadNewProfilePic({user_id: userId, profile_pic: str});
               if (response.status) {
                   console.log("image url saved in database")
-                  secureLocalStorage.setItem("user", response.data);
+                  localStorage.setItem("user", JSON.stringify(response.data));
                   setAdmin(response.data);
                   // change local storage
                   setFile(null);

@@ -15,13 +15,12 @@ import { getAllLocal } from "../../redux/localRedux";
 import { getAllTourist } from "../../redux/touristRedux";
 import UserModal from "./UserModal";
 import { UserAddOutlined }  from "@ant-design/icons";
-import secureLocalStorage from "react-secure-storage";
 
 export default function User() {
 
     const navigate = useNavigate();
     const { Header, Content, Sider, Footer } = Layout;
-    const admin = secureLocalStorage.getItem("user");
+    const admin = JSON.parse(localStorage.getItem("user"));
 
     const breadcrumbItems = [
         {

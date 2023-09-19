@@ -1,4 +1,5 @@
 import axios from "axios";
+import {TOKEN_KEY} from "./AuthContext";
 
 const HOST = 'localhost'
 const HOST_WITH_PORT = `http://${HOST}:8080`
@@ -27,13 +28,13 @@ export const bookingApi = axios.create({
     baseURL: HOST_WITH_PORT + '/booking'
 })
 
-export const updateApiInstances = (token) => {
-    const bearerToken = token?  `Bearer ${token}`: ``;
-    console.log('Bearer Token', bearerToken)
-    localApi.defaults.headers.common['Authorization'] = bearerToken
-    adminApi.defaults.headers.common['Authorization'] = bearerToken
-    bookingApi.defaults.headers.common['Authorization'] = bearerToken
-    vendorStaffApi.defaults.headers.common['Authorization'] = bearerToken
-    touristApi.defaults.headers.common['Authorization'] = bearerToken
+const instanceList = [localApi, adminApi, bookingApi, vendorStaffApi, touristApi]
 
-}
+instanceList.map((api) => {
+    api.interceptors.request.use( (config) => {
+        const token = localStorage.getItem(TOKEN_KEY);
+        config.headers.Authorization =  token ? `Bearer ${token}` : '';
+        return config;
+    });
+})
+
