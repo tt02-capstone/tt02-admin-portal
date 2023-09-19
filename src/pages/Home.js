@@ -1,13 +1,19 @@
-import { Layout } from 'antd';
-import { React } from 'react';
+import {Card, Col, Layout, Row} from 'antd';
+import {React, useContext, useEffect} from 'react';
 import CustomHeader from "../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
-import { Navigate, Link } from 'react-router-dom';
-import { Card, Col, Row } from 'antd';
+import {Link, Navigate} from 'react-router-dom';
+import secureLocalStorage from "react-secure-storage";
+import {getPendingApplications} from "../redux/adminRedux";
+import axios, {Axios} from "axios";
+import {AuthContext, TOKEN_KEY} from "../redux/AuthContext";
+import {updateApiInstances} from "../redux/api";
 
 export default function Home() {
-    
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = secureLocalStorage.getItem('user');
+    const context = useContext(AuthContext);
+    console.log('getUser', user)
+
     const { Meta } = Card;
 
     const breadCrumbItems = [
@@ -16,11 +22,17 @@ export default function Home() {
         },
     ]
 
-    return user ?
-        (
+    useEffect(() => {
+        const loadToken = async () => {
+            updateApiInstances(context.getAccessToken())
+        };
+
+        loadToken()
+    }, []);
+
+    return (
             <Layout style={styles.layout}>
                 <CustomHeader items={breadCrumbItems} />
-
                 <Content style={styles.content}>
                     <div>
                         <Row gutter={100}>
@@ -36,8 +48,8 @@ export default function Home() {
                                         cover={<img alt="attractions" src="http://tt02.s3-ap-southeast-1.amazonaws.com/static/web/attractions.png" style={{width:300, height:300}}/>}
                                         bordered={false}
                                     >
-                                        <Meta 
-                                            title="Attraction" 
+                                        <Meta
+                                            title="Attraction"
                                             description="Attraction Overview"/>
                                     </Card>
                                 </Link>
@@ -88,8 +100,8 @@ export default function Home() {
                                         cover={<img alt="telecom" src="http://tt02.s3-ap-southeast-1.amazonaws.com/static/web/telecom.png" style={{width:300, height:300}}/>}
                                         bordered={false}
                                     >
-                                        <Meta 
-                                            title="Telecom Packages" 
+                                        <Meta
+                                            title="Telecom Packages"
                                             description="Telecom Package Overview"/>
                                     </Card>
                                 </Link>
@@ -106,23 +118,19 @@ export default function Home() {
                                         cover={<img alt="deals" src="http://tt02.s3-ap-southeast-1.amazonaws.com/static/web/discount.png" style={{width:300, height:300}}/>}
                                         bordered={false}
                                     >
-                                        <Meta 
-                                            title="Deals and Discount" 
+                                        <Meta
+                                            title="Deals and Discount"
                                             description="Deals and Discount Overview"/>
                                     </Card>
                                 </Link>
                             </Col>
                         </Row>
                     </div>
-                    
+
                 </Content>
 
             </Layout>
-        ) : 
-        ( 
-            <Navigate to="/" />
-        )
-        
+    )
 }
 
 const styles = {

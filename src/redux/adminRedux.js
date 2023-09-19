@@ -73,7 +73,7 @@ export async function editPassword(userId, oldPassword, newPassword) {
 export async function getPendingApplications() {
   return await adminApi.get(`/getPendingApplications`)
     .then((response) => {
-      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404) {
+      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404 || response.data.httpStatusCode === 422) {
         return response.data.errorMessage
       } else {
         return response.data;
@@ -87,7 +87,7 @@ export async function getPendingApplications() {
 export async function updateApplicationStatus(vendorId, applicationStatus) {
   return await adminApi.put(`/updateApplicationStatus/${vendorId}/${applicationStatus}`)
     .then((response) => {
-      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404) {
+      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404 || response.data.httpStatusCode === 422) {
         return response.data.errorMessage
       } else {
         return response.data;

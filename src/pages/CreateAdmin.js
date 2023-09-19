@@ -5,6 +5,7 @@ import {useNavigate, Navigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { createAdmin } from "../redux/adminRedux";
 import CustomHeader from "../components/CustomHeader";
+import secureLocalStorage from "react-secure-storage";
 
 export default function CreateAdmin() {
     const [staffName, setName] = useState("");
@@ -12,7 +13,7 @@ export default function CreateAdmin() {
     const [password, setPassword] = useState("");
     const [createAdminMsg, setCreateAdminMsg] = useState();
 
-    const user = JSON.parse(localStorage.getItem("user")); // check if the user is logged in
+    const user = secureLocalStorage.getItem("user"); // check if the user is logged in
 
     const navigate = useNavigate();
     const { Header, Content, Sider, Footer } = Layout;
@@ -49,8 +50,9 @@ export default function CreateAdmin() {
         }
       }
     }
+  
 
-    return user ? (
+    return (
           <Layout style={styles.layout}>
                 <CustomHeader text={"Header"}/>
                 {createAdminMsg && <p>Admin Created Successfully!</p>}
@@ -94,9 +96,6 @@ export default function CreateAdmin() {
                     </Content>
             </Layout>
         </Layout>
-    ) :
-    (
-        <Navigate to="/" />
     )
   }
 

@@ -7,9 +7,10 @@ import { getAttractionList } from '../redux/AttractionRedux';
 import  { Table, Input, Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
+import secureLocalStorage from "react-secure-storage";
 
 export default function Attraction() {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = secureLocalStorage.getItem("user");
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
 

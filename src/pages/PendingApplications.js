@@ -9,9 +9,11 @@ import { Table, Input, Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import ConfirmationDialog from '../components/ConfirmationDialog';
+import secureLocalStorage from "react-secure-storage";
+import axios from "axios";
 
 export default function PendingApplications() {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = secureLocalStorage.getItem('user')
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isDialogVisible, setDialogVisible] = useState(false);
@@ -31,6 +33,7 @@ export default function PendingApplications() {
                 let listOfPendingApplications = await getPendingApplications();
                 setData(listOfPendingApplications);
                 setLoading(false);
+
             } catch (error) {
                 alert('An error occurred! Failed to retrieve pending applications!');
                 setLoading(false);
@@ -263,7 +266,7 @@ export default function PendingApplications() {
         }
     ];
 
-    return user ? (
+    return (
         <Layout style={styles.layout}>
             <CustomHeader items={breadcrumbItems} />
             <Content style={styles.content}>
@@ -283,10 +286,7 @@ export default function PendingApplications() {
                 </div>
             </Content>
         </Layout >
-    ) :
-        (
-            <Navigate to="/" />
-        )
+    )
 
 }
 
