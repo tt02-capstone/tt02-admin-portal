@@ -7,7 +7,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   Button
 } from 'antd';
-import secureLocalStorage from "react-secure-storage";
 import {AuthContext, TOKEN_KEY} from "../redux/AuthContext";
 
 function Login() {
@@ -54,8 +53,8 @@ function Login() {
             autoClose: 1500
           });
 
-          secureLocalStorage.setItem("user", response.data.user);
-          secureLocalStorage.setItem(TOKEN_KEY, response.data.token);
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+          localStorage.setItem(TOKEN_KEY, response.data.token);
           axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`
 
           console.log('login', response.data)

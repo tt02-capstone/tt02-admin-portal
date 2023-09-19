@@ -9,11 +9,10 @@ import { Table, Input, Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import ConfirmationDialog from '../components/ConfirmationDialog';
-import secureLocalStorage from "react-secure-storage";
 import axios from "axios";
 
 export default function PendingApplications() {
-    const user = secureLocalStorage.getItem('user')
+    const user = JSON.parse(localStorage.getItem('user'));
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isDialogVisible, setDialogVisible] = useState(false);

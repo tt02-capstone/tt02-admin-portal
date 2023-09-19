@@ -3,14 +3,11 @@ import {React, useContext, useEffect} from 'react';
 import CustomHeader from "../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
 import {Link, Navigate} from 'react-router-dom';
-import secureLocalStorage from "react-secure-storage";
 import {getPendingApplications} from "../redux/adminRedux";
-import axios, {Axios} from "axios";
 import {AuthContext, TOKEN_KEY} from "../redux/AuthContext";
-import {updateApiInstances} from "../redux/api";
 
 export default function Home() {
-    const user = secureLocalStorage.getItem('user');
+    const user = JSON.parse(localStorage.getItem('user'));
     const context = useContext(AuthContext);
     console.log('getUser', user)
 
@@ -22,13 +19,6 @@ export default function Home() {
         },
     ]
 
-    useEffect(() => {
-        const loadToken = async () => {
-            updateApiInstances(context.getAccessToken())
-        };
-
-        loadToken()
-    }, []);
 
     return (
             <Layout style={styles.layout}>

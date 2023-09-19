@@ -1,7 +1,5 @@
 import {createContext, useEffect, useState} from "react";
 import axios from "axios";
-import secureLocalStorage from "react-secure-storage";
-import {updateApiInstances} from "./api";
 
 const TOKEN_KEY= 'token'
 const AuthContext = createContext(null);
@@ -15,7 +13,7 @@ const AuthProvider = ({children}) => {
 
     useEffect(() => {
         const loadToken = async () => {
-            const token = await secureLocalStorage.getItem(TOKEN_KEY);
+            const token = localStorage.getItem(TOKEN_KEY);
             console.log('stored', token )
             if (token) {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
@@ -31,8 +29,7 @@ const AuthProvider = ({children}) => {
 
 
     const logout = async () => {
-        await secureLocalStorage.clear()
-        updateApiInstances('')
+        localStorage.clear()
         axios.defaults.headers.common['Authorization'] =  ``;
         setAuthState({
             accessToken: null,
