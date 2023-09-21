@@ -61,11 +61,12 @@ export function AppLayout() {
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/attraction" element={<Attraction />} />
                         <Route path="/pendingApplications" element={<PendingApplications/>}/>
-                        <Route path="/" element={<Home/>}/>
+                        <Route path="*" element={<Home/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>
                         <Route path="/passwordreset" element={<PasswordReset/>}/>
                         <Route path="/forgetpassword" element={<ForgetPassword/>}/>
+                        <Route path="*" element={<Login/>}/>
                     </>
                 )}
             </Routes>

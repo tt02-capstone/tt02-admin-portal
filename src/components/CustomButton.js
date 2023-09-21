@@ -2,20 +2,20 @@ import React, { useState } from "react";
 import { Button } from "antd";
 
 export default function CustomButton(props) {
-    
+
     // properties
     // text --> button text
     // style --> css style
     // icon --> button icon
     // onClick --> onClick function
 
-    return(
-        <Button 
+    return (
+        <Button
             type="primary"
-            style={props.style}
+            style={{ ...props.style, backgroundColor: '#FFA53F' }}
             onClick={props.onClick}
             icon={props.icon}>
-        {props.text}
+            {props.text}
         </Button>
     )
 }
