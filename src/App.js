@@ -15,12 +15,7 @@ import PendingApplications from "./pages/PendingApplications";
 import {AuthContext, AuthProvider} from "./redux/AuthContext";
 import Attraction from "./pages/Attraction";
 import User from "./pages/user/User";
-import Profile from "./pages/profileAndPassword/Profile";
-
-
-// function Profile() {
-//     return null;
-// }
+import Profile from "./pages/profileAndPassword/Profile"
 
 export function AppLayout() {
 
@@ -66,6 +61,7 @@ export function AppLayout() {
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/attraction" element={<Attraction />} />
                         <Route path="/pendingApplications" element={<PendingApplications/>}/>
+                        <Route path="/" element={<Home/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>
                         <Route path="/passwordreset" element={<PasswordReset/>}/>

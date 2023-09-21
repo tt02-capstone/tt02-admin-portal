@@ -72,6 +72,7 @@ export default function PendingApplications() {
         setTimeout(() => {
             window.location.reload();
         }, 1500);
+        setLoading(false);
     }
 
     const showConfirmationDialog = (vendorId, newStatus) => {
