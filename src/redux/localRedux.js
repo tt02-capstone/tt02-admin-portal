@@ -2,14 +2,12 @@ import { userApi, localApi } from "./api";
 import { handleApiErrors } from "../helper/errorCatching";
 
 export async function getAllLocal() {
-  console.log("Enter getAllLocal function");
-  return await localApi.get(`/getAllLocal`)
-    .then((response) => {
-      console.log('in localRedux :: getAllLocal')
-      handleApiErrors(response);
-    })
-    .catch((error) => {
-      console.error("localRedux getAllLocal Error : ", error);
-      return {status: false, data: error.message};
-    });
+
+  try {
+    const response = await localApi.get(`/getAllLocal`);
+    return handleApiErrors(response);
+  } catch (error) {
+    console.error("vendorStaffRedux verifyEmail Error : ", error);
+    return {status: false, data: error.message};
+  }
 }
