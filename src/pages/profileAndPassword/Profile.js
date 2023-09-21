@@ -16,7 +16,7 @@ import {adminApi} from "../../redux/api";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
-export default function ViewProfile() {
+export default function Profile() {
 
     // const navigate = useNavigate();
     const { Header, Content, Sider, Footer } = Layout;
