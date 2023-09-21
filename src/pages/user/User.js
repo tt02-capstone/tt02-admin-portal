@@ -442,7 +442,8 @@ export default function User() {
             name: values.name,
             email: values.email,
             is_blocked: values.is_blocked === "true" ? true : false,
-            role: values.role
+            role: values.role,
+            user_type: 'INTERNAL_STAFF'
         }
             
         let response = await createAdmin(adminObj);
