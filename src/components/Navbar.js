@@ -16,6 +16,7 @@ function Navbar(props) {
                 setCollapsed(collapsed)
             }}
             collapsible collapsed={collapsed}
+            style={{backgroundColor: 'orange'}}
         >
             <Menu
                 theme="light"
@@ -24,6 +25,7 @@ function Navbar(props) {
                 selectedKeys={[props.currentTab]}
                 items={props.menuItems}
                 onClick={props.onClickNewTab}
+                style={{backgroundColor: 'orange'}}
             />
         </Sider>
     )
