@@ -10,5 +10,6 @@ export async function getAllTourist() {
     })
     .catch((error) => {
       console.error("touristRedux getAllTourist Error : ", error);
+      return {status: false, data: error.message};
     });
 }

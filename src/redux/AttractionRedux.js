@@ -11,5 +11,6 @@ export async function getAttractionList() {
         }    
     } catch (error) {
         console.error("Retrieve attraction list error!");
+        return {status: false, data: error.message};
     }
 }

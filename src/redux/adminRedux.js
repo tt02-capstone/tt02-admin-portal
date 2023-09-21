@@ -11,6 +11,7 @@ export async function createAdmin(admin) {
     })
     .catch((error) => {
       console.error("adminRedux createAdmin Error : ", error);
+      return {status: false, data: error.message};
     });
 }
 
@@ -23,6 +24,7 @@ export async function getAllAdmin() {
     })
     .catch((error) => {
       console.error("adminRedux getAllAdmin Error : ", error);
+      return {status: false, data: error.message};
     });
 }
 
@@ -35,6 +37,7 @@ export async function editProfile(edittedUser) {
     })
     .catch((error) => {
       console.error("adminRedux editProfile Error : ", error);
+      return {status: false, data: error.message};
     });
 }
 
@@ -47,6 +50,7 @@ export async function editPassword(userId, oldPassword, newPassword) {
     })
     .catch((error) => {
       console.error("adminRedux editPassword Error : ", error);
+      return {status: false, data: error.message};
     });
 }
 
@@ -61,6 +65,7 @@ export async function getPendingApplications() {
     })
     .catch((error) => {
       console.error("AdminRedux getPendingApplications Error : ", error);
+      return {status: false, data: error.message};
     });
 }
 
@@ -75,6 +80,7 @@ export async function updateApplicationStatus(vendorId, applicationStatus) {
   })
     .catch((error) => {
       console.error("AdminRedux updateApplicationStatus Error : ", error);
+      return {status: false, data: error.message};
     });
 }
 
@@ -86,6 +92,7 @@ export async function passwordResetStageOne(email) {
     })
     .catch((error) => {
       console.error("AdminRedux passwordResetStageOne Error : ", error);
+      return {status: false, data: error.message};
     });
 }
 
@@ -97,6 +104,7 @@ export async function passwordResetStageTwo(email, otp) {
     })
     .catch((error) => {
       console.error("AdminRedux passwordResetStageTwo Error : ", error);
+      return {status: false, data: error.message};
     });
 }
 
@@ -108,5 +116,6 @@ export async function passwordResetStageThree(email, password) {
     })
     .catch((error) => {
       console.error("AdminRedux passwordResetStageThree Error : ", error);
+      return {status: false, data: error.message};
     });
 }

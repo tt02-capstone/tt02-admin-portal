@@ -10,5 +10,6 @@ export async function getAllVendorStaff() {
     })
     .catch((error) => {
       console.error("vendorStaffRedux getAllVendorStaff Error : ", error);
+      return {status: false, data: error.message};
     });
 }

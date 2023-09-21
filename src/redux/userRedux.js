@@ -10,6 +10,7 @@ export async function uploadNewProfilePic(user) {
     })
     .catch((error) => {
       console.error("userRedux uploadNewProfilePic Error : ", error);
+      return {status: false, data: error.message};
     });
 }
 
@@ -22,6 +23,7 @@ export async function toggleUserBlock(userId) {
     })
     .catch((error) => {
       console.error("userRedux toggleUserBlock Error : ", error);
+      return {status: false, data: error.message};
     });
 }
 
@@ -34,5 +36,6 @@ export async function viewUserProfile(userId) {
     })
     .catch((error) => {
       console.error("userRedux viewUserProfile Error : ", error);
+      return {status: false, data: error.message};
     });
 }

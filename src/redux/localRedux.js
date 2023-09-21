@@ -10,5 +10,6 @@ export async function getAllLocal() {
     })
     .catch((error) => {
       console.error("localRedux getAllLocal Error : ", error);
+      return {status: false, data: error.message};
     });
 }
