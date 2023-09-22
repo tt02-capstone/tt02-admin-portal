@@ -41,7 +41,7 @@ function Login() {
       setLoading(true);
       axios.post(`${baseURL}/staffLogin/${email}/${password}`).then((response) => {
         console.log(response);
-        if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404) {
+        if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404 ||  response.data.httpStatusCode === 422) {
           toast.error(response.data.errorMessage, {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 1500
@@ -55,6 +55,7 @@ function Login() {
 
           localStorage.setItem("user", JSON.stringify(response.data.user));
           localStorage.setItem(TOKEN_KEY, response.data.token);
+          console.log(localStorage);
           axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`
 
           console.log('login', response.data)
