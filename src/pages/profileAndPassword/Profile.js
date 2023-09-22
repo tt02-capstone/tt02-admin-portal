@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Layout, Spin, Form, Input, Button, Divider, Row, Col } from 'antd';
 import { EditFilled } from "@ant-design/icons";
 import {useNavigate} from 'react-router-dom';
@@ -11,6 +11,8 @@ import EditPasswordModal from "./EditPasswordModal";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import { uploadNewProfilePic } from "../../redux/userRedux";
 import CustomFileUpload from "../../components/CustomFileUpload";
+import {AuthContext, TOKEN_KEY} from "../../redux/AuthContext";
+import axios from 'axios';
 import AWS from 'aws-sdk';
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
@@ -19,6 +21,7 @@ export default function Profile() {
 
     // const navigate = useNavigate();
     const { Header, Content, Sider, Footer } = Layout;
+    const authContext = useContext(AuthContext);
 
     const viewProfileBreadcrumbItems = [
         {
@@ -71,7 +74,15 @@ export default function Profile() {
 
         let response = await editProfile({...values, user_id: admin.user_id, role: tempRole});
         if (response.status) {
-            setAdmin(response.data);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+            localStorage.setItem(TOKEN_KEY, response.data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`
+            authContext.setAuthState({
+                accessToken: response.data.token,
+                authenticated: true
+            });
+            setAdmin(response.data.user);
+
             toast.success('Profile successfully updated!', {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 1500
@@ -193,9 +204,8 @@ export default function Profile() {
                 const response = await uploadNewProfilePic({user_id: userId, profile_pic: str});
                 if (response.status) {
                     console.log("image url saved in database")
-                    localStorage.setItem("user", JSON.stringify(response.data));
                     setAdmin(response.data);
-                    // change local storage
+                    localStorage.setItem("user", JSON.stringify(response.data));
                     setFile(null);
                     toast.success('User profile image successfully uploaded!', {
                         position: toast.POSITION.TOP_RIGHT,
@@ -308,6 +318,15 @@ export default function Profile() {
                             initialValue={getAdminRole()}
                             >
                             <Input disabled={true}/>
+                            </Form.Item>
+
+                            <Form.Item
+                            label="Password (Validation)"
+                            name="password"
+                            tooltip="Password is required for validation. This is not to change password!"
+                            rules={[{ required: true, message: 'Password is required!' }]}
+                            >
+                            <Input.Password placeholder="Enter password" />
                             </Form.Item>
 
                             <Form.Item {...tailFormItemLayout}>
