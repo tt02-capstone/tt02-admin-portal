@@ -79,7 +79,7 @@ export default function CreateAdminModal(props) {
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
-                        <Button type="primary" htmlType="submit" loading={props.loading}>
+                        <Button type="primary" style={{backgroundColor: '#FFA53F'}} htmlType="submit" loading={props.loading}>
                             Create
                         </Button>
                     </Form.Item>

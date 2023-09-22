@@ -12,7 +12,6 @@ import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import { uploadNewProfilePic } from "../../redux/userRedux";
 import CustomFileUpload from "../../components/CustomFileUpload";
 import AWS from 'aws-sdk';
-import {adminApi} from "../../redux/api";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
@@ -110,7 +109,7 @@ export default function Profile() {
             if (val.newPasswordOne.match(passwordChecker)) {
                 let response = await editPassword(admin.user_id, val.oldPassword, val.newPasswordOne);
                 if (response.status) {
-                    toast.success('Admin password changed successfully!', {
+                    toast.success('Password changed successfully!', {
                         position: toast.POSITION.TOP_RIGHT,
                         autoClose: 1500
                     });
@@ -138,78 +137,82 @@ export default function Profile() {
     }
 
     // upload image
-  const S3BUCKET ='tt02/user'; // if you want to save in a folder called 'attraction', your S3BUCKET will instead be 'tt02/attraction'
-  const TT02REGION ='ap-southeast-1';
-  const ACCESS_KEY ='AKIART7KLOHBGOHX2Y7T';
-  const SECRET_ACCESS_KEY ='xsMGhdP0XsZKAzKdW3ED/Aa5uw91Ym5S9qz2HiJ0';
+    const S3BUCKET ='tt02/user'; // if you want to save in a folder called 'attraction', your S3BUCKET will instead be 'tt02/attraction'
+    const TT02REGION ='ap-southeast-1';
+    const ACCESS_KEY ='AKIART7KLOHBGOHX2Y7T';
+    const SECRET_ACCESS_KEY ='xsMGhdP0XsZKAzKdW3ED/Aa5uw91Ym5S9qz2HiJ0';
 
-  const [file, setFile] = useState(null);
+    const [file, setFile] = useState(null);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFile(file);
-  };
-
-  const uploadFile = async () => {
-      if (file) {
-          const S3_BUCKET = S3BUCKET;
-          const REGION = TT02REGION;
-      
-          AWS.config.update({
-              accessKeyId: ACCESS_KEY,
-              secretAccessKey: SECRET_ACCESS_KEY,
-          });
-          const s3 = new AWS.S3({
-              params: { Bucket: S3_BUCKET },
-              region: REGION,
-          });
-      
-          const params = {
-              Bucket: S3_BUCKET,
-              Key: file.name,
-              Body: file,
-          };
-      
-          var upload = s3
-              .putObject(params)
-              .on("httpUploadProgress", (evt) => {
-              console.log(
-                  "Uploading " + parseInt((evt.loaded * 100) / evt.total) + "%"
-              );
-              })
-              .promise();
-      
-          await upload.then((err, data) => {
-              console.log(err);
-          });
-
-          let str = 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/' + file.name;
-          const fetchData = async (userId, str) => {
-              const response = await uploadNewProfilePic({user_id: userId, profile_pic: str});
-              if (response.status) {
-                  console.log("image url saved in database")
-                  localStorage.setItem("user", JSON.stringify(response.data));
-                  setAdmin(response.data);
-                  // change local storage
-                  setFile(null);
-                  toast.success('User profile image successfully uploaded!', {
-                    position: toast.POSITION.TOP_RIGHT,
-                    autoClose: 1500
-                });
-
-              } else {
-                  console.log("User image URL in database not updated!");
-              }
-          }
-
-          fetchData(admin.user_id, str);
-          setFile(null);
-      } else {
-        toast.error('Please select an image!', {
+    const handleFileChange = (e) => {
+        const file = e.file;
+        setFile(file);
+        toast.success(e.file.name + ' selected!', {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 1500
         });
-      }
+    };
+
+    const uploadFile = async () => {
+        if (file) {
+            const S3_BUCKET = S3BUCKET;
+            const REGION = TT02REGION;
+        
+            AWS.config.update({
+                accessKeyId: ACCESS_KEY,
+                secretAccessKey: SECRET_ACCESS_KEY,
+            });
+            const s3 = new AWS.S3({
+                params: { Bucket: S3_BUCKET },
+                region: REGION,
+            });
+        
+            const params = {
+                Bucket: S3_BUCKET,
+                Key: file.name,
+                Body: file,
+            };
+        
+            var upload = s3
+                .putObject(params)
+                .on("httpUploadProgress", (evt) => {
+                console.log(
+                    "Uploading " + parseInt((evt.loaded * 100) / evt.total) + "%"
+                );
+                })
+                .promise();
+        
+            await upload.then((err, data) => {
+                console.log(err);
+            });
+
+            let str = 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/' + file.name;
+            const fetchData = async (userId, str) => {
+                const response = await uploadNewProfilePic({user_id: userId, profile_pic: str});
+                if (response.status) {
+                    console.log("image url saved in database")
+                    localStorage.setItem("user", JSON.stringify(response.data));
+                    setAdmin(response.data);
+                    // change local storage
+                    setFile(null);
+                    toast.success('User profile image successfully uploaded!', {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: 1500
+                    });
+
+                } else {
+                    console.log("User image URL in database not updated!");
+                }
+            }
+
+          fetchData(admin.user_id, str);
+          setFile(null);
+        } else {
+            toast.error('Please select an image!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
     };
 
     return (
@@ -307,25 +310,12 @@ export default function Profile() {
 
                             <Form.Item {...tailFormItemLayout}>
                                 <div style={{ textAlign: "right" }}>
-                                <Button type="primary" htmlType="submit">
+                                <Button type="primary" htmlType="submit" style={{backgroundColor: '#FFA53F'}}>
                                     Submit
                                 </Button>
                                 <CustomButton text="Cancel" style={{marginLeft: '20px'}} onClick={onClickCancelProfileButton} />
                                 </div>
                             </Form.Item>
-
-                            {/* <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                                <Button type="primary" htmlType="submit">
-                                    Submit
-                                </Button>
-                            </Form.Item>
-                            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                                <CustomButton 
-                                    text="Cancel"
-                                    // icon
-                                    onClick={onClickCancelProfileButton}
-                                />
-                            </Form.Item> */}
                         </Form>
                     </Content>
                 </Layout>

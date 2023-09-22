@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Layout, Menu, Form } from 'antd';
+import React, { useState, useEffect, useRef } from "react";
+import { Layout, Menu, Form, Input, Space, Button } from 'antd';
+import Highlighter from 'react-highlight-words';
 import {useNavigate} from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,7 +15,7 @@ import { getAllVendorStaff } from '../../redux/vendorStaffRedux';
 import { getAllLocal } from "../../redux/localRedux";
 import { getAllTourist } from "../../redux/touristRedux";
 import UserModal from "./UserModal";
-import { UserAddOutlined }  from "@ant-design/icons";
+import { UserAddOutlined, SearchOutlined }  from "@ant-design/icons";
 
 export default function User() {
 
@@ -58,27 +59,154 @@ export default function User() {
     const [getAdminData, setGetAdminData] = useState(true);
     const [adminData, setAdminData] = useState([]); // list of admins
 
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef(null);
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+    const handleReset = (clearFilters) => {
+        clearFilters();
+        setSearchText('');
+    };
+    const getColumnSearchProps = (dataIndex) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+            <div
+                style={{
+                    padding: 8,
+                }}
+                onKeyDown={(e) => e.stopPropagation()}
+            >
+                <Input
+                    ref={searchInput}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{
+                        marginBottom: 8,
+                        display: 'block',
+                    }}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                        style={{
+                            width: 90,
+                        }}
+                    >
+                        Search
+                    </Button>
+                    <Button
+                        onClick={() => clearFilters && handleReset(clearFilters)}
+                        size="small"
+                        style={{
+                            width: 90,
+                        }}
+                    >
+                        Reset
+                    </Button>
+                    {/* <Button
+                        type="link"
+                        size="small"
+                        onClick={() => {
+                            confirm({
+                                closeDropdown: false,
+                            });
+                            setSearchText(selectedKeys[0]);
+                            setSearchedColumn(dataIndex);
+                        }}
+                    >
+                        Filter
+                    </Button> */}
+                    <Button
+                        type="link"
+                        size="small"
+                        onClick={() => {
+                            close();
+                        }}
+                    >
+                        Close
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: (filtered) => (
+            <SearchOutlined
+                style={{
+                    color: filtered ? '#1677ff' : undefined,
+                }}
+            />
+        ),
+        onFilter: (value, record) =>
+            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownOpenChange: (visible) => {
+            if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100);
+            }
+        },
+        render: (text) =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                    highlightStyle={{
+                        backgroundColor: '#ffc069',
+                        padding: 0,
+                    }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text ? text.toString() : ''}
+                />
+            ) : (
+                text
+            ),
+    });
+
     const adminColumns = [
         {
             title: 'Id',
             dataIndex: 'user_id',
             key: 'user_id',
+            sorter: (a, b) => a.user_id > b.user_id,
+            ...getColumnSearchProps('user_id'),
         },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
+            sorter: (a, b) => a.email.localeCompare(b.email),
+            ...getColumnSearchProps('email'),
         },
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            ...getColumnSearchProps('name'),
         },
         {
             title: 'Role',
             dataIndex: 'role',
             key: 'role',
-            // rowKey: 'user_id',
+            filters: [
+                {
+                  text: 'Admin',
+                  value: 'ADMIN',
+                },
+                {
+                  text: 'Operation',
+                  value: 'OPERATION',
+                },
+                {
+                    text: 'Support',
+                    value: 'SUPPORT',
+                },
+            ],
+            onFilter: (value, record) => record.role.indexOf(value) === 0,
             render: (text) => {
                 if (text === "ADMIN") {
                     return <p>Admin</p>
@@ -94,6 +222,17 @@ export default function User() {
             dataIndex: 'is_blocked',
             key: 'is_blocked',
             rowKey: 'user_id',
+            filters: [
+                {
+                  text: 'Allowed',
+                  value: false,
+                },
+                {
+                  text: 'Denied',
+                  value: true,
+                },
+            ],
+            onFilter: (value, record) => record.is_blocked === value,
             render: (text) => {
                 if (text === true) {
                     return <p>No</p>
@@ -107,10 +246,29 @@ export default function User() {
             dataIndex: 'user_id',
             key: 'user_id',
             render: (text, record) => {
-                return <CustomButton
+                let actions = [];
+                actions.push(<CustomButton
+                    key={2}
                     text="View"
+                    style={{marginRight: '10px'}}
                     onClick={() => viewProfile(record.user_id)}
-                />
+                />)
+
+                if (record.is_blocked) {
+                    actions.push(<CustomButton
+                        key={1}
+                        text="Unblock" 
+                        onClick={() => toggleBlock(record.user_id)}
+                    />)
+                } else {
+                    actions.push(<CustomButton
+                        key={1}
+                        text="Block" 
+                        onClick={() => toggleBlock(record.user_id)}
+                    />)
+                }
+
+                return actions;
             }
         }
     ];
@@ -144,26 +302,45 @@ export default function User() {
             title: 'Id',
             dataIndex: 'user_id',
             key: 'user_id',
+            sorter: (a, b) => a.user_id > b.user_id,
+            ...getColumnSearchProps('user_id'),
         },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
+            sorter: (a, b) => a.email.localeCompare(b.email),
+            ...getColumnSearchProps('email'),
         },
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            ...getColumnSearchProps('name'),
         },
         {
             title: 'Position',
             dataIndex: 'position',
             key: 'position',
+            sorter: (a, b) => a.position.localeCompare(b.position),
+            ...getColumnSearchProps('position'),
         },
         {
             title: 'Master Account',
             dataIndex: 'is_master_account',
             key: 'is_master_account',
+            filters: [
+                {
+                  text: 'Master',
+                  value: true,
+                },
+                {
+                  text: 'Non-master',
+                  value: false,
+                },
+            ],
+            onFilter: (value, record) => record.is_master_account === value,
             render: (text, record) => {
                 if (text === true) {
                     return <p>Yes</p>
@@ -176,8 +353,19 @@ export default function User() {
             title: 'Allowed Login Access',
             dataIndex: 'is_blocked',
             key: 'is_blocked',
+            filters: [
+                {
+                  text: 'Allowed',
+                  value: false,
+                },
+                {
+                  text: 'Denied',
+                  value: true,
+                },
+            ],
+            onFilter: (value, record) => record.is_blocked === value,
             render: (text, record) => {
-                if (text === "true") {
+                if (text === true) {
                     return <p>No</p>
                 } else {
                     return <p>Yes</p>
@@ -190,6 +378,14 @@ export default function User() {
             key: 'user_id',
             render: (text, record) => {
                 let actions = [];
+                
+                actions.push(<CustomButton
+                    key={2}
+                    text="View"
+                    style={{marginRight: '10px'}}
+                    onClick={() => viewProfile(record.user_id)}
+                />)
+                
                 if (record.is_blocked) {
                     actions.push(<CustomButton
                         key={1}
@@ -203,13 +399,6 @@ export default function User() {
                         onClick={() => toggleBlock(record.user_id)}
                         />)
                 }
-
-                actions.push(<CustomButton
-                    key={2}
-                    text="View"
-                    style={{marginLeft: '10px'}}
-                    onClick={() => viewProfile(record.user_id)}
-                />)
 
                 return actions;
             }
@@ -245,21 +434,29 @@ export default function User() {
             title: 'Id',
             dataIndex: 'user_id',
             key: 'user_id',
+            sorter: (a, b) => a.user_id > b.user_id,
+            ...getColumnSearchProps('user_id'),
         },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
+            sorter: (a, b) => a.email.localeCompare(b.email),
+            ...getColumnSearchProps('email'),
         },
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            ...getColumnSearchProps('name'),
         },
         {
             title: 'Mobile Number',
-            dataIndex: 'country_code',
-            key: 'country_code',
+            dataIndex: 'mobile_num',
+            key: 'mobile_num',
+            sorter: (a, b) => (a.country_code + a.mobile_num).localeCompare((b.country_code + b.mobile_num)),
+            ...getColumnSearchProps('mobile_num'),
             render: (text, record) => {
                 return record.country_code + ' ' + record.mobile_num;
             }
@@ -268,8 +465,19 @@ export default function User() {
             title: 'Allowed Login Access',
             dataIndex: 'is_blocked',
             key: 'is_blocked',
+            filters: [
+                {
+                  text: 'Allowed',
+                  value: false,
+                },
+                {
+                  text: 'Denied',
+                  value: true,
+                },
+            ],
+            onFilter: (value, record) => record.is_blocked === value,
             render: (text, record) => {
-                if (text === "true") {
+                if (text === true) {
                     return <p>No</p>
                 } else {
                     return <p>Yes</p>
@@ -282,6 +490,14 @@ export default function User() {
             key: 'user_id',
             render: (text, record) => {
                 let actions = [];
+
+                actions.push(<CustomButton
+                    key={2}
+                    text="View"
+                    style={{marginRight: '10px'}}
+                    onClick={() => viewProfile(record.user_id)}
+                />)
+
                 if (record.is_blocked) {
                     actions.push(<CustomButton
                         key={1}
@@ -295,13 +511,6 @@ export default function User() {
                         onClick={() => toggleBlock(record.user_id)}
                         />)
                 }
-
-                actions.push(<CustomButton
-                    key={2}
-                    text="View"
-                    style={{marginLeft: '10px'}}
-                    onClick={() => viewProfile(record.user_id)}
-                />)
 
                 return actions;
             }
@@ -337,21 +546,29 @@ export default function User() {
             title: 'Id',
             dataIndex: 'user_id',
             key: 'user_id',
+            sorter: (a, b) => a.user_id > b.user_id,
+            ...getColumnSearchProps('user_id'),
         },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
+            sorter: (a, b) => a.email.localeCompare(b.email),
+            ...getColumnSearchProps('email'),
         },
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            ...getColumnSearchProps('name'),
         },
         {
             title: 'Mobile Number',
-            dataIndex: 'country_code',
-            key: 'country_code',
+            dataIndex: 'mobile_num',
+            key: 'mobile_num',
+            sorter: (a, b) => (a.country_code + a.mobile_num).localeCompare((b.country_code + b.mobile_num)),
+            ...getColumnSearchProps('mobile_num'),
             render: (text, record) => {
                 return record.country_code + ' ' + record.mobile_num;
             }
@@ -360,8 +577,19 @@ export default function User() {
             title: 'Allowed Login Access',
             dataIndex: 'is_blocked',
             key: 'is_blocked',
+            filters: [
+                {
+                  text: 'Allowed',
+                  value: false,
+                },
+                {
+                  text: 'Denied',
+                  value: true,
+                },
+            ],
+            onFilter: (value, record) => record.is_blocked === value,
             render: (text, record) => {
-                if (text === "true") {
+                if (text === true) {
                     return <p>No</p>
                 } else {
                     return <p>Yes</p>
@@ -374,6 +602,14 @@ export default function User() {
             key: 'user_id',
             render: (text, record) => {
                 let actions = [];
+
+                actions.push(<CustomButton
+                    key={2}
+                    text="View"
+                    style={{marginRight: '10px'}}
+                    onClick={() => viewProfile(record.user_id)}
+                />)
+
                 if (record.is_blocked) {
                     actions.push(<CustomButton
                         key={1}
@@ -387,13 +623,6 @@ export default function User() {
                         onClick={() => toggleBlock(record.user_id)}
                         />)
                 }
-
-                actions.push(<CustomButton
-                    key={2}
-                    text="View"
-                    style={{marginLeft: '10px'}}
-                    onClick={() => viewProfile(record.user_id)}
-                />)
 
                 return actions;
             }

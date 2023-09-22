@@ -4,9 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {
-  Button
-} from 'antd';
+import { Button } from 'antd';
 import {AuthContext, TOKEN_KEY} from "../redux/AuthContext";
 
 function Login() {
@@ -28,8 +26,6 @@ function Login() {
     margin: "10% auto",
     padding: "20px"
   }
-
-  // localStorage.removeItem("user");
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
@@ -105,7 +101,13 @@ function Login() {
         />
 
         <div style={{ textAlign: "right" }}>
-          <Button type="primary" htmlType="submit" loading={loading} disabled={!validateForm()}>Login</Button>
+          <Button 
+            type="primary"
+            htmlType="submit"
+            style={{backgroundColor: '#FFA53F'}}
+            loading={loading}
+            disabled={!validateForm()}
+          >Login</Button>
           <br /><br />
           <Button type="link" onClick={passwordResetRouteChange}>Forgotten your password?</Button>
         </div>
