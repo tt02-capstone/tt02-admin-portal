@@ -15,11 +15,7 @@ import PendingApplications from "./pages/PendingApplications";
 import {AuthContext, AuthProvider} from "./redux/AuthContext";
 import Attraction from "./pages/Attraction";
 import User from "./pages/user/User";
-
-
-function Profile() {
-    return null;
-}
+import Profile from "./pages/profileAndPassword/Profile"
 
 export function AppLayout() {
 
@@ -29,7 +25,7 @@ export function AppLayout() {
 
   const menuItems = [
       {key: '/home', label: 'Home', icon: <HomeOutlined />},
-      {key: '/viewProfile', label: 'Profile', icon: <UserOutlined />},
+      {key: '/profile', label: 'Profile', icon: <UserOutlined />},
       {key: '/user', label: 'User', icon: <UsergroupAddOutlined />},
       // {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
@@ -62,13 +58,15 @@ export function AppLayout() {
                         <Route path="/home" element={<Home/>}/>
                         <Route path="/user" element={<User />} />
                         <Route path="/createAdmin" element={<CreateAdmin/>}/>
-                        <Route path="/viewProfile" element={<Profile />} />
+                        <Route path="/profile" element={<Profile />} />
                         <Route path="/attraction" element={<Attraction />} />
                         <Route path="/pendingApplications" element={<PendingApplications/>}/>
+                        <Route path="*" element={<Home/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>
                         <Route path="/passwordreset" element={<PasswordReset/>}/>
                         <Route path="/forgetpassword" element={<ForgetPassword/>}/>
+                        <Route path="*" element={<Login/>}/>
                     </>
                 )}
             </Routes>

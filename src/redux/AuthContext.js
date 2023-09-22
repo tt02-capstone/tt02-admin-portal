@@ -14,7 +14,7 @@ const AuthProvider = ({children}) => {
     useEffect(() => {
         const loadToken = async () => {
             const token = localStorage.getItem(TOKEN_KEY);
-            console.log('stored', token )
+            console.log('stored', token)
             if (token) {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
                 setAuthState({

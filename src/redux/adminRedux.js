@@ -8,7 +8,7 @@ export async function createAdmin(admin) {
     return handleApiErrors(response);
   } catch (error) {
     console.error("vendorStaffRedux verifyEmail Error : ", error);
-    return {status: false, data: error.message};
+    return { status: false, data: error.message };
   }
 
 }
@@ -20,7 +20,7 @@ export async function getAllAdmin() {
     return handleApiErrors(response);
   } catch (error) {
     console.error("vendorStaffRedux verifyEmail Error : ", error);
-    return {status: false, data: error.message};
+    return { status: false, data: error.message };
   }
 
 }
@@ -32,7 +32,7 @@ export async function editProfile(editedUser) {
     return handleApiErrors(response);
   } catch (error) {
     console.error("vendorStaffRedux verifyEmail Error : ", error);
-    return {status: false, data: error.message};
+    return { status: false, data: error.message };
   }
 
 }
@@ -44,32 +44,39 @@ export async function editPassword(userId, oldPassword, newPassword) {
     return handleApiErrors(response);
   } catch (error) {
     console.error("vendorStaffRedux verifyEmail Error : ", error);
-    return {status: false, data: error.message};
+    return { status: false, data: error.message };
   }
 
 }
 
 export async function getPendingApplications() {
-
-  try {
-    const response = await adminApi.get(`/getPendingApplications`);
-    return handleApiErrors(response);
-  } catch (error) {
-    console.error("vendorStaffRedux verifyEmail Error : ", error);
-    return {status: false, data: error.message};
-  }
-
+  return await adminApi.get(`/getPendingApplications`)
+    .then((response) => {
+      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404 || response.data.httpStatusCode === 422) {
+        return response.data.errorMessage
+      } else {
+        return response.data;
+      }
+    })
+    .catch((error) => {
+      console.error("AdminRedux getPendingApplications Error : ", error);
+      return { status: false, data: error.message };
+    });
 }
 
 export async function updateApplicationStatus(vendorId, applicationStatus) {
-
-  try {
-    const response = await adminApi.put(`/updateApplicationStatus/${vendorId}/${applicationStatus}`);
-    return handleApiErrors(response);
-  } catch (error) {
-    console.error("vendorStaffRedux verifyEmail Error : ", error);
-    return {status: false, data: error.message};
-  }
+  return await adminApi.put(`/updateApplicationStatus/${vendorId}/${applicationStatus}`)
+    .then((response) => {
+      if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404 || response.data.httpStatusCode === 422) {
+        return response.data.errorMessage
+      } else {
+        return response.data;
+      }
+    })
+    .catch((error) => {
+      console.error("AdminRedux updateApplicationStatus Error : ", error);
+      return { status: false, data: error.message };
+    });
 }
 
 export async function passwordResetStageOne(email) {
@@ -78,7 +85,7 @@ export async function passwordResetStageOne(email) {
     return handleApiErrors(response);
   } catch (error) {
     console.error("vendorStaffRedux verifyEmail Error : ", error);
-    return {status: false, data: error.message};
+    return { status: false, data: error.message };
   }
 }
 
@@ -88,7 +95,7 @@ export async function passwordResetStageTwo(email, otp) {
     return handleApiErrors(response);
   } catch (error) {
     console.error("vendorStaffRedux verifyEmail Error : ", error);
-    return {status: false, data: error.message};
+    return { status: false, data: error.message };
   }
 
 }
@@ -100,6 +107,6 @@ export async function passwordResetStageThree(email, password) {
     return handleApiErrors(response);
   } catch (error) {
     console.error("vendorStaffRedux verifyEmail Error : ", error);
-    return {status: false, data: error.message};
+    return { status: false, data: error.message };
   }
 }
