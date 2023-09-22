@@ -60,7 +60,6 @@ function Login() {
           setLoading(false);
 
           authContext.setAuthState({
-            accessToken: response.data.token,
             authenticated: true
           });
           setTimeout(() => {
