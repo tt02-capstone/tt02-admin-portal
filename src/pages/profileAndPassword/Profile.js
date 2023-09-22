@@ -154,7 +154,9 @@ export default function Profile() {
     };
 
     const uploadFile = async () => {
+        let finalURL;
         if (file) {
+            finalURL = "user_" + admin.user_id + "_" + file.name;
             const S3_BUCKET = S3BUCKET;
             const REGION = TT02REGION;
         
@@ -169,7 +171,7 @@ export default function Profile() {
         
             const params = {
                 Bucket: S3_BUCKET,
-                Key: file.name,
+                Key: finalURL,
                 Body: file,
             };
         
@@ -186,7 +188,7 @@ export default function Profile() {
                 console.log(err);
             });
 
-            let str = 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/' + file.name;
+            let str = 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/' + finalURL;
             const fetchData = async (userId, str) => {
                 const response = await uploadNewProfilePic({user_id: userId, profile_pic: str});
                 if (response.status) {
