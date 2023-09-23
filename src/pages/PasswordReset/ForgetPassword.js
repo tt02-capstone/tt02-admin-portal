@@ -130,7 +130,7 @@ function PasswordReset() {
                             <Form.Item {...tailFormItemLayout}>
                                 <div style={{ textAlign: "right" }}>
                                     <CustomButton text="Back" style={{width: '75px'}} onClick={() => {return navigate('/')}} />
-                                    <Button type="primary" htmlType="submit" style={{marginLeft: '20px'}} loading={loading}>
+                                    <Button type="primary" htmlType="submit" style={{marginLeft: '20px', backgroundColor: '#FFA53F'}} loading={loading}>
                                         Submit
                                     </Button>
                                 </div>

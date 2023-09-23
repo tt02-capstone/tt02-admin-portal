@@ -173,7 +173,7 @@ function PasswordReset() {
 
                 <Form.Item {...tailFormItemLayout}>
                   <div style={{ textAlign: "right" }}>
-                    <Button type="primary" htmlType="submit" loading={loading}>
+                    <Button type="primary" htmlType="submit" loading={loading} style={{backgroundColor: '#FFA53F'}}>
                       Verify OTP
                     </Button>
                   </div>
@@ -234,7 +234,7 @@ function PasswordReset() {
 
                 <Form.Item {...tailFormItemLayout}>
                   <div style={{ textAlign: "right" }}>
-                    <Button type="primary" htmlType="submit" loading={loading}>
+                    <Button type="primary" style={{backgroundColor: '#FFA53F'}} htmlType="submit" loading={loading}>
                       Reset Password
                     </Button>
                   </div>

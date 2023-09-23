@@ -59,7 +59,7 @@ export default function EditPasswordModal(props) {
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" style={{backgroundColor: '#FFA53F'}} htmlType="submit">
                             Submit
                         </Button>
                     </Form.Item>

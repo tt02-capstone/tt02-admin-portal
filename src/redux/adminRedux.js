@@ -26,27 +26,26 @@ export async function getAllAdmin() {
 }
 
 export async function editProfile(editedUser) {
-
+  console.log("editProfile function")
   try {
     const response = await adminApi.put(`/editProfile`, editedUser);
     return handleApiErrors(response);
   } catch (error) {
-    console.error("vendorStaffRedux verifyEmail Error : ", error);
+    console.error("vendorStaffRedux editProfile Error : ", error);
     return { status: false, data: error.message };
   }
 
 }
 
 export async function editPassword(userId, oldPassword, newPassword) {
-
+  console.log("editPassword function")
   try {
     const response = await userApi.put(`/editPassword/${userId}/${oldPassword}/${newPassword}`);
     return handleApiErrors(response);
   } catch (error) {
-    console.error("vendorStaffRedux verifyEmail Error : ", error);
+    console.error("vendorStaffRedux editPassword Error : ", error);
     return { status: false, data: error.message };
   }
-
 }
 
 export async function getPendingApplications() {
