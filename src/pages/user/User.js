@@ -260,12 +260,6 @@ export default function User() {
                         text="Unblock" 
                         onClick={() => toggleBlock(record.user_id)}
                     />)
-                } else {
-                    actions.push(<CustomButton
-                        key={1}
-                        text="Block" 
-                        onClick={() => toggleBlock(record.user_id)}
-                    />)
                 }
 
                 return actions;
@@ -710,7 +704,9 @@ export default function User() {
                 let response = await toggleUserBlock(blockedId);
                 if (response.status) {
                     console.log("User toggle block success!");
-                    if (currentTab === '2') {
+                    if (currentTab === '1') {
+                        setGetAdminData(true);
+                    } else if (currentTab === '2') {
                         setGetVendorStaffData(true);
                     } else if (currentTab === '3') {
                         setGetLocalData(true);
