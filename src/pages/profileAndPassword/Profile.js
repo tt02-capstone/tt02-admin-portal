@@ -105,11 +105,15 @@ export default function Profile() {
 
     // when user edits password
     async function onClickSubmitNewPassword(val) {
+        console.log("a")
         if (val.oldPassword && val.newPasswordOne === val.newPasswordTwo) {
             var passwordChecker=  /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,15}$/;
+            console.log("b")
             if (val.newPasswordOne.match(passwordChecker)) {
                 let response = await editPassword(admin.user_id, val.oldPassword, val.newPasswordOne);
+                console.log("c")
                 if (response.status) {
+                    console.log("d")
                     toast.success('Admin password changed successfully!', {
                         position: toast.POSITION.TOP_RIGHT,
                         autoClose: 1500
@@ -117,11 +121,14 @@ export default function Profile() {
                     setIsChangePasswordModalOpen(false);
                 
                 } else {
+                    console.log("e")
+                    console.log(response.data);
                     toast.error(response.data.errorMessage, {
                         position: toast.POSITION.TOP_RIGHT,
                         autoClose: 1500
                     });
                 }
+                console.log("f")
             } else {
                 toast.error('New password must be 8 characters long, and contain 1 letter, number and symbol each!', {
                     position: toast.POSITION.TOP_RIGHT,
@@ -135,6 +142,7 @@ export default function Profile() {
                 autoClose: 1500
             });
         }
+        console.log("z")
     }
 
     // upload image

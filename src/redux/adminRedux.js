@@ -38,13 +38,17 @@ export async function editProfile(editedUser) {
 }
 
 export async function editPassword(userId, oldPassword, newPassword) {
-
+  console.log("edit password");
   try {
     const response = await userApi.put(`/editPassword/${userId}/${oldPassword}/${newPassword}`);
+    console.log("testing")
+    console.log(response)
     return handleApiErrors(response);
   } catch (error) {
     console.error("vendorStaffRedux verifyEmail Error : ", error);
-    return { status: false, data: error.message };
+    console.log(error)
+    // return { status: false, data: {errorMessage: error.message}};
+    return { status: false, data: error.message};
   }
 
 }
