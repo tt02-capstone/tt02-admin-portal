@@ -4,9 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {
-  Button
-} from 'antd';
+import { Button } from 'antd';
 import {AuthContext, TOKEN_KEY} from "../redux/AuthContext";
 
 function Login() {
@@ -29,8 +27,6 @@ function Login() {
     padding: "20px"
   }
 
-  // localStorage.removeItem("user");
-
   function validateForm() {
     return email.length > 0 && password.length > 0;
   }
@@ -41,7 +37,7 @@ function Login() {
       setLoading(true);
       axios.post(`${baseURL}/staffLogin/${email}/${password}`).then((response) => {
         console.log(response);
-        if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404 ||  response.data.httpStatusCode === 422) {
+        if (response.data.httpStatusCode === 400 || response.data.httpStatusCode === 404 || response.data.httpStatusCode === 422) {
           toast.error(response.data.errorMessage, {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 1500
@@ -54,6 +50,7 @@ function Login() {
           });
 
           localStorage.setItem("user", JSON.stringify(response.data.user));
+          console.log(response.data);
           localStorage.setItem(TOKEN_KEY, response.data.token);
           console.log(localStorage);
           axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`
@@ -63,7 +60,6 @@ function Login() {
           setLoading(false);
 
           authContext.setAuthState({
-            accessToken: response.data.token,
             authenticated: true
           });
           setTimeout(() => {
@@ -104,7 +100,13 @@ function Login() {
         />
 
         <div style={{ textAlign: "right" }}>
-          <Button type="primary" htmlType="submit" loading={loading} disabled={!validateForm()}>Login</Button>
+          <Button 
+            type="primary"
+            htmlType="submit"
+            style={{backgroundColor: '#FFA53F'}}
+            loading={loading}
+            disabled={!validateForm()}
+          >Login</Button>
           <br /><br />
           <Button type="link" onClick={passwordResetRouteChange}>Forgotten your password?</Button>
         </div>
