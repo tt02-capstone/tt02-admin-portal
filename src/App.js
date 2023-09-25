@@ -16,6 +16,7 @@ import {AuthContext, AuthProvider} from "./redux/AuthContext";
 import Attraction from "./pages/Attraction";
 import User from "./pages/user/User";
 import Profile from "./pages/profileAndPassword/Profile"
+import TelecomManagement from "./pages/telecom/TelecomManagement";
 
 export function AppLayout() {
 
@@ -27,7 +28,6 @@ export function AppLayout() {
       {key: '/home', label: 'Home', icon: <HomeOutlined />},
       {key: '/profile', label: 'Profile', icon: <UserOutlined />},
       {key: '/user', label: 'User', icon: <UsergroupAddOutlined />},
-      // {key: '/createAdmin', label: 'Create Admin', icon: <MailOutlined />},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
@@ -61,6 +61,7 @@ export function AppLayout() {
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/attraction" element={<Attraction />} />
                         <Route path="/pendingApplications" element={<PendingApplications/>}/>
+                        <Route path="/telecom" element={<TelecomManagement />}/>
                         <Route path="*" element={<Home/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>

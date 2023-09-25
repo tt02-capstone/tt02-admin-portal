@@ -79,7 +79,7 @@ export default function Home() {
                         </Row>
                         <Row gutter={100}>
                             <Col span={8}>
-                                <Link to={'/'}>
+                                <Link to={'/telecom'}>
                                     <Card
                                         hoverable
                                         style={{
