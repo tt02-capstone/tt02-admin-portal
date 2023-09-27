@@ -32,6 +32,11 @@ export const telecomApi = axios.create({
     baseURL: HOST_WITH_PORT + '/telecom'
 })
 
+export const dealsApi = axios.create({
+    baseURL: HOST_WITH_PORT + '/deal'
+})
+
+
 const instanceList = [userApi, localApi, adminApi, bookingApi, vendorStaffApi, touristApi, telecomApi]
 
 instanceList.map((api) => {
