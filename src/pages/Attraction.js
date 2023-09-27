@@ -15,7 +15,7 @@ export default function Attraction() {
 
     const breadCrumbItems = [
         {
-            title: 'Attraction List',
+            title: 'Attraction',
         },
     ]
 
@@ -43,6 +43,29 @@ export default function Attraction() {
 
         const priceListString = formatPriceList.join('\n');
 
+        const activityList = item.seasonal_activity_list;
+
+            const validActivityList = activityList.filter(item => {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0'); // format to current timezone 
+    
+                const todayFormatted = `${year}-${month}-${day}`;
+    
+                return item.start_date >= todayFormatted && item.end_date >=  todayFormatted;
+            });
+
+            let activityListString; 
+
+            if (validActivityList.length > 0) {
+                activityListString = validActivityList.map((item, index) => {
+                    return `${index + 1}. ${item.name} from ${item.start_date} to ${item.end_date}`;
+                }).join('\n');
+            } else {
+                activityListString = 'No Activities Created!';
+            }
+
         return {
             key: index,
             name: item.name,
@@ -51,7 +74,8 @@ export default function Attraction() {
             category: item.attraction_category, 
             description: item.description,
             status: publishedStatus,
-            price_list: priceListString
+            price_list: priceListString,
+            seasonal_activity_list: activityListString
         };
     });
     
@@ -198,7 +222,7 @@ export default function Attraction() {
             title: 'Description',
             dataIndex: 'description',
             key: 'description', 
-            width: 500,
+            width: 350,
             sorter: (a, b) => a.description.localeCompare(b.description),
             ...getColumnSearchProps('description')
         },
@@ -210,10 +234,18 @@ export default function Attraction() {
             ...getColumnSearchProps('status')
         },
         {
+            title: 'Seasonal Activity',
+            dataIndex: 'seasonal_activity_list',
+            key: 'seasonal_activity_list',
+            sorter: (a, b) => a.seasonal_activity_list.localeCompare(b.seasonal_activity_list),
+            ...getColumnSearchProps('seasonal_activity_list'),
+            width: 300
+        },
+        {
             title: 'Price List',
             dataIndex: 'price_list',
             key: 'price_list', 
-            width: 300,
+            width: 250,
             sorter: (a, b) => a.price_list.localeCompare(b.price_list),
             ...getColumnSearchProps('price_list'),
         }
