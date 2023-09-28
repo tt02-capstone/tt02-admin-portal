@@ -17,6 +17,7 @@ import Attraction from "./pages/Attraction";
 import User from "./pages/user/User";
 import Profile from "./pages/profileAndPassword/Profile"
 import TelecomManagement from "./pages/telecom/TelecomManagement";
+import Restaurant from "./pages/restaurant/restaurant";
 
 export function AppLayout() {
 
@@ -62,6 +63,7 @@ export function AppLayout() {
                         <Route path="/attraction" element={<Attraction />} />
                         <Route path="/pendingApplications" element={<PendingApplications/>}/>
                         <Route path="/telecom" element={<TelecomManagement />}/>
+                        <Route path="/restaurant" element={<Restaurant />}/>
                         <Route path="*" element={<Home/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>

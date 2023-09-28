@@ -32,7 +32,11 @@ export const telecomApi = axios.create({
     baseURL: HOST_WITH_PORT + '/telecom'
 })
 
-const instanceList = [userApi, localApi, adminApi, bookingApi, vendorStaffApi, touristApi, telecomApi]
+export const restaurantApi = axios.create({
+    baseURL: HOST_WITH_PORT + '/restaurant'
+})
+
+const instanceList = [userApi, localApi, adminApi, bookingApi, vendorStaffApi, touristApi, telecomApi, restaurantApi]
 
 instanceList.map((api) => {
     api.interceptors.request.use( (config) => {
