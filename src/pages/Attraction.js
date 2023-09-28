@@ -7,6 +7,7 @@ import { getAttractionList } from '../redux/AttractionRedux';
 import  { Table, Input, Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
+import CustomTablePagination from '../components/CustomTablePagination';
 
 export default function Attraction() {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -255,9 +256,15 @@ export default function Attraction() {
         <Layout style={styles.layout}>
              <CustomHeader items={breadCrumbItems} />
              <Content style={styles.content}>
-             <div>
+             {/* <div>
                 <Table dataSource={datasource} columns={columns} style={{ width : '98%' }} />
-            </div>
+            </div> */}
+             <CustomTablePagination
+                title="Attraction"
+                column={columns}
+                data={datasource}
+                tableLayout="fixed"
+            />
              </Content>
         </Layout>
     ):

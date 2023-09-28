@@ -37,7 +37,11 @@ export const dealsApi = axios.create({
 })
 
 
-const instanceList = [userApi, localApi, adminApi, bookingApi, vendorStaffApi, touristApi, telecomApi, dealsApi]
+export const restaurantApi = axios.create({
+    baseURL: HOST_WITH_PORT + '/restaurant'
+})
+
+const instanceList = [userApi, localApi, adminApi, bookingApi, vendorStaffApi, touristApi, telecomApi, restaurantApi, dealsApi]
 
 instanceList.map((api) => {
     api.interceptors.request.use( (config) => {
@@ -52,7 +56,6 @@ instanceList.map((api) => {
 const refreshToken = async () => {
     try {
         const resp = await userApi.get("/refreshToken");
-        console.log(resp)
         return resp.data;
     } catch (e) {
         console.log("Error",e);
