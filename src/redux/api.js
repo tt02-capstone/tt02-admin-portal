@@ -32,15 +32,21 @@ export const telecomApi = axios.create({
     baseURL: HOST_WITH_PORT + '/telecom'
 })
 
+export const dealsApi = axios.create({
+    baseURL: HOST_WITH_PORT + '/deal'
+})
+
+
 export const restaurantApi = axios.create({
     baseURL: HOST_WITH_PORT + '/restaurant'
 })
 
-const instanceList = [userApi, localApi, adminApi, bookingApi, vendorStaffApi, touristApi, telecomApi, restaurantApi]
+const instanceList = [userApi, localApi, adminApi, bookingApi, vendorStaffApi, touristApi, telecomApi, restaurantApi, dealsApi]
 
 instanceList.map((api) => {
     api.interceptors.request.use( (config) => {
         const token = localStorage.getItem(TOKEN_KEY);
+        console.log(token)
         config.headers.Authorization =  token ? `Bearer ${token}` : '';
         return config;
     });
