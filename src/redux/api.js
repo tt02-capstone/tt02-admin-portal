@@ -37,11 +37,12 @@ export const dealsApi = axios.create({
 })
 
 
-const instanceList = [userApi, localApi, adminApi, bookingApi, vendorStaffApi, touristApi, telecomApi]
+const instanceList = [userApi, localApi, adminApi, bookingApi, vendorStaffApi, touristApi, telecomApi, dealsApi]
 
 instanceList.map((api) => {
     api.interceptors.request.use( (config) => {
         const token = localStorage.getItem(TOKEN_KEY);
+        console.log(token)
         config.headers.Authorization =  token ? `Bearer ${token}` : '';
         return config;
     });
@@ -51,6 +52,7 @@ instanceList.map((api) => {
 const refreshToken = async () => {
     try {
         const resp = await userApi.get("/refreshToken");
+        console.log(resp)
         return resp.data;
     } catch (e) {
         console.log("Error",e);

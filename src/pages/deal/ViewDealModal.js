@@ -134,8 +134,8 @@ export default function ViewDealModal(props) {
                     {renderProperty('Discount Percentage', selectedDeal.discount_percent + '%', 'green')}
                     {renderProperty('Start DateTime', moment(selectedDeal.start_datetime).format('llll'))}
                     {renderProperty('End Day Time Group', moment(selectedDeal.end_datetime).format('llll'))}
-                    {renderProperty('Is Government Voucher?', selectedDeal.is_govt_voucher ? "Yes" : "No")}
-                    {renderProperty('Is Published?', selectedDeal.is_published ? "Yes" : "No")}
+                    {renderProperty('Is Government Voucher?', selectedDeal.is_govt_voucher)}
+                    {renderProperty('Is Published?', selectedDeal.is_published)}
                     {renderProperty('Publish Date', moment(selectedDeal.publish_date).format('ll'))}
 
                 </div>
