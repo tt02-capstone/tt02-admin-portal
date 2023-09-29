@@ -12,7 +12,7 @@ import {
     HomeOutlined,
     UserOutlined,
     UsergroupAddOutlined,
-    MoneyCollectOutlined
+    MoneyCollectOutlined, BankOutlined
 } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
@@ -26,6 +26,7 @@ import Profile from "./pages/profileAndPassword/Profile"
 import TelecomManagement from "./pages/telecom/TelecomManagement";
 import Restaurant from "./pages/restaurant/restaurant";
 import DealManagement from "./pages/deal/DealManagement";
+import AccommodationManagement from "./pages/accommodation/AccommodationManagement";
 
 export function AppLayout() {
 
@@ -37,6 +38,7 @@ export function AppLayout() {
       {key: '/home', label: 'Home', icon: <HomeOutlined />},
       {key: '/profile', label: 'Profile', icon: <UserOutlined />},
       {key: '/user', label: 'User', icon: <UsergroupAddOutlined />},
+      {key: '/accommodation', label: 'Accommodations', icon: <BankOutlined/>,},
       {key: '/deal', label: 'Deals', icon: <MoneyCollectOutlined />,},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
@@ -70,6 +72,7 @@ export function AppLayout() {
                         <Route path="/createAdmin" element={<CreateAdmin/>}/>
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/attraction" element={<Attraction />} />
+                        <Route path="/accommodation" element={<AccommodationManagement/>}/>
                         <Route path="/pendingApplications" element={<PendingApplications/>}/>
                         <Route path="/telecom" element={<TelecomManagement />}/>
                         <Route path="/restaurant" element={<Restaurant />}/>
