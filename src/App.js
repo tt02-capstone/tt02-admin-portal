@@ -26,6 +26,7 @@ import Profile from "./pages/profileAndPassword/Profile"
 import TelecomManagement from "./pages/telecom/TelecomManagement";
 import Restaurant from "./pages/restaurant/restaurant";
 import DealManagement from "./pages/deal/DealManagement";
+import BookingManagement from "./pages/booking/BookingManagement";
 
 export function AppLayout() {
 
@@ -38,6 +39,7 @@ export function AppLayout() {
       {key: '/profile', label: 'Profile', icon: <UserOutlined />},
       {key: '/user', label: 'User', icon: <UsergroupAddOutlined />},
       {key: '/deal', label: 'Deals', icon: <MoneyCollectOutlined />,},
+      {key: '/booking', label: 'Bookings', icon: <MoneyCollectOutlined />,},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
@@ -74,6 +76,7 @@ export function AppLayout() {
                         <Route path="/telecom" element={<TelecomManagement />}/>
                         <Route path="/restaurant" element={<Restaurant />}/>
                         <Route path="/deal" element={<DealManagement />}/>
+                        <Route path="/booking" element={<BookingManagement />}/>
                         <Route path="*" element={<Home/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>
