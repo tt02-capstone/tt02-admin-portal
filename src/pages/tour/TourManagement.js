@@ -8,12 +8,14 @@ import { Layout, Form, Input, Badge, Space, Tag, Button, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import axios from "axios";
-
+import ViewTourTypeModal from "./ViewTourTypeModal";
+import CustomButton from "../../components/CustomButton";
 
 export default function TourManagement() {
     const user = JSON.parse(localStorage.getItem('user'));
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedTourTypeId, setSelectedTourTypeId] = useState(null);
 
     const breadcrumbItems = [
         {
@@ -39,6 +41,7 @@ export default function TourManagement() {
 
     const datasource = data.map((val) => ({
         ...val,
+        no_of_tours: val.tour_list.length,
         key: val.user_id,
     }));
 
@@ -199,6 +202,14 @@ export default function TourManagement() {
             },
         },
         {
+            title: 'No. of Tours',
+            dataIndex: 'no_of_tours',
+            key: 'no_of_tours',
+            width: 40,
+            sorter: (a, b) => a.no_of_tours - b.no_of_tours,
+            ...getColumnSearchProps('no_of_tours')
+        },
+        {
             title: 'Special Notes',
             dataIndex: 'special_note',
             key: 'special_note',
@@ -219,19 +230,52 @@ export default function TourManagement() {
             },
             width: 40
         },
+        {
+            title: 'Action(s)',
+            dataIndex: 'operation',
+            key: 'operation',
+            align: 'center',
+            render: (text, record) => {
+                return <div>
+                    <Space>
+                        <CustomButton key='1' text="View" onClick={() => onClickOpenViewTourTypeModal(record.tour_type_id)} />
+                    </Space>
+                </div>
+            },
+            width: 70,
+        }
     ];
+
+    // View details of Tour Type
+    const [isViewTourTypeModalOpen, setIsViewTourTypeModalOpen] = useState(false);
+
+    function onClickOpenViewTourTypeModal(tourTypeId) {
+        setSelectedTourTypeId(tourTypeId);
+        setIsViewTourTypeModalOpen(true);
+    }
+
+    function onClickCancelViewTourTypeModal() {
+        setIsViewTourTypeModalOpen(false);
+    }
 
     return (
         <Layout style={styles.layout}>
             <CustomHeader items={breadcrumbItems} />
             <Content style={styles.content}>
                 <div>
-                    <Table 
+                    <Table
                         dataSource={datasource}
                         tableLayout='fixed'
                         columns={columns}
                         style={{ width: '98%' }}
                         loading={loading} />
+
+                    {/* Modal to view tour type */}
+                    <ViewTourTypeModal
+                        isViewTourTypeModalOpen={isViewTourTypeModalOpen}
+                        onClickCancelViewTourTypeModal={onClickCancelViewTourTypeModal}
+                        tourTypeId={selectedTourTypeId}
+                    />
                     <ToastContainer />
                 </div>
             </Content>
