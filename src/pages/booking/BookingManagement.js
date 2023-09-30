@@ -1,137 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Layout, Spin, Form, Input, Button, Modal, Badge, Space, Tag, Menu, Table } from 'antd';
+import { Content } from "antd/es/layout/layout";
 import { useNavigate } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Layout, Spin, Form, Input, Button, Modal, Badge, Space, Tag, Image } from 'antd';
+import { retrieveAllBookings } from "../../redux/bookingRedux";
 import CustomHeader from "../../components/CustomHeader";
+import ViewBookingModal from "./ViewBookingModal";
 import CustomButton from "../../components/CustomButton";
 import CustomTablePagination from "../../components/CustomTablePagination";
-import { retrieveAllBookings } from "../../redux/bookingRedux";
-import { SearchOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
-import ViewBookingModal from "./ViewBookingModal";
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function BookingManagement() {
 
     const navigate = useNavigate();
-    const [form] = Form.useForm();
-    const { Content } = Layout;
-    const user = JSON.parse(localStorage.getItem("user"));
+    const vendor = JSON.parse(localStorage.getItem("user"));
 
-    const breadcrumbItems = [
+    const [getBookingsData, setGetBookingsData] = useState(true);
+    const [bookingsData, setBookingsData] = useState([]);
+    const [selectedBookingId, setSelectedBookingId] = useState(null);
+
+    const viewBookingBreadCrumb = [
         {
           title: 'Bookings',
-        },
+        }
     ];
 
-    // view booking modal
-    const [viewBookingModal, setViewBookingModal] = useState(false);
-    const [viewBookingId, setViewBookingId] = useState();
-
-    // table
-    const [searchText, setSearchText] = useState('');
-    const [searchedColumn, setSearchedColumn] = useState('');
-    const searchInput = useRef(null);
-    const handleSearch = (selectedKeys, confirm, dataIndex) => {
-        confirm();
-        setSearchText(selectedKeys[0]);
-        setSearchedColumn(dataIndex);
-    };
-    const handleReset = (clearFilters) => {
-        clearFilters();
-        setSearchText('');
-    };
-    const getColumnSearchProps = (dataIndex) => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
-            <div
-                style={{
-                    padding: 8,
-                }}
-                onKeyDown={(e) => e.stopPropagation()}
-            >
-                <Input
-                    ref={searchInput}
-                    placeholder={`Search ${dataIndex}`}
-                    value={selectedKeys[0]}
-                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    style={{
-                        marginBottom: 8,
-                        display: 'block',
-                    }}
-                />
-                <Space>
-                    <Button
-                        type="primary"
-                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                        icon={<SearchOutlined />}
-                        size="small"
-                        style={{
-                            width: 90,
-                        }}
-                    >
-                        Search
-                    </Button>
-                    <Button
-                        onClick={() => clearFilters && handleReset(clearFilters)}
-                        size="small"
-                        style={{
-                            width: 90,
-                        }}
-                    >
-                        Reset
-                    </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            close();
-                        }}
-                    >
-                        Close
-                    </Button>
-                </Space>
-            </div>
-        ),
-        filterIcon: (filtered) => (
-            <SearchOutlined
-                style={{
-                    color: filtered ? '#1677ff' : undefined,
-                }}
-            />
-        ),
-        onFilter: (value, record) =>
-            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-        onFilterDropdownOpenChange: (visible) => {
-            if (visible) {
-                setTimeout(() => searchInput.current?.select(), 100);
-            }
-        },
-        render: (text) =>
-            searchedColumn === dataIndex ? (
-                <Highlighter
-                    highlightStyle={{
-                        backgroundColor: '#ffc069',
-                        padding: 0,
-                    }}
-                    searchWords={[searchText]}
-                    autoEscape
-                    textToHighlight={text ? text.toString() : ''}
-                />
-            ) : (
-                text
-            ),
-    });
-
-    const column = [
-        {
-            title: 'Id',
-            dataIndex: 'booking_id',
-            key: 'booking_id',
-            sorter: (a, b) => a.booking_id > b.booking_id,
-            ...getColumnSearchProps('booking_id'),
-        },
+    const bookingsColumns = [
         {
             title: 'Customer Name',
             dataIndex: 'customerName',
@@ -145,13 +42,6 @@ export default function BookingManagement() {
         
                 return customerName;
             },
-            sorter: (a, b) => {
-                const nameA = a.tourist_user ? a.tourist_user.name : a.local_user ? a.local_user.name : '';
-                const nameB = b.tourist_user ? b.tourist_user.name : b.local_user ? b.local_user.name : '';
-        
-                return nameA.localeCompare(nameB);
-            },
-            // ...getColumnSearchProps('customerName')
         },
         {
             title: 'Customer Type',
@@ -166,25 +56,18 @@ export default function BookingManagement() {
                 return '';
               }
             },
-            sorter: (a, b) => {
-                const getTypeValue = (record) => {
-                    if (record.tourist_user) {
-                        return 1; // Tourist
-                    } else if (record.local_user) {
-                        return 2; // Local
-                    } else {
-                        return 0; 
-                    }
-                };
-        
-                const typeA = getTypeValue(a);
-                const typeB = getTypeValue(b);
-        
-                return typeA - typeB;
+          },
+        {
+            title: 'Activity',
+            dataIndex: 'activity_name',
+            key: 'activity_name',
+            render: (text, record) => {
+                console.log("text", text);
+                console.log("record", record);
+                return record.activity_name;
             },
-            // ...getColumnSearchProps('customerType')
-          }, 
-          {
+        },
+        {
             title: 'Type',
             dataIndex: 'type',
             key: 'type',
@@ -195,10 +78,10 @@ export default function BookingManagement() {
                     case 'ACCOMMODATION':
                         color = 'green';
                         break;
-                    case 'TELECOM':
+                    case 'ATTRACTION':
                         color = 'orange';
                         break;
-                    case 'ATTRACTION':
+                    case 'TELECOM':
                         color = 'red';
                         break;
                     case 'TOUR':
@@ -208,13 +91,6 @@ export default function BookingManagement() {
 
                 return <Tag color={color}>{type}</Tag>;
             },
-        },
-        {
-            title: 'Activity Name',
-            dataIndex: 'activity_name',
-            key: 'activity_name',
-            sorter: (a, b) => a.activity_name.localeCompare(b.activity_name),
-            ...getColumnSearchProps('activity_name'),
         },
         {
             title: 'Status',
@@ -250,14 +126,6 @@ export default function BookingManagement() {
                 const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}/${dateObj.getFullYear()} ${dateObj.toLocaleTimeString()}`;
                 return formattedDate;
             },
-            sorter: (a, b) => {
-                // Extract the underlying date values for 'a' and 'b'
-                const dateA = new Date(a.last_update).getTime();
-                const dateB = new Date(b.last_update).getTime();
-        
-                // Compare the date values for sorting
-                return dateA - dateB;
-            },
         },
         {
             title: 'Payment Status',
@@ -274,13 +142,6 @@ export default function BookingManagement() {
 
                 return <Tag color={color}>{payment ? (payment.is_paid ? 'PAID' : 'UNPAID') : 'N/A'}</Tag>;
             },
-            sorter: (a, b) => {
-                const isPaidA = (a.payment && a.payment.is_paid) || false; 
-                const isPaidB = (b.payment && b.payment.is_paid) || false; 
-        
-                return isPaidA - isPaidB;
-            },
-            // missing search
         },
         {
             title: 'Amount Earned',
@@ -292,80 +153,103 @@ export default function BookingManagement() {
         },
         {
             title: 'Action(s)',
-            dataIndex: 'booking_id',
-            key: 'booking_id',
-            width: 160,
-            align: 'center',
-            render: (text, record) => (
-                <div>
-                    <CustomButton key='1' text="View" onClick={() => onOpenViewModal(record.booking_id)} style={{marginRight: '10px'}} />
-                </div>
-            ),
-        }
+            dataIndex: 'operation',
+            key: 'operation',
+            render: (text, record) => {
+                return <Space>
+                    <CustomButton
+                        text="View"
+                        onClick={() => onClickOpenViewBookingModal(record.booking_id)}
+                    />
+                </Space>
+            }
+        },
     ];
 
-    // fetch booking list
-    const [bookingList, setBookingList] = useState([]);
-    const [fetchBookingList, setFetchBookingList] = useState(true);
-
     useEffect(() => {
-        if (fetchBookingList) {
+        if (getBookingsData) {
             const fetchData = async () => {
-                const response = await retrieveAllBookings(); // stackoverflowing sigh
-                console.log("response.data", response.data);
+                const response = await retrieveAllBookings();
+                console.log("response data", response.data)
                 if (response.status) {
-                    setBookingList(response.data);
-                    setFetchBookingList(false);
+                    var tempData = response.data.map((val) => ({
+                        ...val,
+                        key: val.user_id,
+                    }));
+                    setBookingsData(tempData);
+                    setGetBookingsData(false);
+                    console.log(response.data)
                 } else {
-                    console.log("Booking list not fetched!");
+                    console.log("List of bookings not fetched!");
                 }
             }
-    
+
             fetchData();
+            setGetBookingsData(false);
         }
-    },[fetchBookingList]);
+    }, [getBookingsData]);
 
-    // open view modal
-    function onOpenViewModal(id) {
-        setViewBookingId(id);
-        setViewBookingModal(true);
+    // VIEW BOOKING
+    const [isViewBookingModalOpen, setIsViewBookingModalOpen] = useState(false);
+
+    useEffect(() => {
+
+    }, [selectedBookingId])
+
+    //view booking modal open button
+    function onClickOpenViewBookingModal(bookingId) {
+        setSelectedBookingId(bookingId);
+        setIsViewBookingModalOpen(true);
     }
 
-    // close view modal
-    function onCancelViewModal() {
-        setViewBookingModal(false);
+    // view booking modal cancel button
+    function onClickCancelViewBookingModal() {
+        setIsViewBookingModalOpen(false);
     }
 
-    return user ? (
+    return vendor ? (
         <div>
             <Layout style={styles.layout}>
-                <CustomHeader items={breadcrumbItems}/>
-                <Content style={styles.content}>
-                    <CustomTablePagination column={column} data={bookingList} rowKey="booking_id" tableLayout={"fixed"}/>
+            <CustomHeader items={viewBookingBreadCrumb}/>
+                <Layout style={{ padding: '0 24px 24px' }}>
+                    <Content style={styles.content}>
 
-                    {/* Modal to view booking */}
-                    <ViewBookingModal
-                        selectedBookingId={viewBookingId}
-                        viewBookingModal={viewBookingModal}
-                        onCancelViewModal={onCancelViewModal}
-                    />
-                </Content>
+                        <CustomTablePagination
+                            title="Bookings"
+                            column={bookingsColumns}
+                            data={bookingsData}
+                            tableLayout="fixed"
+                            
+                        />
+
+                        <ViewBookingModal
+                            isViewBookingModalOpen={isViewBookingModalOpen}
+                            onClickCancelViewBookingModal={onClickCancelViewBookingModal}
+                            bookingId={selectedBookingId}
+                        />
+
+                    </Content>
+                </Layout>
             </Layout>
+
+            <ToastContainer />
         </div>
-    ) : (
-        <Navigate to="/" />
-    )
+    ) :
+        (
+            <Navigate to="/" />
+        )
 }
 
 const styles = {
     layout: {
         minHeight: '100vh',
-        minWidth: '90vw',
+        minWidth: '91.5vw'
     },
     content: {
-        margin: '1vh 3vh 1vh 3vh',
+        margin: '24px 16px 0',
         alignSelf: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        width: "98%"
     },
 }
