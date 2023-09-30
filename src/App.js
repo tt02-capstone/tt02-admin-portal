@@ -26,6 +26,7 @@ import Profile from "./pages/profileAndPassword/Profile"
 import TelecomManagement from "./pages/telecom/TelecomManagement";
 import Restaurant from "./pages/restaurant/restaurant";
 import DealManagement from "./pages/deal/DealManagement";
+import TourManagement from "./pages/tour/TourManagement";
 
 export function AppLayout() {
 
@@ -74,6 +75,7 @@ export function AppLayout() {
                         <Route path="/telecom" element={<TelecomManagement />}/>
                         <Route path="/restaurant" element={<Restaurant />}/>
                         <Route path="/deal" element={<DealManagement />}/>
+                        <Route path="/tour" element={<TourManagement />}/>
                         <Route path="*" element={<Home/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>
