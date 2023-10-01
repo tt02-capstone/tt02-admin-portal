@@ -26,11 +26,8 @@ import Profile from "./pages/profileAndPassword/Profile"
 import TelecomManagement from "./pages/telecom/TelecomManagement";
 import Restaurant from "./pages/restaurant/restaurant";
 import DealManagement from "./pages/deal/DealManagement";
-<<<<<<< HEAD
 import BookingManagement from "./pages/booking/BookingManagement";
-=======
 import TourManagement from "./pages/tour/TourManagement";
->>>>>>> b0e987a4a27ea5a28910ef0047ae0c95cac02b2b
 
 export function AppLayout() {
 
