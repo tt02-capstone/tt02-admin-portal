@@ -62,3 +62,13 @@ export async function getAccommodationById(accommodationId) {
         return { status: false, data: error.message };
     }
 }
+
+export async function getNumOf0AvailableRoomsListOnDateRange(id, startDate, endDate) {
+    try {
+        const response = await accommodationApi.get(`/getNumOf0AvailableRoomsListOnDateRange/${id}/${startDate}/${endDate}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("accommodationRedux getNumOf0AvailableRoomsListOnDateRange Error: ", error);
+        return { status: false, data: error.message };
+    }
+}

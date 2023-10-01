@@ -29,6 +29,7 @@ import DealManagement from "./pages/deal/DealManagement";
 import AccommodationManagement from "./pages/accommodation/AccommodationManagement";
 import TourManagement from "./pages/tour/TourManagement";
 import BookingManagement from "./pages/booking/BookingManagement";
+import ViewRoomCount from "./pages/accommodation/ViewRoomCount";
 
 export function AppLayout() {
 
@@ -82,6 +83,7 @@ export function AppLayout() {
                         <Route path="/deal" element={<DealManagement />}/>
                         <Route path="/booking" element={<BookingManagement />}/>
                         <Route path="/tour" element={<TourManagement />}/>
+                        <Route path="/accommodation/viewRoomCount" element={<ViewRoomCount />}/>
                         <Route path="*" element={<Home/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>

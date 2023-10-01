@@ -150,10 +150,14 @@ export default function AccommodationManagement() {
             render: (text, record) => {
                 return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ marginBottom: '10px' }}>
-                        <Space direction="horizontal">
+                        <Space direction="vertical">
                             <CustomButton
-                                text="View"
+                                text="View Details"
                                 onClick={() => onClickOpenViewAccommodationModal(record.accommodation_id)}
+                            />
+                            <CustomButton
+                                text="View Room Count"
+                                onClick={() => onClickViewRoomCount(record.accommodation_id)}
                             />
                         </Space>
                     </div>
@@ -214,7 +218,12 @@ export default function AccommodationManagement() {
         }
     }, [getAccommodationsData]);
 
-    // VIEW ATTRACTION
+    // view room count page
+    function onClickViewRoomCount(id) {
+        navigate('/accommodation/viewRoomCount', { state: { id } });
+    }
+    
+    // view attraction
     const [isViewAccommodationModalOpen, setIsViewAccommodationModalOpen] = useState(false);
 
     //view attraction modal open button
