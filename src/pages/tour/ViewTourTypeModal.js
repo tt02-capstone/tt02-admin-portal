@@ -91,7 +91,7 @@ export default function ViewTourTypeModal(props) {
         }
 
         if (label === 'No. of Tours') {
-            formattedValue = formattedValue.length;
+            formattedValue = formattedValue ? formattedValue.length : 0;
         }
 
         return (

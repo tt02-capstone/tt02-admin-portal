@@ -41,7 +41,7 @@ export default function TourManagement() {
 
     const datasource = data.map((val) => ({
         ...val,
-        no_of_tours: val.tour_list.length,
+        no_of_tours: val && val.tour_list ? val.tour_list.length : 0,
         key: val.user_id,
     }));
 
