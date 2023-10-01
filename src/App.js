@@ -27,6 +27,8 @@ import TelecomManagement from "./pages/telecom/TelecomManagement";
 import Restaurant from "./pages/restaurant/restaurant";
 import DealManagement from "./pages/deal/DealManagement";
 import AccommodationManagement from "./pages/accommodation/AccommodationManagement";
+import TourManagement from "./pages/tour/TourManagement";
+import BookingManagement from "./pages/booking/BookingManagement";
 
 export function AppLayout() {
 
@@ -40,6 +42,7 @@ export function AppLayout() {
       {key: '/user', label: 'User', icon: <UsergroupAddOutlined />},
       {key: '/accommodation', label: 'Accommodations', icon: <BankOutlined/>,},
       {key: '/deal', label: 'Deals', icon: <MoneyCollectOutlined />,},
+      {key: '/booking', label: 'Bookings', icon: <MoneyCollectOutlined />,},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
@@ -77,6 +80,8 @@ export function AppLayout() {
                         <Route path="/telecom" element={<TelecomManagement />}/>
                         <Route path="/restaurant" element={<Restaurant />}/>
                         <Route path="/deal" element={<DealManagement />}/>
+                        <Route path="/booking" element={<BookingManagement />}/>
+                        <Route path="/tour" element={<TourManagement />}/>
                         <Route path="*" element={<Home/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>
