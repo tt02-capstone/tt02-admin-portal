@@ -97,7 +97,7 @@ export default function Home() {
                                 </Link>
                             </Col>
                             <Col span={8}>
-                                <Link to={'/'}>
+                                <Link to={'/deal'}>
                                     <Card
                                         hoverable
                                         style={{
@@ -111,6 +111,24 @@ export default function Home() {
                                         <Meta
                                             title="Deals and Discount"
                                             description="Deals and Discount Overview"/>
+                                    </Card>
+                                </Link>
+                            </Col>
+                            <Col span={8}>
+                                <Link to={'/tour'}>
+                                    <Card
+                                        hoverable
+                                        style={{
+                                            width: 350,
+                                            height: 400,
+                                            margin: '100px 0'
+                                        }}
+                                        cover={<img alt="tours" src="https://tt02.s3.ap-southeast-1.amazonaws.com/static/web/tours.jpg" style={{width:300, height:300}}/>}
+                                        bordered={false}
+                                    >
+                                        <Meta
+                                            title="Tours"
+                                            description="Tours Overview"/>
                                     </Card>
                                 </Link>
                             </Col>
