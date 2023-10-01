@@ -5,7 +5,7 @@ export async function getAllDealList() {
     const response = await dealsApi.get(`/getAllDealList`);
     return handleApiErrors(response);
   } catch (error) {
-    console.error("telecomRedux getAllTelecomList Error : ", error);
+    console.error("dealRedux getAllTelecomList Error : ", error);
     return {status: false, data: error.message};
   }
 }
