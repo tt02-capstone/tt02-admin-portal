@@ -45,7 +45,7 @@ export default function Home() {
                                 </Link>
                             </Col>
                             <Col span={8}>
-                                <Link to={'/'}>
+                                <Link to={'/accommodation'}>
                                     <Card
                                         hoverable
                                         style={{
