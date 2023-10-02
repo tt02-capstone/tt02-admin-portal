@@ -195,44 +195,48 @@ export default function Attraction() {
             dataIndex: 'name',
             key: 'name',
             sorter: (a, b) => a.name.localeCompare(b.name),
-            ...getColumnSearchProps('name')
+            ...getColumnSearchProps('name'),
+            width: 130
         },
         {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
             sorter: (a, b) => a.address.localeCompare(b.address),
-            ...getColumnSearchProps('address')
+            ...getColumnSearchProps('address'),
+            width: 180
         },
         {
             title: 'Age Group',
             dataIndex: 'age_group',
             key: 'age_group',
-            width: 350,
             sorter: (a, b) => a.age_group.localeCompare(b.age_group),
-            ...getColumnSearchProps('age_group')
+            ...getColumnSearchProps('age_group'),
+            width: 130
         },
         {
             title: 'Category',
             dataIndex: 'category',
             key: 'category', 
             sorter: (a, b) => a.category.localeCompare(b.category),
-            ...getColumnSearchProps('category')
+            ...getColumnSearchProps('category'),
+            width: 130
         },
         {
             title: 'Description',
             dataIndex: 'description',
             key: 'description', 
-            width: 350,
             sorter: (a, b) => a.description.localeCompare(b.description),
-            ...getColumnSearchProps('description')
+            ...getColumnSearchProps('description'),
+            width: 180
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status', 
             sorter: (a, b) => a.status.localeCompare(b.status),
-            ...getColumnSearchProps('status')
+            ...getColumnSearchProps('status'),
+            width: 100
         },
         {
             title: 'Seasonal Activity',
@@ -240,15 +244,15 @@ export default function Attraction() {
             key: 'seasonal_activity_list',
             sorter: (a, b) => a.seasonal_activity_list.localeCompare(b.seasonal_activity_list),
             ...getColumnSearchProps('seasonal_activity_list'),
-            width: 300
+            width: 150
         },
         {
             title: 'Price List',
             dataIndex: 'price_list',
             key: 'price_list', 
-            width: 250,
             sorter: (a, b) => a.price_list.localeCompare(b.price_list),
             ...getColumnSearchProps('price_list'),
+            width: 150
         }
     ];
     
