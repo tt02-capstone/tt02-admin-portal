@@ -1,24 +1,39 @@
-import { Layout } from 'antd';
+import { Layout , Badge} from 'antd';
 import { React , useEffect, useState , useRef } from 'react';
-import CustomHeader from "../components/CustomHeader";
+import CustomHeader from "../../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, Link } from 'react-router-dom';
-import { getAttractionList } from '../redux/AttractionRedux';
+import { getAttractionList } from '../../redux/AttractionRedux';
 import  { Table, Input, Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
-import CustomTablePagination from '../components/CustomTablePagination';
+import CustomTablePagination from '../../components/CustomTablePagination';
+import ViewTicketModal from './ViewTicketModal';
+import CustomButton from '../../components/CustomButton';
+
 
 export default function Attraction() {
     const user = JSON.parse(localStorage.getItem("user"));
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [viewModal, setViewModal] = useState(false);
+    const [viewId, setViewId] = useState();
 
     const breadCrumbItems = [
         {
             title: 'Attraction',
         },
     ]
+
+    const showViewModal = (id) => {
+        setViewId(id)
+        setViewModal(true);
+    }
+
+    const viewModalCancel = () => {
+        setViewModal(false);
+        setViewId(null);
+    }
 
     useEffect(() => {
         const fetchData = async() => {
@@ -69,12 +84,13 @@ export default function Attraction() {
 
         return {
             key: index,
+            attraction_id : item.attraction_id,
             name: item.name,
             address: item.address,
             age_group: item.age_group,
             category: item.attraction_category, 
             description: item.description,
-            status: publishedStatus,
+            status: item.is_published, // change to match others
             price_list: priceListString,
             seasonal_activity_list: activityListString
         };
@@ -195,48 +211,48 @@ export default function Attraction() {
             dataIndex: 'name',
             key: 'name',
             sorter: (a, b) => a.name.localeCompare(b.name),
-            ...getColumnSearchProps('name'),
-            width: 130
+            ...getColumnSearchProps('name')
         },
         {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
             sorter: (a, b) => a.address.localeCompare(b.address),
-            ...getColumnSearchProps('address'),
-            width: 180
+            ...getColumnSearchProps('address')
         },
         {
             title: 'Age Group',
             dataIndex: 'age_group',
             key: 'age_group',
             sorter: (a, b) => a.age_group.localeCompare(b.age_group),
-            ...getColumnSearchProps('age_group'),
-            width: 130
+            ...getColumnSearchProps('age_group')
         },
         {
             title: 'Category',
             dataIndex: 'category',
             key: 'category', 
             sorter: (a, b) => a.category.localeCompare(b.category),
-            ...getColumnSearchProps('category'),
-            width: 130
+            ...getColumnSearchProps('category')
         },
         {
             title: 'Description',
             dataIndex: 'description',
             key: 'description', 
             sorter: (a, b) => a.description.localeCompare(b.description),
-            ...getColumnSearchProps('description'),
-            width: 180
+            ...getColumnSearchProps('description')
         },
         {
-            title: 'Status',
+            title: 'Published',
             dataIndex: 'status',
-            key: 'status', 
-            sorter: (a, b) => a.status.localeCompare(b.status),
-            ...getColumnSearchProps('status'),
-            width: 100
+            key: 'status',
+            render: (text) => {
+                if (text === true) {
+                    return <Badge status="success" text="Yes" />
+                } else {
+                    return <Badge status="error" text="No" />
+                }
+            },
+            width: 100,
         },
         {
             title: 'Seasonal Activity',
@@ -252,7 +268,20 @@ export default function Attraction() {
             key: 'price_list', 
             sorter: (a, b) => a.price_list.localeCompare(b.price_list),
             ...getColumnSearchProps('price_list'),
-            width: 150
+            width: 200
+        }, 
+        {
+            title: 'Action(s)',
+            key: 'view',
+            dataIndex: 'view',
+            width: 160,
+            align: 'center',
+            render: (text, record) => (
+                <div>
+                    <CustomButton text="View Current Ticket(s)" onClick={() => showViewModal(record.attraction_id)} style={styles.button} />
+                </div>
+            ),
+            width: 190
         }
     ];
     
@@ -260,15 +289,19 @@ export default function Attraction() {
         <Layout style={styles.layout}>
              <CustomHeader items={breadCrumbItems} />
              <Content style={styles.content}>
-             {/* <div>
-                <Table dataSource={datasource} columns={columns} style={{ width : '98%' }} />
-            </div> */}
-             <CustomTablePagination
-                title="Attraction"
-                column={columns}
-                data={datasource}
-                tableLayout="fixed"
-            />
+             
+                <CustomTablePagination
+                    title="Attraction"
+                    column={columns}
+                    data={datasource}
+                    tableLayout="fixed"
+                />
+
+                <ViewTicketModal
+                    isVisible={viewModal}
+                    onCancel={viewModalCancel}
+                    id={viewId}
+                />
              </Content>
         </Layout>
     ):
@@ -281,7 +314,7 @@ export default function Attraction() {
 const styles = {
     layout: {
         minHeight: '100vh',
-        backgroundColor: 'white'
+        minWidth: '90vw',
     },
     content: {
         margin: '20px 30px 0',
@@ -289,4 +322,8 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center'
     },
+    button: {
+        fontSize: 12,
+        fontWeight: "bold"
+    }
 }
