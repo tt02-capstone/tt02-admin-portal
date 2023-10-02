@@ -168,16 +168,14 @@ export default function Restaurant() {
             dataIndex: 'name',
             key: 'name',
             sorter: (a, b) => a.name.localeCompare(b.name),
-            ...getColumnSearchProps('name'),
-            width: 130
+            ...getColumnSearchProps('name')
         },
         {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
             sorter: (a, b) => a.description.localeCompare(b.description),
-            ...getColumnSearchProps('description'),
-            width: 180
+            ...getColumnSearchProps('description')
         },
         {
             title: 'Type',
@@ -213,33 +211,28 @@ export default function Restaurant() {
                 return (
                     <Tag color={tagColor}>{type}</Tag>
                 );
-            },
-            width: 100
+            }
         },
         {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
             sorter: (a, b) => a.address.localeCompare(b.address),
-            ...getColumnSearchProps('address'),
-            width: 180
+            ...getColumnSearchProps('address')
         },
         {
             title: 'Opening Hours',
             dataIndex: 'opening_hours',
             key: 'opening_hours',
             sorter: (a, b) => a.opening_hours.localeCompare(b.opening_hours),
-            ...getColumnSearchProps('opening_hours'),
-            width: 130
+            ...getColumnSearchProps('opening_hours')
         },
         {
             title: 'Contact No.',
             dataIndex: 'contact_num',
             key: 'contact_num',
             sorter: (a, b) => a.contact_num.localeCompare(b.contact_num),
-            ...getColumnSearchProps('contact_num'),
-            width: 130
-            
+            ...getColumnSearchProps('contact_num')
         },
         {
             title: 'Published',
@@ -306,6 +299,7 @@ export default function Restaurant() {
                     <br/><br/>
                 </div>
             },
+            width: 180
         },
     ];
 
