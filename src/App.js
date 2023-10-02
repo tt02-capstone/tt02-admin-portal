@@ -41,8 +41,6 @@ export function AppLayout() {
       {key: '/home', label: 'Home', icon: <HomeOutlined />},
       {key: '/profile', label: 'Profile', icon: <UserOutlined />},
       {key: '/user', label: 'User', icon: <UsergroupAddOutlined />},
-      {key: '/accommodation', label: 'Accommodations', icon: <BankOutlined/>,},
-      {key: '/deal', label: 'Deals', icon: <MoneyCollectOutlined />,},
       {key: '/booking', label: 'Bookings', icon: <MoneyCollectOutlined />,},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
