@@ -195,9 +195,7 @@ export default function ViewRoomCount() {
             dataIndex: 'date',
             key: 'date',
             sorter: (a, b) => a.date > b.date,
-            render(text) {
-                return moment(text).format('LL');
-            }
+            ...getColumnSearchProps('date')
         },
         {
             title: 'Room Count',
@@ -221,7 +219,17 @@ export default function ViewRoomCount() {
 
         let response = await getNumOf0AvailableRoomsListOnDateRange(id, startDate, endDate);
         if (response.status) {
-            setData(response.data);
+            let tempList = response.data.map(item => {
+                return {
+                    accommodation_name: item.accommodation_name,
+                    type: item.type,
+                    date: moment(item.date).format('LL'),
+                    count: item.count,
+                };
+            });
+
+            // setData(response.data);
+            setData(tempList);
         } else {
             console.log("Room count list fetch failed!");
         }
@@ -248,7 +256,7 @@ export default function ViewRoomCount() {
                                     <Col>
                                         <Form.Item
                                             name="dateRange"
-                                            label="Select Date Range:"
+                                            label="Select Dates:"
                                             labelAlign='left'
                                             rules={[{ required: true, message: 'Date range is required!'}]}
                                         >
