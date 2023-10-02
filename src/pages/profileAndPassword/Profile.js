@@ -25,16 +25,13 @@ export default function Profile() {
 
     const viewProfileBreadcrumbItems = [
         {
-            title: 'Profile',
-        },
-        {
-            title: 'View Profile',
+            title: <strong>Profile</strong>,
         },
     ];
 
     const editProfileBreadcrumbItems = [
         {
-            title: 'Profile',
+            title: <strong>Profile</strong>,
         },
         {
             title: 'Edit Profile',

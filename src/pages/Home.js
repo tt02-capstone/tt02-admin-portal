@@ -15,7 +15,7 @@ export default function Home() {
 
     const breadCrumbItems = [
         {
-            title: 'Home',
+            title: <strong>Home</strong>,
         },
     ]
 

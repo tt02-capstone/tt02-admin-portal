@@ -25,7 +25,7 @@ export default function User() {
 
     const breadcrumbItems = [
         {
-            title: 'User',
+            title: <strong>User</strong>,
         },
     ];
 

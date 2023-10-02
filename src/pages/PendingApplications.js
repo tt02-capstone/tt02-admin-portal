@@ -21,7 +21,7 @@ export default function PendingApplications() {
 
     const breadcrumbItems = [
         {
-            title: 'Pending Applications',
+            title: <strong>Pending Applications</strong>,
         },
     ];
 

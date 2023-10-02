@@ -25,7 +25,7 @@ export default function BookingManagement() {
 
     const viewBookingBreadCrumb = [
         {
-          title: 'Bookings',
+          title: <strong>Bookings</strong>,
         }
     ];
 
@@ -371,7 +371,6 @@ export default function BookingManagement() {
         <div>
             <Layout style={styles.layout}>
             <CustomHeader items={viewBookingBreadCrumb}/>
-                <Layout style={{ padding: '0 24px 24px' }}>
                     <Content style={styles.content}>
 
                         <CustomTablePagination
@@ -390,7 +389,6 @@ export default function BookingManagement() {
 
                     </Content>
                 </Layout>
-            </Layout>
 
             <ToastContainer />
         </div>
@@ -403,13 +401,14 @@ export default function BookingManagement() {
 const styles = {
     layout: {
         minHeight: '100vh',
-        minWidth: '91.5vw'
+        minWidth: '91.5vw',
+        backgroundColor: 'white'
     },
     content: {
-        margin: '24px 16px 0',
+        margin: '20px 30px 0',
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-        width: "98%"
+        width: "98%"     
     },
 }
