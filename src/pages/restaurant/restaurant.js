@@ -169,7 +169,7 @@ export default function Restaurant() {
             key: 'name',
             sorter: (a, b) => a.name.localeCompare(b.name),
             ...getColumnSearchProps('name'),
-            width: 250
+            width: 130
         },
         {
             title: 'Description',
@@ -177,7 +177,7 @@ export default function Restaurant() {
             key: 'description',
             sorter: (a, b) => a.description.localeCompare(b.description),
             ...getColumnSearchProps('description'),
-            width: 300
+            width: 180
         },
         {
             title: 'Type',
@@ -214,7 +214,7 @@ export default function Restaurant() {
                     <Tag color={tagColor}>{type}</Tag>
                 );
             },
-            width: 180
+            width: 100
         },
         {
             title: 'Address',
@@ -222,7 +222,7 @@ export default function Restaurant() {
             key: 'address',
             sorter: (a, b) => a.address.localeCompare(b.address),
             ...getColumnSearchProps('address'),
-            width: 200
+            width: 180
         },
         {
             title: 'Opening Hours',
@@ -230,7 +230,7 @@ export default function Restaurant() {
             key: 'opening_hours',
             sorter: (a, b) => a.opening_hours.localeCompare(b.opening_hours),
             ...getColumnSearchProps('opening_hours'),
-            width: 150
+            width: 130
         },
         {
             title: 'Contact No.',
@@ -238,7 +238,7 @@ export default function Restaurant() {
             key: 'contact_num',
             sorter: (a, b) => a.contact_num.localeCompare(b.contact_num),
             ...getColumnSearchProps('contact_num'),
-            width: 150,
+            width: 130
             
         },
         {
@@ -253,7 +253,7 @@ export default function Restaurant() {
                     return <Badge status="error" text="No" />
                 }
             },
-            width: 150,
+            width: 100
         },
         {
             title: 'Price Tier',
@@ -289,7 +289,7 @@ export default function Restaurant() {
                     <Tag color={tagColor}>{priceTier}</Tag>
                 );
             },
-            width: 100,
+            width: 100
         },
         {
             title: 'Action(s)',
@@ -306,7 +306,6 @@ export default function Restaurant() {
                     <br/><br/>
                 </div>
             },
-            width: 200,
         },
     ];
 
