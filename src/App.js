@@ -20,7 +20,7 @@ import PasswordReset from "./pages/PasswordReset/PasswordReset";
 import ForgetPassword from "./pages/PasswordReset/ForgetPassword";
 import PendingApplications from "./pages/PendingApplications";
 import {AuthContext, AuthProvider} from "./redux/AuthContext";
-import Attraction from "./pages/Attraction";
+import Attraction from "./pages/attraction/Attraction";
 import User from "./pages/user/User";
 import Profile from "./pages/profileAndPassword/Profile"
 import TelecomManagement from "./pages/telecom/TelecomManagement";
