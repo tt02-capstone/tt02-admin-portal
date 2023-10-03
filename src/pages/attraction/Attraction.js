@@ -1,4 +1,4 @@
-import { Layout , Badge} from 'antd';
+import { Layout , Badge, Tag} from 'antd';
 import { React , useEffect, useState , useRef } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
@@ -50,14 +50,17 @@ export default function Attraction() {
     }, []);
 
     const datasource = data.map((item, index) => {
-        const publishedStatus = item.is_published ? 'Published' : 'Not Published';
         const priceList = item.price_list;
 
-        const formatPriceList = priceList.map(item => {
-            return `${item.ticket_type}: Local $${item.local_amount}, Tourist $${item.tourist_amount}`;
+        const formatPriceList = priceList.map(priceItem => {
+            return (
+                <tr key={priceItem.ticket_type}>
+                    <td>{priceItem.ticket_type}</td>
+                    <td>${priceItem.local_amount} (Local)</td>
+                    <td>${priceItem.tourist_amount} (Tourist)</td>
+                </tr>
+            );
         });
-
-        const priceListString = formatPriceList.join('\n');
 
         const activityList = item.seasonal_activity_list;
 
@@ -82,6 +85,8 @@ export default function Attraction() {
                 activityListString = 'No Activities Created!';
             }
 
+            const formattedPriceTier = item.estimated_price_tier.split('_').join(' ');
+
         return {
             key: index,
             attraction_id : item.attraction_id,
@@ -91,8 +96,15 @@ export default function Attraction() {
             category: item.attraction_category, 
             description: item.description,
             status: item.is_published, // change to match others
-            price_list: priceListString,
-            seasonal_activity_list: activityListString
+            price_list: (
+                <table>
+                    <tbody>
+                        {formatPriceList}
+                    </tbody>
+                </table>
+            ),
+            seasonal_activity_list: activityListString,
+            estimated_price_tier: formattedPriceTier
         };
     });
     
@@ -230,16 +242,47 @@ export default function Attraction() {
         {
             title: 'Category',
             dataIndex: 'category',
-            key: 'category', 
+            key: 'category',
             sorter: (a, b) => a.category.localeCompare(b.category),
-            ...getColumnSearchProps('category')
+            ...getColumnSearchProps('category'),
+            render: (attractionCategory) => {
+                let tagColor = 'default'; 
+                switch (attractionCategory) {
+                    case 'HISTORICAL':
+                        tagColor = 'purple';
+                        break;
+                    case 'CULTURAL':
+                        tagColor = 'volcano';
+                        break;
+                    case 'NATURE':
+                        tagColor = 'magenta';
+                        break;
+                    case 'ADVENTURE':
+                        tagColor = 'geekblue';
+                        break;
+                    case 'SHOPPING':
+                        tagColor = 'gold';
+                        break;
+                    case 'ENTERTAINMENT':
+                        tagColor = 'cyan';
+                        break;
+                    default:
+                        break;
+                }
+
+                return (
+                    <Tag color={tagColor}>{attractionCategory}</Tag>
+                );
+            },
+            width:140
         },
         {
             title: 'Description',
             dataIndex: 'description',
             key: 'description', 
             sorter: (a, b) => a.description.localeCompare(b.description),
-            ...getColumnSearchProps('description')
+            ...getColumnSearchProps('description'),
+            width:300
         },
         {
             title: 'Published',
@@ -252,6 +295,40 @@ export default function Attraction() {
                     return <Badge status="error" text="No" />
                 }
             },
+            width:100
+        },
+        {
+            title: 'Price Tier',
+            dataIndex: 'estimated_price_tier',
+            key: 'estimated_price_tier',
+            sorter: (a, b) => a.estimated_price_tier.localeCompare(b.estimated_price_tier),
+            ...getColumnSearchProps('estiminated_price_tier'),
+            render: (priceTier) => {
+                let tagColor = 'default'; 
+                switch (priceTier) {
+                    case 'TIER 1':
+                        tagColor = 'green';
+                        break;
+                    case 'TIER 2':
+                        tagColor = 'orange';
+                        break;
+                    case 'TIER 3':
+                        tagColor = 'red';
+                        break;
+                    case 'TIER 4':
+                        tagColor = 'blue';
+                        break;
+                    case 'TIER 5':
+                        tagColor = 'yellow';
+                        break;
+                    default:
+                        break;
+                }
+
+                return (
+                    <Tag color={tagColor}>{priceTier}</Tag>
+                );
+            },
             width: 100,
         },
         {
@@ -260,15 +337,13 @@ export default function Attraction() {
             key: 'seasonal_activity_list',
             sorter: (a, b) => a.seasonal_activity_list.localeCompare(b.seasonal_activity_list),
             ...getColumnSearchProps('seasonal_activity_list'),
-            width: 150
+            width:150
         },
         {
             title: 'Price List',
             dataIndex: 'price_list',
             key: 'price_list', 
-            sorter: (a, b) => a.price_list.localeCompare(b.price_list),
-            ...getColumnSearchProps('price_list'),
-            width: 200
+            width: 250
         }, 
         {
             title: 'Action(s)',
@@ -281,7 +356,7 @@ export default function Attraction() {
                     <CustomButton text="View Current Ticket(s)" onClick={() => showViewModal(record.attraction_id)} style={styles.button} />
                 </div>
             ),
-            width: 190
+            width: 200
         }
     ];
     
