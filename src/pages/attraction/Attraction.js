@@ -349,14 +349,13 @@ export default function Attraction() {
             title: 'Action(s)',
             key: 'view',
             dataIndex: 'view',
-            width: 160,
+            width: 200,
             align: 'center',
             render: (text, record) => (
                 <div>
                     <CustomButton text="View Current Ticket(s)" onClick={() => showViewModal(record.attraction_id)} style={styles.button} />
                 </div>
             ),
-            width: 200
         }
     ];
     
