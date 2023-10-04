@@ -193,23 +193,23 @@ export default function TelecomManagement() {
             key: 'estimated_price_tier',
             filters: [
                 {
-                    text: 'Tier 1',
+                    text: '$',
                     value: 'TIER_1',
                 },
                 {
-                    text: 'Tier 2',
+                    text: '$$',
                     value: 'TIER_2',
                 },
                 {
-                    text: 'Tier 3',
+                    text: '$$$',
                     value: 'TIER_3',
                 },
                 {
-                    text: 'Tier 4',
+                    text: '$$$$',
                     value: 'TIER_4',
                 },
                 {
-                    text: 'Tier 5',
+                    text: '$$$$$',
                     value: 'TIER_5',
                 },
             ],
@@ -240,15 +240,15 @@ export default function TelecomManagement() {
                     value: 'ONE_DAY',
                 },
                 {
-                    text: 'Bet 1 and 3 days',
+                    text: 'Bet 2 and 3 days',
                     value: 'THREE_DAY',
                 },
                 {
-                    text: 'Bet 3 and 7 days',
+                    text: 'Bet 4 and 7 days',
                     value: 'SEVEN_DAY',
                 },
                 {
-                    text: 'Bet 7 and 14 days',
+                    text: 'Bet 8 and 14 days',
                     value: 'FOURTEEN_DAY',
                 },
                 {
@@ -259,17 +259,17 @@ export default function TelecomManagement() {
             onFilter: (value, record) => record.plan_duration_category.indexOf(value) === 0,
             render: (text, record) => {
                 if (text === 'ONE_DAY') {
-                    return <Tag color="green">1 Day</Tag>
+                    return <Tag color="green">1 day</Tag>
                 } else if (text === 'THREE_DAY') {
-                    return <Tag color="cyan">3 Day</Tag>
+                    return <Tag color="cyan">Bet 2 and 3 days</Tag>
                 } else if (text === 'SEVEN_DAY') {
-                    return <Tag color="blue">7 Day</Tag>
+                    return <Tag color="blue">Bet 4 and 7 days</Tag>
                 } else if (text === 'FOURTEEN_DAY') {
-                    return <Tag color="geekblue">14 Day</Tag>
+                    return <Tag color="geekblue">Bet 8 and 14 days</Tag>
                 } else if (text === 'MORE_THAN_FOURTEEN_DAYS') {
-                    return <Tag color="purple">More Than 14 Days</Tag>
+                    return <Tag color="purple">More than 14 days</Tag>
                 } else {
-                    return <p>Bug</p>
+                    return <p>text</p>
                 }
             }
         },
@@ -283,15 +283,15 @@ export default function TelecomManagement() {
                     value: 'VALUE_10',
                 },
                 {
-                    text: 'Bet 10GB and 30GB',
+                    text: 'Bet 11GB and 30GB',
                     value: 'VALUE_30',
                 },
                 {
-                    text: 'Bet 30GB and 50GB',
+                    text: 'Bet 31GB and 50GB',
                     value: 'VALUE_50',
                 },
                 {
-                    text: 'Bet 50GB and 100GB',
+                    text: 'Bet 51GB and 100GB',
                     value: 'VALUE_100',
                 },
                 {
@@ -312,7 +312,7 @@ export default function TelecomManagement() {
                 } else if (text === 'UNLIMITED') {
                     return <Tag color="gold">Beyond 100GB</Tag>
                 } else {
-                    return <p>Bug</p>
+                    return <p>text</p>
                 }
             }
         },
