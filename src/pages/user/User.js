@@ -838,5 +838,6 @@ const styles = {
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
+        marginTop: -10
     },
 }

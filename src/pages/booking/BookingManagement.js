@@ -413,12 +413,14 @@ const styles = {
     layout: {
         minHeight: '100vh',
         minWidth: '91.5vw',
+        backgroundColor: 'white'
     },
     content: {
         margin: '20px 30px 0',
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-        width: "98%"     
+        width: "98%" ,
+        marginTop: -10
     },
 }

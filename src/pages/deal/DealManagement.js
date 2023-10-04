@@ -393,12 +393,14 @@ const styles = {
     layout: {
         minHeight: '100vh',
         minWidth: '90vw',
+        backgroundColor: 'white'
     },
     content: {
         margin: '1vh 3vh 1vh 3vh',
         alignSelf: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: -45
     },
     imageContainer: {
         // maxWidth: '180px',

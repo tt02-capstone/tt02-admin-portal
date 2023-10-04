@@ -359,7 +359,7 @@ export default function AccommodationManagement() {
             <div>
                 <Layout style={styles.layout}>
                     <CustomHeader items={viewAccommodationBreadCrumb} />
-                    <Layout style={{ padding: '0 24px 24px' }}>
+                    <Layout style={{ padding: '0 24px 24px' , backgroundColor:'white'}}>
                         <Content style={styles.content}>
 
                             <CustomTablePagination
@@ -390,14 +390,16 @@ export default function AccommodationManagement() {
 const styles = {
     layout: {
         minHeight: '100vh',
-        minWidth: '91.5vw'
+        minWidth: '91.5vw',
+        backgroundColor: 'white'
     },
     content: {
         margin: '1vh 3vh 1vh 3vh',
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-        width: "98%"
+        width: "98%",
+        marginTop: -10
     },
     customRow: {
         height: '280px',
