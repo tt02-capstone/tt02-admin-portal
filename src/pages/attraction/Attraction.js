@@ -376,12 +376,14 @@ const styles = {
     layout: {
         minHeight: '100vh',
         minWidth: '90vw',
+        backgroundColor: 'white'
     },
     content: {
         margin: '20px 30px 0',
         alignSelf: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: -10
     },
     button: {
         fontSize: 12,

@@ -225,7 +225,7 @@ export default function TourManagement() {
             render: (text, record) => {
                 return <div>
                     <Space>
-                        <CustomButton key='1' text="View" onClick={() => onClickOpenViewTourTypeModal(record.tour_type_id)} />
+                        <CustomButton key='1' text="View" style ={{fontWeight:"bold"}} onClick={() => onClickOpenViewTourTypeModal(record.tour_type_id)} />
                     </Space>
                 </div>
             },
@@ -280,7 +280,8 @@ const styles = {
         margin: '20px 30px 0',
         alignSelf: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: -10
     },
     button: {
         width: '80%'

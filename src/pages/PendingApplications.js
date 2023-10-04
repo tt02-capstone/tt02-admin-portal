@@ -286,7 +286,8 @@ const styles = {
         margin: '20px 30px 0',
         alignSelf: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: -10
     },
     button: {
         width: '80%'
