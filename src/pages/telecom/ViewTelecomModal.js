@@ -84,6 +84,34 @@ export default function ViewTelecomModal(props) {
         }
     }
 
+    function formatDurationCategory(text) {
+        if (text === 'ONE_DAY') {
+            return '1 DAY';
+        } else if (text === 'THREE_DAY') {
+            return '3 DAYS';
+        } else if (text === 'SEVEN_DAY') {
+            return '7 DAYS';
+        } else if (text === 'FOURTEEN_DAY') {
+            return '14 DAYS';
+        } else {
+            return 'MORE THAN 14 DAYS';
+        }
+    }
+
+    function formatDataLimitText(text) {
+        if (text === 'VALUE_10') {
+            return '10GB';
+        } else if (text === 'VALUE_30') {
+            return '30GB';
+        } else if (text === 'VALUE_50') {
+            return '50GB';
+        } else if (text === 'VALUE_100') {
+            return '100GB';
+        } else {
+            return 'BEYOND 100GB';
+        }
+    }
+
     function renderProperty(label, value, color) {
 
         let formattedValue = value;
@@ -116,9 +144,9 @@ export default function ViewTelecomModal(props) {
                     {renderProperty('Price', telecom.price)}
                     {renderProperty('Price Tier', getPriceTierCount(telecom.estimated_price_tier))}
                     {renderProperty('Duration', telecom.num_of_days_valid)}
-                    {renderProperty('Duration Category', telecom.plan_duration_category, getValidityColor(telecom.plan_duration_category))}
+                    {renderProperty('Duration Category', formatDurationCategory(telecom.plan_duration_category), getValidityColor(telecom.plan_duration_category))}
                     {renderProperty('Data Limit', telecom.data_limit)}
-                    {renderProperty('Data Limit Category', telecom.data_limit_category, getDataLimitColor(telecom.data_limit_category))}
+                    {renderProperty('Data Limit Category', formatDataLimitText(telecom.data_limit_category), getDataLimitColor(telecom.data_limit_category))}
                 </div>
             </Modal>}
         </div>
