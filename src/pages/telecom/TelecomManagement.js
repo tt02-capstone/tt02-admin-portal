@@ -179,9 +179,9 @@ export default function TelecomManagement() {
             onFilter: (value, record) => record.type.indexOf(value) === 0,
             render: (text, record) => {
                 if (text === 'ESIM') {
-                    return <Tag color="magenta">E-Sim</Tag>
+                    return <Tag color="magenta">{text}</Tag>
                 } else if (text === 'PHYSICALSIM') {
-                    return <Tag color="cyan">Physical Sim</Tag>
+                    return <Tag color="cyan">{text}</Tag>
                 } else {
                     return <p>Bug</p>
                 }
@@ -310,7 +310,7 @@ export default function TelecomManagement() {
                 } else if (text === 'VALUE_100') {
                     return <Tag color="orange">100GB</Tag>
                 } else if (text === 'UNLIMITED') {
-                    return <Tag color="gold">Beyond 100GB</Tag>
+                    return <Tag color="gold">BEYOND 100GB</Tag>
                 } else {
                     return <p>text</p>
                 }
