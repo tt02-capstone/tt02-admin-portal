@@ -22,7 +22,7 @@ const CustomHeader = (props) => {
     // ];
     
     return(
-        <Header style={{ minHeight: '8vh', background: 'white', textAlign: 'left' }}>
+        <Header style={{ minHeight: '8vh', background: 'white', textAlign: 'left', fontWeight:"bold" }}>
             <Breadcrumb
                 separator=">"
                 items={props.items}
