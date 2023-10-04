@@ -317,7 +317,7 @@ export default function DealManagement() {
             align: 'center',
             render: (text, record) => (
                 <div>
-                    <CustomButton key='1' text="View" onClick={() => onOpenViewModal(record.deal_id)} style={{marginRight: '10px'}} />
+                    <CustomButton key='1' text="View" onClick={() => onOpenViewModal(record.deal_id)} style={{marginRight: '10px', fontWeiight:"bold"}} />
                 </div>
             ),
         }

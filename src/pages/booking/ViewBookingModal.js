@@ -162,7 +162,7 @@ export default function ViewBookingModal(props) {
         
         // Create an array of formatted ticket descriptions
         const itemDescriptions = bookingItems.map((bookingItem) => {
-          return `${bookingItem?.activity_selection} (${bookingItem?.quantity})`;
+          return `${bookingItem?.activity_selection} (${bookingItem?.quantity} pax)`;
         });
         
         const items = itemDescriptions.join(', ');

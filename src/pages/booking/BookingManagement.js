@@ -155,9 +155,9 @@ export default function BookingManagement() {
             onFilter: (value, record) => record.booked_user === value,
             render: (text, record) => {
               if (text === 'LOCAL') {
-                return <Tag color='success'>Local</Tag>;
+                return <Tag color='success'>LOCAL</Tag>;
               } else if (text === 'TOURIST') {
-                return <Tag color='error'>Tourist</Tag>;
+                return <Tag color='error'>TOURIST</Tag>;
               } else {
                 return 'Bug';
               }
@@ -191,20 +191,20 @@ export default function BookingManagement() {
                 let value = '';
                 switch (text) {
                     case 'ACCOMMODATION':
-                        color = 'processing';
-                        value = 'Accommodation';
+                        color = 'purple';
+                        value = 'ACCOMMODATION';
                         break;
                     case 'TELECOM':
-                        color = 'warning';
-                        value = 'Telecom';
+                        color = 'magenta';
+                        value = 'TELECOM';
                         break;
                     case 'ATTRACTION':
-                        color = 'success';
-                        value = 'Attraction';
+                        color = 'volcano';
+                        value = 'ATTRACTION';
                         break;
                     case 'TOUR':
-                        color = 'error';
-                        value = 'Tour';
+                        color = 'geekblue';
+                        value = 'TOUR';
                         break;
                 }
 
@@ -296,7 +296,7 @@ export default function BookingManagement() {
                     color = 'red';
                 }
 
-                return <Tag color={color}>{payment ? (payment.is_paid ? 'Paid' : 'Unpaid') : 'N/A'}</Tag>;
+                return <Tag color={color}>{payment ? (payment.is_paid ? 'PAID' : 'UNPAID') : 'N/A'}</Tag>;
             },
         },
         {
@@ -310,16 +310,26 @@ export default function BookingManagement() {
             title: 'Action(s)',
             dataIndex: 'operation',
             key: 'operation',
+            align: 'center',
             render: (text, record) => {
                 return <Space>
                     <CustomButton
                         text="View"
+                        style={{fontWeight: "bold"}}
                         onClick={() => onClickOpenViewBookingModal(record.booking_id)}
                     />
                 </Space>
             }
         },
     ];
+
+    function formatDate(dateTime) {
+        if (!dateTime) return '';
+        const dateObj = new Date(dateTime);
+        const formattedDate = dateObj.toLocaleDateString(); 
+        const formattedTime = dateObj.toLocaleTimeString(); 
+        return `${formattedDate} ${formattedTime}`;
+    }
 
     useEffect(() => {
         if (getBookingsData) {
@@ -334,6 +344,7 @@ export default function BookingManagement() {
                         start_datetime: moment(val.start_datetime).format('ll'),
                         end_datetime: moment(val.end_datetime).format('ll'),
                         payment_amount: `$${(val.payment.payment_amount * val.payment.comission_percentage).toFixed(2)}`,
+                        last_update: formatDate(val.last_update),
                         key: val.user_id,
                     }));
                     setBookingsData(tempData);
@@ -402,7 +413,6 @@ const styles = {
     layout: {
         minHeight: '100vh',
         minWidth: '91.5vw',
-        backgroundColor: 'white'
     },
     content: {
         margin: '20px 30px 0',

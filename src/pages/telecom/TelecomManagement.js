@@ -324,7 +324,7 @@ export default function TelecomManagement() {
             align: 'center',
             render: (text, record) => (
                 <div>
-                    <CustomButton key='1' text="View" onClick={() => onOpenViewModal(record.telecom_id)} style={{marginRight: '10px'}} />
+                    <CustomButton key='1' text="View" onClick={() => onOpenViewModal(record.telecom_id)} style={{marginRight: '10px',fontWeight:"bold"}} />
                 </div>
             ),
         }

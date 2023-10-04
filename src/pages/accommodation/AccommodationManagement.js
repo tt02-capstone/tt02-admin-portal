@@ -194,7 +194,7 @@ export default function AccommodationManagement() {
             ...getColumnSearchProps('address'),
         },
         {
-            title: 'Contact Num',
+            title: 'Contact No.',
             dataIndex: 'contact_num',
             key: 'contact_num',
             width: 120,
@@ -257,16 +257,19 @@ export default function AccommodationManagement() {
             title: 'Action(s)',
             dataIndex: 'operation',
             key: 'operation',
+            align: 'center',
             render: (text, record) => {
                 return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ marginBottom: '10px' }}>
                         <Space direction="vertical">
                             <CustomButton
                                 text="View Details"
+                                style={{fontWeight: "bold", fontSize: 12}}
                                 onClick={() => onClickOpenViewAccommodationModal(record.accommodation_id)}
                             />
                             <CustomButton
                                 text="View Room Count"
+                                style={{fontWeight: "bold", fontSize: 12}}
                                 onClick={() => onClickViewRoomCount(record.accommodation_id)}
                             />
                         </Space>
@@ -284,6 +287,7 @@ export default function AccommodationManagement() {
             // const formattedGenericLocation = item.generic_location.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
             // const formattedPriceTier = item.estimated_price_tier.split('_').join(' ');
             const formattedAvgRatingTier = item.avg_rating_tier === 0 ? 'N/A' : item.avg_rating_tier;
+            const formattedPriceTier = item.estimated_price_tier.split('_').join(' ');
 
             return {
                 accommodation_id: item.accommodation_id,
@@ -300,7 +304,7 @@ export default function AccommodationManagement() {
                 generic_location: item.generic_location,
                 estimated_price_tier: item.estimated_price_tier,
                 // generic_location: formattedGenericLocation,
-                // estimated_price_tier: formattedPriceTier,
+                estimated_price_tier: formattedPriceTier,
                 room_list: item.room_list,
             };
         });
