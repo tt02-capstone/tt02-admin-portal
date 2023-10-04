@@ -72,9 +72,9 @@ export default function ViewBookingModal(props) {
     function getPaymentStatusColor(paymentStatus) {
         switch (paymentStatus) {
             case 'PAID':
-                return 'success'; 
+                return 'success';
             case 'UNPAID':
-                return 'error';  
+                return 'error';
             default:
                 return '';
         }
@@ -83,8 +83,8 @@ export default function ViewBookingModal(props) {
     function formatDate(dateTime) {
         if (!dateTime) return '';
         const dateObj = new Date(dateTime);
-        const formattedDate = dateObj.toLocaleDateString(); 
-        const formattedTime = dateObj.toLocaleTimeString(); 
+        const formattedDate = dateObj.toLocaleDateString();
+        const formattedTime = dateObj.toLocaleTimeString();
         return `${formattedDate} ${formattedTime}`;
     }
 
@@ -159,21 +159,40 @@ export default function ViewBookingModal(props) {
 
     function renderBookingItems() {
         const bookingItems = selectedBooking.booking_item_list || [];
-        
+
         // Create an array of formatted ticket descriptions
         const itemDescriptions = bookingItems.map((bookingItem) => {
-          return `${bookingItem?.activity_selection} (${bookingItem?.quantity} pax)`;
+            return `${bookingItem?.activity_selection} (${bookingItem?.quantity} pax)`;
         });
-        
+
         const items = itemDescriptions.join(', ');
-      
+
         return (
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', marginBottom: '16px' }}>
-            <div style={{ fontWeight: 'bold', minWidth: '200px' }}>Booking Items:</div>
-            <div>{items}</div>
-          </div>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', marginBottom: '16px' }}>
+                <div style={{ fontWeight: 'bold', minWidth: '200px' }}>Booking Items:</div>
+                <div>{items}</div>
+            </div>
         );
-      }
+    }
+
+    function renderAccommodationBookingItems() {
+        const bookingItems = selectedBooking.booking_item_list || [];
+    
+        // Create an array of formatted ticket descriptions
+        const itemDescriptions = bookingItems.map((bookingItem) => {
+            const roomText = bookingItem.quantity === 1 ? 'room' : 'rooms';
+            return `${bookingItem?.activity_selection} (${bookingItem?.quantity} ${roomText})`;
+        });
+    
+        const items = itemDescriptions.join(', ');
+    
+        return (
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', marginBottom: '16px' }}>
+                <div style={{ fontWeight: 'bold', minWidth: '200px' }}>Booking Items:</div>
+                <div>{items}</div>
+            </div>
+        );
+    }    
 
     return (
         <div>
@@ -196,7 +215,9 @@ export default function ViewBookingModal(props) {
                     {renderProperty('Last Updated', formatDate(selectedBooking.last_update))}
                     {renderProperty('Start Date', formatStartEndDate(selectedBooking.start_datetime))}
                     {renderProperty('End Date', formatStartEndDate(selectedBooking.end_datetime))}
-                    {renderBookingItems()}
+                    {selectedBooking.type === 'ACCOMMODATION'
+                        ? renderAccommodationBookingItems()
+                        : renderBookingItems()}
                     {renderProperty('Payment Status', selectedBooking.payment ? (selectedBooking.payment.is_paid ? 'PAID' : 'UNPAID') : '', getPaymentStatusColor(selectedBooking.payment ? (selectedBooking.payment.is_paid ? 'PAID' : 'UNPAID') : ''))}
                     {renderProperty('Amount Earned', calculateAdminEarns(selectedBooking.payment))}
                 </div>
