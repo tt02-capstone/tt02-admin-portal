@@ -143,15 +143,9 @@ export default function ViewTelecomModal(props) {
                     {renderProperty('Published', telecom.is_published )}
                     {renderProperty('Price', "$" + telecom.price)}
                     {renderProperty('Price Tier', getPriceTierCount(telecom.estimated_price_tier))}
-<<<<<<< HEAD
                     {renderProperty('Duration', telecom.num_of_days_valid + " day(s)")}
                     {renderProperty('Duration Category', formatDurationCategory(telecom.plan_duration_category), getValidityColor(telecom.plan_duration_category))}
                     {renderProperty('Data Limit', telecom.data_limit + "GB")}
-=======
-                    {renderProperty('Duration', telecom.num_of_days_valid)}
-                    {renderProperty('Duration Category', formatDurationCategory(telecom.plan_duration_category), getValidityColor(telecom.plan_duration_category))}
-                    {renderProperty('Data Limit', telecom.data_limit)}
->>>>>>> d550e0840b46e72b389f8a64c8340363ea23d00c
                     {renderProperty('Data Limit Category', formatDataLimitText(telecom.data_limit_category), getDataLimitColor(telecom.data_limit_category))}
                 </div>
             </Modal>}
