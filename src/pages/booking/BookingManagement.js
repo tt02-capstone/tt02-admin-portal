@@ -340,7 +340,6 @@ export default function BookingManagement() {
                     var tempData = response.data.map((val) => ({
                         ...val,
                         name: val.local_user == null ? val.tourist_user.name : val.local_user.name,
-                        last_update: moment(val.last_update).format('llll'),
                         start_datetime: moment(val.start_datetime).format('ll'),
                         end_datetime: moment(val.end_datetime).format('ll'),
                         payment_amount: `$${(val.payment.payment_amount * val.payment.comission_percentage).toFixed(2)}`,
