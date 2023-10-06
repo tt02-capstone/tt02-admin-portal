@@ -198,7 +198,7 @@ export default function ViewRoomCount() {
             ...getColumnSearchProps('date')
         },
         {
-            title: 'Room Count',
+            title: 'Remaining Available Room(s)',
             dataIndex: 'count',
             key: 'count',
             sorter: (a, b) => a.count > b.count,
