@@ -201,8 +201,14 @@ export default function TourManagement() {
             dataIndex: 'special_note',
             key: 'special_note',
             width: 60,
-            sorter: (a, b) => a.special_note - b.special_note,
+            sorter: (a, b) => a.special_note.localeCompare(b.special_note),
             ...getColumnSearchProps('special_note'),
+            render: (text) => {
+                if (text === null) {
+                    return "-";
+                }
+                return text;
+            },
         },
         {
             title: 'Published',
@@ -215,7 +221,18 @@ export default function TourManagement() {
                     return <Badge status="error" text="No" />
                 }
             },
-            width: 40
+            width: 40,
+            filters: [
+                {
+                    text: 'Published',
+                    value: true,
+                },
+                {
+                    text: 'Hidden',
+                    value: false,
+                },
+            ],
+            onFilter: (value, record) => record.is_published === value,
         },
         {
             title: 'Action(s)',
