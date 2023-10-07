@@ -104,7 +104,8 @@ export default function Attraction() {
                 </table>
             ),
             seasonal_activity_list: activityListString,
-            estimated_price_tier: formattedPriceTier
+            estimated_price_tier: formattedPriceTier,
+            attraction_image_list: item.attraction_image_list
         };
     });
     
@@ -205,6 +206,26 @@ export default function Attraction() {
     });
 
     const columns = [
+        {
+            title: 'Cover Image',
+            dataIndex: 'attraction_image_list',
+            key: 'attraction_image_list',
+            render: (imageList) => {
+                if (Array.isArray(imageList) && imageList.length > 0) {
+                    const firstImageUrl = imageList[0];
+                    return (
+                        <div style={styles.imageContainer}>
+                            <img
+                                src={firstImageUrl}
+                                alt="Attraction"
+                                style={styles.image}
+                            />
+                        </div>
+                    );
+                }
+                return 'No Image';
+            },
+        },
         {
             title: 'Name',
             dataIndex: 'name',
@@ -388,5 +409,14 @@ const styles = {
     button: {
         fontSize: 12,
         fontWeight: "bold"
-    }
+    },
+    imageContainer: {
+        maxWidth: '180px',
+        maxHeight: '100px',
+        overflow: 'hidden',
+    },
+    image: {
+        width: '100%',
+        height: 'auto',
+    },
 }

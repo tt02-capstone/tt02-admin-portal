@@ -41,14 +41,16 @@ export default function ViewAllDishModal(props) {
 
     const columns = [
         {
-            title: 'Dish Name',
+            title: 'Menu Name',
             dataIndex: 'name',
             key: 'name',
+            sorter: (a, b) => a.name.localeCompare(b.name),
             width: 200,
         },
         {
             title: 'Price',
             dataIndex: 'price',
+            sorter: (a, b) => a.price.localeCompare(b.price),
             key: 'price',
             width: 100,
         },
@@ -56,6 +58,7 @@ export default function ViewAllDishModal(props) {
             title: 'Spicy',
             dataIndex: 'spicy',
             key: 'spicy',
+            sorter: (a, b) => String(a.spicy).localeCompare(String(b.spicy)),
             render: (text) => {
                 if (text === true) {
                     return <Badge status="success" text="Yes" />
@@ -69,6 +72,7 @@ export default function ViewAllDishModal(props) {
             title: 'Signature',
             dataIndex: 'is_signature',
             key: 'is_signature',
+            sorter: (a, b) => String(a.is_signature).localeCompare(String(b.is_signature)),
             render: (text) => {
                 if (text === true) {
                     return <Badge status="success" text="Yes" />
@@ -79,9 +83,28 @@ export default function ViewAllDishModal(props) {
             width: 100
         },
         {
-            title: 'Type',
+            title: 'Menu Type',
             dataIndex: 'dish_type',
             key: 'dish_type',
+            filters: [
+                {
+                    text: 'Mains',
+                    value: 'MAINS',
+                },
+                {
+                    text: 'Beverage',
+                    value: 'BEVERAGE',
+                },
+                {
+                    text: 'Sides',
+                    value: 'SIDES',
+                },
+                {
+                    text: 'Dessert',
+                    value: 'DESSERT',
+                }
+            ],
+            onFilter: (value, record) => record.dish_type.indexOf(value) === 0,
             render: (type) => {
                 let tagColor = 'default'; 
                 switch (type) {
@@ -112,7 +135,7 @@ export default function ViewAllDishModal(props) {
     return (
         <div>
             <Modal
-                title="View All Dish(s)"
+                title="View Menu"
                 centered
                 open={props.isViewAllDishModalOpen}
                 onCancel={props.onClickCancelViewAllDish}
