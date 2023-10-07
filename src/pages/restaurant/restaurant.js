@@ -145,6 +145,7 @@ export default function Restaurant() {
         const formattedContactNum = item.contact_num.replace(/(\d{4})(\d{4})/, '$1 $2');
         const formattedGenericLocation = item.generic_location.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
         const formattedPriceTier = item.estimated_price_tier.split('_').join(' ');
+        const formatType = item.restaurant_type.split('_').join(' ');
 
         return {
             key: index,
@@ -156,13 +157,34 @@ export default function Restaurant() {
             contact_num: formattedContactNum,
             is_published: item.is_published,
             suggested_duration: item.suggested_duration,
-            restaurant_type: item.restaurant_type,
+            restaurant_type: formatType,
             generic_location: formattedGenericLocation,
-            estimated_price_tier: formattedPriceTier
+            estimated_price_tier: formattedPriceTier,
+            restaurant_image_list: item.restaurant_image_list
         };
     }) : [];
     
     const columns = [
+        {
+            title: 'Cover Image',
+            dataIndex: 'restaurant_image_list',
+            key: 'restaurant_image_list',
+            render: (imageList) => {
+                if (Array.isArray(imageList) && imageList.length > 0) {
+                    const firstImageUrl = imageList[0];
+                    return (
+                        <div style={styles.imageContainer}>
+                            <img
+                                src={firstImageUrl}
+                                alt="Restaurant"
+                                style={styles.image}
+                            />
+                        </div>
+                    );
+                }
+                return 'No Image';
+            },
+        },
         {
             title: 'Restaurant Name',
             dataIndex: 'name',
@@ -178,15 +200,40 @@ export default function Restaurant() {
             ...getColumnSearchProps('description')
         },
         {
-            title: 'Type',
+            title: 'Restaurant Type',
             dataIndex: 'restaurant_type',
             key: 'restaurant_type',
-            sorter: (a, b) => a.restaurant_type.localeCompare(b.restaurant_type),
-            ...getColumnSearchProps('restaurant_type'),
+            filters: [
+                {
+                    text: 'Fast Food',
+                    value: 'FAST FOOD',
+                },
+                {
+                    text: 'Chinese',
+                    value: 'CHINESE',
+                },
+                {
+                    text: 'Mexican',
+                    value: 'MEXICAN',
+                },
+                {
+                    text: 'Korean',
+                    value: 'KOREAN',
+                },
+                {
+                    text: 'Western',
+                    value: 'WESTERN',
+                },
+                {
+                    text: 'Japanese',
+                    value: 'JAPANESE',
+                }
+            ],
+            onFilter: (value, record) => record.restaurant_type.indexOf(value) === 0,
             render: (type) => {
                 let tagColor = 'default'; 
                 switch (type) {
-                    case 'FAST_FOOD':
+                    case 'FAST FOOD':
                         tagColor = 'purple';
                         break;
                     case 'CHINESE':
@@ -292,7 +339,7 @@ export default function Restaurant() {
             render: (text, record) => {
                 return <div>
                     <CustomButton
-                        text="View All Dish"
+                        text="View Menu"
                         style ={{ fontSize : 12, fontWeight: "bold"}}
                         onClick={() => onClickViewAllDish(record.restaurant_id)}
                     />
@@ -358,5 +405,14 @@ const styles = {
     button: {
         fontSize: 13,
         fontWeight: "bold"
-    }
+    },
+    imageContainer: {
+        maxWidth: '180px',
+        maxHeight: '100px',
+        overflow: 'hidden',
+    },
+    image: {
+        width: '100%',
+        height: 'auto',
+    },
 }
