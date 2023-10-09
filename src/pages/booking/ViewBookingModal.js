@@ -175,13 +175,29 @@ export default function ViewBookingModal(props) {
         );
     }
 
+    function formatRoomType(text) {
+        if (text === 'STANDARD') {
+            return 'Standard';
+        } else if (text === 'DOUBLE') {
+            return 'Double';
+        } else if (text == 'SUITE') {
+            return 'Suite';
+        } else if (text === 'JUNIOR_SUITE') {
+            return 'Junior Suite';
+        } else if (text === 'DELUXE_SUITE') {
+            return 'Deluxe Suite';
+        } else {
+            return text;
+        }
+    }
+
     function renderAccommodationBookingItems() {
         const bookingItems = selectedBooking.booking_item_list || [];
     
         // Create an array of formatted ticket descriptions
         const itemDescriptions = bookingItems.map((bookingItem) => {
             const roomText = bookingItem.quantity === 1 ? 'room' : 'rooms';
-            return `${bookingItem?.activity_selection} (${bookingItem?.quantity} ${roomText})`;
+            return `${formatRoomType(bookingItem?.activity_selection)} (${bookingItem?.quantity} ${roomText})`;
         });
     
         const items = itemDescriptions.join(', ');

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Select, Tag, Badge, Carousel } from "antd";
 import {getAccommodationById} from "../../redux/accommodationRedux";
+import moment from 'moment';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 export default function ViewAccommodationModal(props) {
@@ -17,7 +18,21 @@ export default function ViewAccommodationModal(props) {
             alert('An error occurred! Failed to retrieve accommodation!');
         }
     }
-
+    function formatRoomType(text) {
+        if (text === 'STANDARD') {
+            return 'Standard';
+        } else if (text === 'DOUBLE') {
+            return 'Double';
+        } else if (text == 'SUITE') {
+            return 'Suite';
+        } else if (text === 'JUNIOR_SUITE') {
+            return 'Junior Suite';
+        } else if (text === 'DELUXE_SUITE') {
+            return 'Deluxe Suite';
+        } else {
+            return text;
+        }
+    }
     useEffect(() => {
     }, [selectedAccommodation, roomList])
 
@@ -50,7 +65,7 @@ export default function ViewAccommodationModal(props) {
 
                 return (
                     <p key={index} style={index === 0 ? { marginTop: 0 } : itemStyle}>
-                        <span>{type} Rooms: {roomTypes[type]}</span>
+                        <span>{formatRoomType(type)} Rooms: {roomTypes[type]}</span>
                     </p>
                 );
             });
@@ -59,6 +74,14 @@ export default function ViewAccommodationModal(props) {
         }
 
         return <p>No rooms available. Please create some!</p>;
+    }
+
+    function formatRoomType(text) {
+        if (text === 'Deluxe_suite') {
+            return 'Deluxe Suite';
+        } else {
+            return text;
+        }
     }
 
     function getPriceTierColor(priceTier) {
@@ -177,8 +200,8 @@ export default function ViewAccommodationModal(props) {
                     {renderProperty('Area', selectedAccommodation.generic_location)}
                     {renderProperty('Contact Number', selectedAccommodation.contact_num)}
                     {renderProperty('Is Published?', selectedAccommodation.is_published ? "Yes" : "No")}
-                    {renderProperty('Check In Time', selectedAccommodation.check_in_time)}
-                    {renderProperty('Check Out Time', selectedAccommodation.check_out_time)}
+                    {renderProperty('Check In Time', moment(selectedAccommodation.check_in_time).format('LT'))}
+                    {renderProperty('Check Out Time', moment(selectedAccommodation.check_out_time).format('LT'))}
                     {renderProperty('Price Tier', selectedAccommodation.estimated_price_tier, getPriceTierColor(selectedAccommodation.estimated_price_tier))}
                     {renderProperty('Rooms', formattedRoomList())}
                 </div>
