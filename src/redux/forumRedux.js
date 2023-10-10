@@ -80,8 +80,6 @@ export async function getAllCategory() {
 export async function getAllByCategoryItems(categoryId) {
     try {
         const response = await categoryItemApi.get(`/getAllByCategoryId/${categoryId}`);
-        console.log('redux get all category item')
-        console.log(response);
         return handleApiErrors(response);
     } catch (error) {
         console.error("forumRedux getAllByCategoryItems Error : ", error);
@@ -92,8 +90,6 @@ export async function getAllByCategoryItems(categoryId) {
 export async function getAllPostByCategoryItemId(categoryItemId) {
     try {
         const response = await postApi.get(`/getAllPostByCategoryItemId/${categoryItemId}`);
-        console.log('redux get all post within the category item')
-        console.log(response);
         return handleApiErrors(response);
     } catch (error) {
         console.error("forumRedux getAllPostByCategoryItemId Error : ", error);
@@ -104,8 +100,6 @@ export async function getAllPostByCategoryItemId(categoryItemId) {
 export async function getPost(postId) {
     try {
         const response = await postApi.get(`/getPost/${postId}`);
-        console.log('redux get post')
-        console.log(response);
         return handleApiErrors(response);
     } catch (error) {
         console.error("forumRedux getPost Error : ", error);
