@@ -34,6 +34,16 @@ export async function deleteCategoryItem(categoryItemIdToDelete) {
     }
 }
 
+export async function getLastCategoryItemId() {
+    try {
+      const response = await categoryItemApi.get(`/getLastCategoryItemId`);
+      return handleApiErrors(response);
+    } catch (error) {
+      console.error("forumRedux getLastCategoryItemId Error: ", error);
+      return { status: false, data: error.message };
+    }
+  }
+
 export async function createPost(userId, categoryItemId, postToCreate) {
     try {
         const response = await postApi.post(`/createPost/${userId}/${categoryItemId}`, postToCreate);
