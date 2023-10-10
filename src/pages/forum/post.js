@@ -51,8 +51,6 @@ export default function Post() {
                     } 
                 });
                 setPostList(processData);
-                console.log(processData)
-                console.log(user)
             } else {
                 console.log("List of posts not fetched!");
             }
@@ -79,7 +77,7 @@ export default function Post() {
              <CustomHeader items={forumBreadCrumb} />
              <Content style={styles.content}>
                 <div style={{ display: 'flex'}}>
-                    <div style={{ fontWeight: "bold", fontSize: 26, color:"#FFA53F"}}> 
+                    <div style={{ fontWeight: "bold", fontSize: 26}}> 
                         {category_item_name} Posts
                     </div> 
 

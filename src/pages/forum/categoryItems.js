@@ -5,7 +5,7 @@ import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, Link, useParams } from 'react-router-dom';
 import { getAllByCategoryItems } from '../../redux/forumRedux';
-import { DeleteOutlined, EditOutlined , PlusOutlined} from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined , PlusOutlined, EyeOutlined} from "@ant-design/icons";
 
 export default function ForumCategoryItems() {
     let { category_id } = useParams();
@@ -30,8 +30,6 @@ export default function ForumCategoryItems() {
             const response = await getAllByCategoryItems(category_id);
             if (response.status) {
                 setCategoryItems(response.data);
-                console.log('items')
-                console.log(response.data)
             } else {
                 console.log("List of categories items not fetched!");
             }
@@ -58,7 +56,7 @@ export default function ForumCategoryItems() {
              <CustomHeader items={forumBreadCrumb} />
              <Content style={styles.content}>
                 <div style={{ display: 'flex'}}>
-                    <div style={{ fontWeight: "bold", fontSize: 26, color:"#FFA53F"}}> 
+                    <div style={{ fontWeight: "bold", fontSize: 26}}> 
                         {category_name} Category Items 
                     </div> 
 
@@ -74,29 +72,27 @@ export default function ForumCategoryItems() {
 
                 <div style={{ display: 'flex', flexWrap: 'wrap', width: 1200}}>
                     {categoryItems.map((item, index) => (
-                        <Link to={`/forum/post/${category_id}/${category_name}/${item.category_item_id}/${item.name}`}>
-                            <Card
-                                hoverable
-                                style={{
-                                    width: 400,
-                                    height: 530,
-                                    marginLeft: '-5px',
-                                    marginRight: '50px'
-                                }}
-                                cover={<img alt={item.name} src={item.image} style={{width:400, height:400}}/>}
-                                bordered={false}
-                                key={index}
-                            >
-                                <Meta
-                                    title={item.name}
-                                    description= {"Explore Posts Related to " + item.name}/>
+                        <Card
+                            style={{
+                                width: 400,
+                                height: 530,
+                                marginLeft: '-5px',
+                                marginRight: '50px'
+                            }}
+                            cover={<img alt={item.name} src={item.image} style={{width:400, height:400}}/>}
+                            bordered={false}
+                            key={index}
+                        >
+                            <Meta
+                                title={item.name}
+                                description= {"Explore Posts Related to " + item.name}/>
 
-                                <div style={{ marginTop:'10px', marginLeft:'-12px'}}>
-                                    <Button type="text" style={{color:'#FFA53F'}} onClick={() => handleUpdate(item.category_item_id)}><EditOutlined /></Button>
-                                    <Button type="text" style={{color:'#FFA53F', marginLeft:'-10px'}} onClick={() => handleDelete(item.category_item_id)}><DeleteOutlined /></Button>
-                                </div>
-                            </Card>
-                        </Link>
+                            <div style={{ marginTop:'10px', marginLeft:'-12px'}}>
+                                <Button type="text" style={{color:'#FFA53F'}} onClick={() => handleUpdate(item.category_item_id)}><EditOutlined /></Button>
+                                <Button type="text" style={{color:'#FFA53F', marginLeft:'-2px'}} onClick={() => handleDelete(item.category_item_id)}><DeleteOutlined /></Button>
+                                <Link style={{color:'#FFA53F', marginLeft:'10px'}} to={`/forum/post/${category_id}/${category_name}/${item.category_item_id}/${item.name}`}>< EyeOutlined /></Link>
+                            </div>
+                        </Card>
                     ))}
                 </div>
                 

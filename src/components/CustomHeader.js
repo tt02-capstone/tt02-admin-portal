@@ -11,7 +11,7 @@ const CustomHeader = (props) => {
                     {props.items.map((item, index) => (
                         <span key={index} style={{ paddingRight:'10px'}}>
                             {item.to ? (
-                                <Link to={item.to} style={{color:'black'}}>{item.title}</Link>
+                                <Link to={item.to} style={{color:'#FFA53F'}}>{item.title}</Link>
                             ) : (
                                 item.title
                             )}
