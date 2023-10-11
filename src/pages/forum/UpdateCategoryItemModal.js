@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Form, Input, Space, Button, Select, InputNumber, Upload, TimePicker } from "antd";
 import { MinusCircleOutlined, PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import { ToastContainer, toast } from 'react-toastify';
-import { getLastCategoryItemId } from "../../redux/forumRedux";
 import AWS from 'aws-sdk';
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 export default function UpdateCategoryItemModal(props) {
 
-    const { TextArea } = Input;
-    const { Option } = Select;
     const [categoryItemId, setCategoryItemId] = useState(null);
     const [form] = Form.useForm();
-    const [lastCategoryItemId, setLastCategoryItemId] = useState(null);
-    const [category, setCategory] = useState([]);
+    const [categoryId, setCategoryId] = useState([]);
     const [imageFiles, setImageFiles] = useState([]);
     const [uploadedImage, setUploadedImage] = useState([]);
 
@@ -105,21 +100,19 @@ export default function UpdateCategoryItemModal(props) {
             setCategoryItemId(newCategoryItemId);
             console.log("nextCategoryItemId", categoryItemId);
 
-            props.onClickSubmitCategoryItemCreate({ ...props.form.getFieldsValue(), image: uploadedImage });
-
+            props.onClickSubmitCategoryItemUpdate({ ...form.getFieldsValue(), image: uploadedImage });
         } catch (error) {
             console.error("Error uploading image:", error);
         }
     };
 
     useEffect(() => {
-        setCategory(props.category);
-        console.log("category", category);
+        setCategoryId(props.category_id);
+        console.log("Category ID", categoryId);
     }, []);
 
     useEffect(() => {
         if (props.isUpdateCategoryItemModalOpen) {
-
             form.setFieldsValue({
                 name: props.category_item.name,
                 category_item_id: props.category_item.category_item_id,

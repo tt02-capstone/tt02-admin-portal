@@ -4,10 +4,11 @@ import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, Link, useParams } from 'react-router-dom';
-import { getAllByCategoryItems, createCategoryItem, deleteCategoryItem } from '../../redux/forumRedux';
+import { getAllByCategoryItems, createCategoryItem, deleteCategoryItem, updateCategoryItem } from '../../redux/forumRedux';
 import { DeleteOutlined, EditOutlined, PlusOutlined, EyeOutlined } from "@ant-design/icons";
 import { ToastContainer, toast } from 'react-toastify';
 import CreateCategoryItemModal from './CreateCategoryItemModal';
+import UpdateCategoryItemModal from './UpdateCategoryItemModal';
 
 export default function ForumCategoryItems() {
     let { category_id } = useParams();
@@ -62,6 +63,48 @@ export default function ForumCategoryItems() {
     const handleUpdate = (item_id) => {
         console.log('update');
         console.log(item_id);
+        setSelectedCategoryItemId(item_id);
+        setSelectedCategoryItem(categoryItems.find(item => item.category_item_id === item_id));
+        setIsUpdateCategoryItemModalOpen(true);
+    }
+
+    function onClickCancelUpdateCategoryItemModal() {
+        setIsUpdateCategoryItemModalOpen(false);
+        setSelectedCategoryItem(null);
+        setSelectedCategoryItemId(null);
+    }
+
+    async function onClickSubmitCategoryItemUpdate(values) {
+        const categoryItemObj = {
+            category_item_id: selectedCategoryItemId,
+            name: values.name,
+            image: values.image[0]
+        };
+
+        console.log("categoryItemObj", categoryItemObj);
+
+        let response = await updateCategoryItem(categoryItemObj);
+        console.log("updateCategoryItem response", response);
+        if (response.status) {
+            updateCategoryItemForm.resetFields();
+            setIsUpdateCategoryItemModalOpen(false);
+            toast.success('Category item successfully updated!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+
+            console.log(response.data);
+            setSelectedCategoryItemId(null);
+            setSelectedCategoryItem(null);
+            retrieveCategoryItems();
+        } else {
+            console.log("Category item update failed!");
+            console.log(response.data);
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
     }
 
     // Delete category item
@@ -191,6 +234,16 @@ export default function ForumCategoryItems() {
                         </Card>
                     ))}
                 </div>
+
+                <UpdateCategoryItemModal
+                    form={updateCategoryItemForm}
+                    isUpdateCategoryItemModalOpen={isUpdateCategoryItemModalOpen}
+                    onClickCancelUpdateCategoryItemModal={onClickCancelUpdateCategoryItemModal}
+                    onClickSubmitCategoryItemUpdate={onClickSubmitCategoryItemUpdate}
+                    category_id={category_id}
+                    category_item={selectedCategoryItem}
+                />
+
                 <Modal
                     title="Confirm Delete"
                     visible={isDeleteConfirmationVisible}

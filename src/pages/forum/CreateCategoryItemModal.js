@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Form, Input, Space, Button, Select, InputNumber, Upload, TimePicker } from "antd";
 import { MinusCircleOutlined, PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import { ToastContainer, toast } from 'react-toastify';
 import { getLastCategoryItemId } from "../../redux/forumRedux";
 import AWS from 'aws-sdk';
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 export default function CreateCategoryItemModal(props) {
-
-    const { TextArea } = Input;
-    const { Option } = Select;
     const [categoryItemId, setCategoryItemId] = useState(null);
     const [lastCategoryItemId, setLastCategoryItemId] = useState(null);
     const [categoryId, setCategoryId] = useState([]);
