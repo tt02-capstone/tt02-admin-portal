@@ -443,6 +443,17 @@ export default function User() {
             }
         },
         {
+            title: 'Wallet Balance',
+            dataIndex: 'wallet_balance',
+            key: 'wallet_balance',
+            sorter: (a, b) => (a.wallet_balance) > b.wallet_balance,
+            ...getColumnSearchProps('wallet_balance'),
+            render: (text, record) => {
+                return `$${parseFloat(record.wallet_balance).toFixed(2)}`;
+              },
+            
+        }, 
+        {
             title: 'Allowed Login Access',
             dataIndex: 'is_blocked',
             key: 'is_blocked',
@@ -479,6 +490,20 @@ export default function User() {
                     onClick={() => viewProfile(record.user_id)}
                 />)
 
+                actions.push(<CustomButton
+                    key={3}
+                    text="Add funds to wallet"
+                    style={{marginRight: '10px'}}
+                    onClick={() => viewProfile(record.user_id)}
+                />)
+
+                actions.push(<CustomButton
+                    key={3}
+                    text="Remove funds from wallet"
+                    style={{marginRight: '10px'}}
+                    onClick={() => viewProfile(record.user_id)}
+                />)
+
                 if (record.is_blocked) {
                     actions.push(<CustomButton
                         key={1}
@@ -492,6 +517,8 @@ export default function User() {
                         onClick={() => toggleBlock(record.user_id)}
                         />)
                 }
+
+                
 
                 return actions;
             }
