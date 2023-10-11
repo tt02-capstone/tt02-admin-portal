@@ -13,7 +13,7 @@ export default function CreateCategoryItemModal(props) {
     const { Option } = Select;
     const [categoryItemId, setCategoryItemId] = useState(null);
     const [lastCategoryItemId, setLastCategoryItemId] = useState(null);
-    const [category, setCategory] = useState([]);
+    const [categoryId, setCategoryId] = useState([]);
     const [imageFiles, setImageFiles] = useState([]);
     const [uploadedImage, setUploadedImage] = useState([]);
 
@@ -112,8 +112,8 @@ export default function CreateCategoryItemModal(props) {
     };
 
     useEffect(() => {
-        setCategory(props.category);
-        console.log("category", category);
+        setCategoryId(props.category_id);
+        console.log("Category ID", categoryId);
     }, []);
 
     useEffect(() => {

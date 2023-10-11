@@ -1,11 +1,13 @@
-import  { Layout, Card, Button } from 'antd';
+import  { Layout, Card, Button, Form } from 'antd';
 import { React , useEffect, useState , useRef } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, Link, useParams } from 'react-router-dom';
-import { getAllByCategoryItems } from '../../redux/forumRedux';
+import { getAllByCategoryItems, createCategoryItem } from '../../redux/forumRedux';
 import { DeleteOutlined, EditOutlined , PlusOutlined, EyeOutlined} from "@ant-design/icons";
+import { ToastContainer, toast } from 'react-toastify';
+import CreateCategoryItemModal from './CreateCategoryItemModal';
 
 export default function ForumCategoryItems() {
     let { category_id } = useParams();
@@ -37,6 +39,22 @@ export default function ForumCategoryItems() {
         fetchData();
     }, []);
 
+    async function retrieveCategoryItems() {
+        try {
+            let response = await getAllByCategoryItems(category_id);
+            setCategoryItems(response.data);
+        } catch (error) {
+            alert('An error occurred! Failed to retrieve category items!');
+        }
+    }
+
+    const [createCategoryItemForm] = Form.useForm();
+    const [updateCategoryItemForm] = Form.useForm();
+    const [isCreateCategoryItemModalOpen, setIsCreateCategoryItemModalOpen] = useState(false);
+    const [isUpdateCategoryItemModalOpen, setIsUpdateCategoryItemModalOpen] = useState(false);
+    const [selectedCategoryItemId, setSelectedCategoryItemId] = useState(null);
+    const [selectedCategoryItem, setSelectedCategoryItem] = useState(null);
+
     const handleUpdate = (item_id) => {
         console.log('update');
         console.log(item_id);
@@ -49,6 +67,41 @@ export default function ForumCategoryItems() {
 
     const handleCreate = () => {
         console.log('create');
+        setIsCreateCategoryItemModalOpen(true);
+    }
+
+    function onClickCancelCreateCategoryItemModal() {
+        setIsCreateCategoryItemModalOpen(false);
+    }
+
+    async function onClickSubmitCategoryItemCreate(values) {
+        const categoryItemObj = {
+            name: values.name,
+            image: values.image[0]
+        };
+
+        console.log("categoryItemObj", categoryItemObj);
+
+        let response = await createCategoryItem(category_id, categoryItemObj);
+        console.log("createCategoryItem response", response);
+        if (response.status) {
+            createCategoryItemForm.resetFields();
+            setIsCreateCategoryItemModalOpen(false);
+            toast.success('Category item successfully created!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+
+            console.log(response.data)
+            retrieveCategoryItems();
+        } else {
+            console.log("Category item creation failed!");
+            console.log(response.data);
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
     }
 
     return user ? (
@@ -65,6 +118,14 @@ export default function ForumCategoryItems() {
                             style={{ marginLeft:'auto', fontWeight: "bold", marginRight: '60px'}}
                             icon={<PlusOutlined />}
                             onClick={() => handleCreate()}
+                    />
+
+                    <CreateCategoryItemModal
+                        form={createCategoryItemForm}
+                        isCreateCategoryItemModalOpen={isCreateCategoryItemModalOpen}
+                        onClickCancelCreateCategoryItemModal={onClickCancelCreateCategoryItemModal}
+                        onClickSubmitCategoryItemCreate={onClickSubmitCategoryItemCreate}
+                        category_id={category_id}
                     />
                 </div>
                 
@@ -95,7 +156,7 @@ export default function ForumCategoryItems() {
                         </Card>
                     ))}
                 </div>
-                
+                <ToastContainer />
              </Content>
         </Layout>
     ):
