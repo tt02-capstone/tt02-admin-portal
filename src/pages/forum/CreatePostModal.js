@@ -44,9 +44,9 @@ export default function CreatePostModal(props) {
                         name="content"
                         placeholder="Content of Post"
                         rules={[{ required: true, message: 'Please enter content of post!' },
-                        { max: 800, message: 'Content should not exceed 800 characters!' }]}
+                        { max: 1000, message: 'Content should not exceed 1000 characters!' }]}
                     >
-                        <TextArea rows={4} />
+                        <TextArea rows={5} />
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 10, span: 16 }}>

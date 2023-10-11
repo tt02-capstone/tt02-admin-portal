@@ -1,11 +1,11 @@
-import { Layout, Card, Button, List, Avatar, Form } from 'antd';
+import { Layout, Card, Button, List, Avatar, Form, Modal } from 'antd';
 import { React, useEffect, useState, useRef } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, Link, useParams } from 'react-router-dom';
 import { DeleteOutlined, EditOutlined, PlusOutlined, EyeOutlined } from "@ant-design/icons";
-import { getAllPostByCategoryItemId, createPost } from '../../redux/forumRedux';
+import { getAllPostByCategoryItemId, createPost, deletePost } from '../../redux/forumRedux';
 import { ToastContainer, toast } from 'react-toastify';
 import CreatePostModal from './CreatePostModal';
 
@@ -91,13 +91,17 @@ export default function Post() {
         }
     }
 
+    // Properties for create/update/delete post
     const [createPostForm] = Form.useForm();
     const [updatePostForm] = Form.useForm();
     const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
     const [isUpdatePostModalOpen, setIsUpdatePostModalOpen] = useState(false);
     const [selectedPostId, setSelectedPostId] = useState(null);
     const [selectedPost, setSelectedPost] = useState(null);
+    const [isDeleteConfirmationVisible, setDeleteConfirmationVisible] = useState(false);
+    const [postIdToDelete, setPostIdToDelete] = useState('');
 
+    // Create a post
     const handleCreatePost = () => {
         console.log('create post');
         setIsCreatePostModalOpen(true);
@@ -137,15 +141,46 @@ export default function Post() {
         }
     }
 
+    // Update a post
     const handleUpdate = (post_id) => {
         console.log('update');
         console.log(post_id);
     }
 
+    // Delete a post
     const handleDelete = (post_id) => {
         console.log('delete');
         console.log(post_id);
+        openDeleteConfirmation(post_id);
     }
+
+    const openDeleteConfirmation = (post_id) => {
+        setPostIdToDelete(post_id);
+        setDeleteConfirmationVisible(true);
+    };
+
+    const closeDeleteConfirmation = () => {
+        setDeleteConfirmationVisible(false);
+    };
+
+    const onDeleteConfirmed = async () => {
+        let response = await deletePost(postIdToDelete);
+        if (response.status) {
+            toast.success(response.data, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+            retrieveAllPosts();
+            setPostIdToDelete('');
+        } else {
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+
+        closeDeleteConfirmation();
+    };
 
     return user ? (
         <Layout style={styles.layout}>
@@ -199,6 +234,14 @@ export default function Post() {
                         </List.Item>
                     )}
                 />
+                <Modal
+                    title="Confirm Delete"
+                    visible={isDeleteConfirmationVisible}
+                    onOk={() => onDeleteConfirmed()}
+                    onCancel={closeDeleteConfirmation}
+                >
+                    <p>Are you sure you want to delete this post?</p>
+                </Modal>
                 <ToastContainer />
             </Content>
         </Layout>
