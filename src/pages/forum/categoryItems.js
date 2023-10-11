@@ -1,11 +1,11 @@
-import  { Layout, Card, Button, Form } from 'antd';
-import { React , useEffect, useState , useRef } from 'react';
+import { Layout, Card, Button, Form, Modal } from 'antd';
+import { React, useEffect, useState, useRef } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, Link, useParams } from 'react-router-dom';
-import { getAllByCategoryItems, createCategoryItem } from '../../redux/forumRedux';
-import { DeleteOutlined, EditOutlined , PlusOutlined, EyeOutlined} from "@ant-design/icons";
+import { getAllByCategoryItems, createCategoryItem, deleteCategoryItem } from '../../redux/forumRedux';
+import { DeleteOutlined, EditOutlined, PlusOutlined, EyeOutlined } from "@ant-design/icons";
 import { ToastContainer, toast } from 'react-toastify';
 import CreateCategoryItemModal from './CreateCategoryItemModal';
 
@@ -13,15 +13,15 @@ export default function ForumCategoryItems() {
     let { category_id } = useParams();
     let { category_name } = useParams();
     const user = JSON.parse(localStorage.getItem("user"));
-    const [categoryItems, setCategoryItems] = useState([]); 
+    const [categoryItems, setCategoryItems] = useState([]);
 
     const { Meta } = Card;
 
     const forumBreadCrumb = [
         {
             title: 'Forum',
-            to:'/forum'
-        }, 
+            to: '/forum'
+        },
         {
             title: category_name,
         }
@@ -48,23 +48,58 @@ export default function ForumCategoryItems() {
         }
     }
 
+    // Properties for create/update/delete category item
     const [createCategoryItemForm] = Form.useForm();
     const [updateCategoryItemForm] = Form.useForm();
     const [isCreateCategoryItemModalOpen, setIsCreateCategoryItemModalOpen] = useState(false);
     const [isUpdateCategoryItemModalOpen, setIsUpdateCategoryItemModalOpen] = useState(false);
     const [selectedCategoryItemId, setSelectedCategoryItemId] = useState(null);
     const [selectedCategoryItem, setSelectedCategoryItem] = useState(null);
+    const [isDeleteConfirmationVisible, setDeleteConfirmationVisible] = useState(false);
+    const [categoryItemIdToDelete, setCategoryItemIdToDelete] = useState('');
 
+    // Update category item
     const handleUpdate = (item_id) => {
         console.log('update');
         console.log(item_id);
     }
 
+    // Delete category item
     const handleDelete = (item_id) => {
         console.log('delete');
         console.log(item_id);
+        openDeleteConfirmation(item_id);
     }
 
+    const openDeleteConfirmation = (item_id) => {
+        setCategoryItemIdToDelete(item_id);
+        setDeleteConfirmationVisible(true);
+    };
+
+    const closeDeleteConfirmation = () => {
+        setDeleteConfirmationVisible(false);
+    };
+
+    const onDeleteConfirmed = async () => {
+        let response = await deleteCategoryItem(categoryItemIdToDelete);
+        if (response.status) {
+            toast.success(response.data, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+            retrieveCategoryItems();
+            setCategoryItemIdToDelete('');
+        } else {
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+
+        closeDeleteConfirmation();
+    };
+
+    // Create category item
     const handleCreate = () => {
         console.log('create');
         setIsCreateCategoryItemModalOpen(true);
@@ -106,18 +141,18 @@ export default function ForumCategoryItems() {
 
     return user ? (
         <Layout style={styles.layout}>
-             <CustomHeader items={forumBreadCrumb} />
-             <Content style={styles.content}>
-                <div style={{ display: 'flex'}}>
-                    <div style={{ fontWeight: "bold", fontSize: 26}}> 
-                        {category_name} Category Items 
-                    </div> 
+            <CustomHeader items={forumBreadCrumb} />
+            <Content style={styles.content}>
+                <div style={{ display: 'flex' }}>
+                    <div style={{ fontWeight: "bold", fontSize: 26 }}>
+                        {category_name} Category Items
+                    </div>
 
                     <CustomButton
-                            text="Add Category Item"
-                            style={{ marginLeft:'auto', fontWeight: "bold", marginRight: '60px'}}
-                            icon={<PlusOutlined />}
-                            onClick={() => handleCreate()}
+                        text="Add Category Item"
+                        style={{ marginLeft: 'auto', fontWeight: "bold", marginRight: '60px' }}
+                        icon={<PlusOutlined />}
+                        onClick={() => handleCreate()}
                     />
 
                     <CreateCategoryItemModal
@@ -128,10 +163,10 @@ export default function ForumCategoryItems() {
                         category_id={category_id}
                     />
                 </div>
-                
-                <br/><br/>
 
-                <div style={{ display: 'flex', flexWrap: 'wrap', width: 1200}}>
+                <br /><br />
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', width: 1200 }}>
                     {categoryItems.map((item, index) => (
                         <Card
                             style={{
@@ -140,29 +175,37 @@ export default function ForumCategoryItems() {
                                 marginLeft: '-5px',
                                 marginRight: '50px'
                             }}
-                            cover={<img alt={item.name} src={item.image} style={{width:400, height:400}}/>}
+                            cover={<img alt={item.name} src={item.image} style={{ width: 400, height: 400 }} />}
                             bordered={false}
                             key={index}
                         >
                             <Meta
                                 title={item.name}
-                                description= {"Explore Posts Related to " + item.name}/>
+                                description={"Explore Posts Related to " + item.name} />
 
-                            <div style={{ marginTop:'10px', marginLeft:'-12px'}}>
-                                <Button type="text" style={{color:'#FFA53F'}} onClick={() => handleUpdate(item.category_item_id)}><EditOutlined /></Button>
-                                <Button type="text" style={{color:'#FFA53F', marginLeft:'-2px'}} onClick={() => handleDelete(item.category_item_id)}><DeleteOutlined /></Button>
-                                <Link style={{color:'#FFA53F', marginLeft:'10px'}} to={`/forum/post/${category_id}/${category_name}/${item.category_item_id}/${item.name}`}>< EyeOutlined /></Link>
+                            <div style={{ marginTop: '10px', marginLeft: '-12px' }}>
+                                <Button type="text" style={{ color: '#FFA53F' }} onClick={() => handleUpdate(item.category_item_id)}><EditOutlined /></Button>
+                                <Button type="text" style={{ color: '#FFA53F', marginLeft: '-2px' }} onClick={() => handleDelete(item.category_item_id)}><DeleteOutlined /></Button>
+                                <Link style={{ color: '#FFA53F', marginLeft: '10px' }} to={`/forum/post/${category_id}/${category_name}/${item.category_item_id}/${item.name}`}>< EyeOutlined /></Link>
                             </div>
                         </Card>
                     ))}
                 </div>
+                <Modal
+                    title="Confirm Delete"
+                    visible={isDeleteConfirmationVisible}
+                    onOk={() => onDeleteConfirmed()}
+                    onCancel={closeDeleteConfirmation}
+                >
+                    <p>Are you sure you want to delete this category item?</p>
+                </Modal>
                 <ToastContainer />
-             </Content>
+            </Content>
         </Layout>
-    ):
-    ( 
-        <Navigate to="/" />
-    )  
+    ) :
+        (
+            <Navigate to="/" />
+        )
 }
 
 const styles = {
@@ -173,8 +216,8 @@ const styles = {
     },
     content: {
         margin: '1vh 3vh 1vh 3vh',
-        marginTop: -10, 
-        justifyContent: 'center', 
+        marginTop: -10,
+        justifyContent: 'center',
         alignItems: 'center',
         marginLeft: 60,
     },
