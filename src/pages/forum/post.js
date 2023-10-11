@@ -5,9 +5,10 @@ import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, Link, useParams } from 'react-router-dom';
 import { DeleteOutlined, EditOutlined, PlusOutlined, EyeOutlined } from "@ant-design/icons";
-import { getAllPostByCategoryItemId, createPost, deletePost } from '../../redux/forumRedux';
+import { getAllPostByCategoryItemId, createPost, deletePost, updatePost } from '../../redux/forumRedux';
 import { ToastContainer, toast } from 'react-toastify';
 import CreatePostModal from './CreatePostModal';
+import UpdatePostModal from './UpdatePostModal';
 
 export default function Post() {
     let { category_name } = useParams();
@@ -145,6 +146,48 @@ export default function Post() {
     const handleUpdate = (post_id) => {
         console.log('update');
         console.log(post_id);
+        setSelectedPostId(post_id);
+        setSelectedPost(postList.find(item => item.post_id === post_id));
+        setIsUpdatePostModalOpen(true);
+    }
+
+    function onClickCancelUpdatePostModal() {
+        setIsUpdatePostModalOpen(false);
+        setSelectedPost(null);
+        setSelectedPostId(null);
+    }
+
+    async function onClickSubmitPostUpdate(values) {
+        const postObj = {
+            post_id: selectedPostId,
+            title: values.title,
+            content: values.content
+        };
+
+        console.log("postObj", postObj);
+
+        let response = await updatePost(postObj);
+        console.log("updatePost response", response);
+        if (response.status) {
+            updatePostForm.resetFields();
+            setIsUpdatePostModalOpen(false);
+            toast.success('Post successfully updated!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+
+            console.log(response.data);
+            setSelectedPostId(null);
+            setSelectedPost(null);
+            retrieveAllPosts();
+        } else {
+            console.log("Post update failed!");
+            console.log(response.data);
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
     }
 
     // Delete a post
@@ -234,6 +277,15 @@ export default function Post() {
                         </List.Item>
                     )}
                 />
+
+                <UpdatePostModal
+                    form={updatePostForm}
+                    isUpdatePostModalOpen={isUpdatePostModalOpen}
+                    onClickCancelUpdatePostModal={onClickCancelUpdatePostModal}
+                    onClickSubmitPostUpdate={onClickSubmitPostUpdate}
+                    post={selectedPost}
+                />
+
                 <Modal
                     title="Confirm Delete"
                     visible={isDeleteConfirmationVisible}
