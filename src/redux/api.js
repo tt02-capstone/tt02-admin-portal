@@ -64,7 +64,11 @@ export const postApi = axios.create({
     baseURL: HOST_WITH_PORT + '/post'
 })
 
-const instanceList = [userApi, localApi, adminApi, bookingApi, vendorStaffApi, touristApi, telecomApi, restaurantApi, dealsApi, tourApi, accommodationApi, attractionApi, categoryApi, categoryItemApi, postApi]
+export const supportApi = axios.create({
+    baseURL: HOST_WITH_PORT + '/supportTicket'
+})
+
+const instanceList = [userApi, localApi, adminApi, bookingApi, vendorStaffApi, touristApi, telecomApi, restaurantApi, dealsApi, tourApi, accommodationApi, attractionApi, categoryApi, categoryItemApi, postApi, supportTicketApi]
 
 instanceList.map((api) => {
     api.interceptors.request.use( (config) => {

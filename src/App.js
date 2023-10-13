@@ -12,7 +12,7 @@ import {
     HomeOutlined,
     UserOutlined,
     UsergroupAddOutlined,
-    MoneyCollectOutlined, BankOutlined, FormOutlined
+    MoneyCollectOutlined, BankOutlined, FormOutlined, AlertOutlined
 } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
@@ -48,6 +48,7 @@ export function AppLayout() {
       {key: '/forum', label: 'Forum', icon: <FormOutlined />,},
       {key: '/booking', label: 'Bookings', icon: <MoneyCollectOutlined />,},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
+      {key: '/supportTicket', label: 'Support Tickets', icon: <AlertOutlined />,},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
 
@@ -91,6 +92,7 @@ export function AppLayout() {
                         <Route path="/forum/:category_id/:category_name" element={<ForumCategoryItems />}/>
                         <Route path="/forum/post/:category_id/:category_name/:category_item_id/:category_item_name" element={< Post/>}/>
                         <Route path="/forum/post/:category_id/:category_name/:category_item_id/:category_item_name/:post_id/:post_title" element={< PostItems/>}/>
+                        <Route path="/supportTicket" element={<SupportTicketManagement />}/>
                         <Route path="*" element={<Home/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>
