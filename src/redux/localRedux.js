@@ -11,3 +11,15 @@ export async function getAllLocal() {
     return {status: false, data: error.message};
   }
 }
+
+export async function updateLocalWallet(vendorId, updateAmount) {
+
+  try {
+    const response = await localApi.put(`/updateWallet/${vendorId}/${updateAmount}`);
+    return handleApiErrors(response);
+  } catch (error) {
+    console.error("local Redux Error : ", error);
+    return {status: false, data: error.message};
+  }
+  
+}

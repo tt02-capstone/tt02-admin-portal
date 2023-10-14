@@ -18,6 +18,8 @@ import { getAllTourist } from "../../redux/touristRedux";
 import UserModal from "./UserModal";
 import { UserAddOutlined, SearchOutlined }  from "@ant-design/icons";
 import WalletModal from "./WalletModal";
+import { updateLocalWallet } from '../../redux/localRedux';
+import { updateVendorWallet } from '../../redux/vendorRedux';
 
 
 export default function User() {
@@ -284,14 +286,61 @@ export default function User() {
     // vendor staff
     const [getVendorStaffData, setGetVendorStaffData] = useState(true);
     const [vendorStaffData, setVendorStaffData] = useState([]); // list of vendor staff
+    const [createWalletForm] = Form.useForm();
+    const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+    const [currentId, setCurrentId] = useState(null);
+    const [currentType, setCurrentType] = useState(null);
+    const [currentAmount, setCurrentAmount] = useState(null);
 
+    // create new admin modal open button
+    function onClickOpenWallet(id, type , wallet_balance) {
+        setCurrentId(id);
+        setCurrentType(type);
+        setCurrentAmount(wallet_balance);
+        setIsWalletModalOpen(true);
 
-    const content = (
+        console.log(id, type , wallet_balance)
+    }
+    // create new admin modal cancel button
+    function onCancelWalletModal() {
+        setIsWalletModalOpen(false);
+    }
+
+    async function onSubmitUpdateWallet(values) {
+
+        const operation = values.operation
+        let amount = values.amount
+
+        if (operation === 'Remove') {
+            amount = -amount;
+          }
+          try {
+            const response = currentType === 'LOCAL' ? await updateLocalWallet(currentId, amount) : await updateVendorWallet(currentId, amount);
+      
+            if (response.status) {
+              console.log(response.data)
+              onCancelWalletModal();
+              if (currentType === 'LOCAL') {
+                setGetLocalData(true);
+              } else {
+                setGetVendorData(true);
+              }
+            } else {
+              console.log("List of vendor staff not fetched!");
+            }
+            } catch (error) {
+              console.log('API Exception:', error);
+            }
+    }
+
+    
+
+    const content = (id, type, wallet_balance) => (
         <div>
           <CustomButton
                         //key={1}
                         text="Add/Remove Funds to Wallet"
-                        //onClick={() => toggleBlock(record.user_id)}
+                        onClick={() => onClickOpenWallet(id, type, wallet_balance)}
                         />
           <CustomButton
                         //key={1}
@@ -375,7 +424,7 @@ export default function User() {
                 let actions = [];
 
                 actions.push(
-                    <Popover content={content} title="Additional Actions" trigger="click" key={3}>
+                    <Popover content={content(record.vendor_id, "VENDOR", record.wallet_balance)} title="Additional Actions" trigger="click" key={3}>
                         <CustomButton
                     text="Manage Wallet"
                     style={{marginRight: '10px'}}
@@ -542,7 +591,7 @@ export default function User() {
     // locals
     const [getLocalData, setGetLocalData] = useState(true);
     const [localData, setLocalData] = useState([]); // list of locals
-
+    
     const localColumns = [
         {
             title: 'Id',
@@ -624,7 +673,7 @@ export default function User() {
                 />)
 
                 actions.push(
-                    <Popover content={content} title="Additional Actions" trigger="click" key={3}>
+                    <Popover content={content(record.user_id, "LOCAL", record.wallet_balance)} title="Additional Actions" trigger="click" key={3}>
                         <CustomButton
                     text="Manage Wallet"
                     style={{marginRight: '10px'}}
@@ -983,9 +1032,13 @@ export default function User() {
                     />
 
                     <WalletModal
-                        user={profileUser}
-                        showUserCard={showUserCard}
-                        onCancelProfile={onCancelProfile}
+                        form={createWalletForm}
+                        id={currentId}
+                        type={currentType}
+                        walletAmount={currentAmount}
+                        isWalletModalOpen={isWalletModalOpen}
+                        onCancelWalletModal={onCancelWalletModal}
+                        onSubmitUpdateWallet={onSubmitUpdateWallet}
                     />
                 </Content>
             </Layout>

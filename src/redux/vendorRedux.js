@@ -12,3 +12,15 @@ export async function getAllVendors() {
   }
   
 }
+
+export async function updateVendorWallet(vendorId, updateAmount) {
+
+  try {
+    const response = await vendorApi.put(`/updateWallet/${vendorId}/${updateAmount}`);
+    return handleApiErrors(response);
+  } catch (error) {
+    console.error("vendorsRedux Error : ", error);
+    return {status: false, data: error.message};
+  }
+  
+}
