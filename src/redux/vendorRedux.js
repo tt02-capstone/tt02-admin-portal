@@ -24,3 +24,15 @@ export async function updateVendorWallet(vendorId, updateAmount) {
   }
   
 }
+
+export async function getVendorWalletHistory(vendorId) {
+
+  try {
+    const response = await vendorApi.get(`/getWalletHistory/${vendorId}`);
+    return handleApiErrors(response);
+  } catch (error) {
+    console.error("vendorsRedux Error : ", error);
+    return {status: false, data: error.message};
+  }
+  
+}

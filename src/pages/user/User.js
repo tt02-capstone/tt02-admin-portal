@@ -20,6 +20,7 @@ import { UserAddOutlined, SearchOutlined }  from "@ant-design/icons";
 import WalletModal from "./WalletModal";
 import { updateLocalWallet } from '../../redux/localRedux';
 import { updateVendorWallet } from '../../redux/vendorRedux';
+import TransactionsModal from "./TransactionsModal";
 
 
 export default function User() {
@@ -288,9 +289,22 @@ export default function User() {
     const [vendorStaffData, setVendorStaffData] = useState([]); // list of vendor staff
     const [createWalletForm] = Form.useForm();
     const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+    const [isTransactionsModalOpen, setIsTransactionsModalOpen] = useState(false);
     const [currentId, setCurrentId] = useState(null);
     const [currentType, setCurrentType] = useState(null);
     const [currentAmount, setCurrentAmount] = useState(null);
+
+    function onClickOpenTransactionsModal(id, type) {
+        setCurrentId(id);
+        setCurrentType(type);
+        setIsTransactionsModalOpen(true);
+
+        
+    }
+
+    function onCancelTransactionsModal() {
+        setIsTransactionsModalOpen(false);
+    }
 
     // create new admin modal open button
     function onClickOpenWallet(id, type , wallet_balance) {
@@ -299,7 +313,6 @@ export default function User() {
         setCurrentAmount(wallet_balance);
         setIsWalletModalOpen(true);
 
-        console.log(id, type , wallet_balance)
     }
     // create new admin modal cancel button
     function onCancelWalletModal() {
@@ -345,7 +358,7 @@ export default function User() {
           <CustomButton
                         //key={1}
                         text="View Withdrawal Requests"
-                        //onClick={() => toggleBlock(record.user_id)}
+                        onClick={() => onClickOpenTransactionsModal(id, type)}
                         />
 
         </div>
@@ -1039,6 +1052,14 @@ export default function User() {
                         isWalletModalOpen={isWalletModalOpen}
                         onCancelWalletModal={onCancelWalletModal}
                         onSubmitUpdateWallet={onSubmitUpdateWallet}
+                    />
+
+                    <TransactionsModal
+                        id={currentId}
+                        type={currentType}
+                        isTransactionsModalOpen={isTransactionsModalOpen}
+                        onCancelTransactionsModal={onCancelTransactionsModal}
+
                     />
                 </Content>
             </Layout>

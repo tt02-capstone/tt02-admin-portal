@@ -23,3 +23,15 @@ export async function updateLocalWallet(vendorId, updateAmount) {
   }
   
 }
+
+export async function getLocalWalletHistory(localId) {
+
+  try {
+    const response = await localApi.get(`/getWalletHistory/${localId}`);
+    return handleApiErrors(response);
+  } catch (error) {
+    console.error("local Redux Error : ", error);
+    return {status: false, data: error.message};
+  }
+  
+}
