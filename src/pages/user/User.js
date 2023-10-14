@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Layout, Menu, Form, Input, Space, Button } from 'antd';
+import { Layout, Menu, Form, Input, Space, Button, Popover } from 'antd';
 import Highlighter from 'react-highlight-words';
 import {useNavigate} from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -12,10 +12,13 @@ import CustomTablePagination from "../../components/CustomTablePagination";
 import { toggleUserBlock, viewUserProfile } from "../../redux/userRedux";
 import { createAdmin, getAllAdmin } from "../../redux/adminRedux";
 import { getAllVendorStaff } from '../../redux/vendorStaffRedux';
+import { getAllVendors } from "../../redux/vendorRedux";
 import { getAllLocal } from "../../redux/localRedux";
 import { getAllTourist } from "../../redux/touristRedux";
 import UserModal from "./UserModal";
 import { UserAddOutlined, SearchOutlined }  from "@ant-design/icons";
+import WalletModal from "./WalletModal";
+
 
 export default function User() {
 
@@ -46,6 +49,10 @@ export default function User() {
         {
             label: 'Tourist',
             key: '4',
+        },
+        {
+            label: 'Vendor',
+            key: '5',
         },
     ];
 
@@ -278,6 +285,132 @@ export default function User() {
     const [getVendorStaffData, setGetVendorStaffData] = useState(true);
     const [vendorStaffData, setVendorStaffData] = useState([]); // list of vendor staff
 
+
+    const content = (
+        <div>
+          <CustomButton
+                        //key={1}
+                        text="Add/Remove Funds to Wallet"
+                        //onClick={() => toggleBlock(record.user_id)}
+                        />
+          <CustomButton
+                        //key={1}
+                        text="View Withdrawal Requests"
+                        //onClick={() => toggleBlock(record.user_id)}
+                        />
+
+        </div>
+      );
+
+    const [getVendorData, setGetVendorData] = useState(true);
+    const [vendorData, setVendorData] = useState([]); // list of locals
+
+    const vendorColumns = [
+
+        {
+            title: 'Business Name',
+            dataIndex: 'business_name',
+            key: 'business_name',
+            width: 160,
+            sorter: (a, b) => a.business_name.localeCompare(b.business_name),
+            ...getColumnSearchProps('business_name'),
+        },
+        {
+            title: 'Vendor Type',
+            dataIndex: 'vendor_type',
+            key: 'vendor_type',
+            width: 160,
+            sorter: (a, b) => a.vendor_type.localeCompare(b.vendor_type),
+            ...getColumnSearchProps('vendor_type'),
+        },
+        {
+            title: 'Service Description',
+            dataIndex: 'service_description',
+            key: 'service_description',
+            width: 240,
+            sorter: (a, b) => a.service_description.localeCompare(b.service_description),
+            ...getColumnSearchProps('service_description'),
+        },
+        {
+            title: 'POC Name',
+            dataIndex: 'poc_name',
+            key: 'poc_name',
+            width: 160,
+            sorter: (a, b) => a.poc_name.localeCompare(b.poc_name),
+            ...getColumnSearchProps('poc_name'),
+        },
+        {
+            title: 'POC Position',
+            dataIndex: 'poc_position',
+            key: 'poc_position',
+            width: 160,
+            sorter: (a, b) => a.poc_position.localeCompare(b.poc_position),
+            ...getColumnSearchProps('poc_position'),
+        },
+        {
+            title: 'POC Contact',
+            dataIndex: 'poc_mobile_num',
+            key: 'poc_mobile_num',
+            width: 160,
+            sorter: (a, b) => a.poc_mobile_num.localeCompare(b.poc_mobile_num),
+            ...getColumnSearchProps('poc_mobile_num'),
+        },
+        {
+            title: 'Wallet Balance',
+            dataIndex: 'wallet_balance',
+            key: 'wallet_balance',
+            sorter: (a, b) => (a.wallet_balance) > b.wallet_balance,
+            ...getColumnSearchProps('wallet_balance'),
+            render: (text, record) => {
+                return `$${parseFloat(record.wallet_balance).toFixed(2)}`;
+              },
+            
+        }, 
+       
+        {
+            title: 'Action(s)',
+            dataIndex: 'vendor_id',
+            key: 'vendor_id',
+            render: (text, record) => {
+                let actions = [];
+
+                actions.push(
+                    <Popover content={content} title="Additional Actions" trigger="click" key={3}>
+                        <CustomButton
+                    text="Manage Wallet"
+                    style={{marginRight: '10px'}}
+                   />
+
+                    </Popover>
+                  );   
+
+                return actions;
+            }
+        }
+    ];
+
+
+      useEffect(() => { // fetch list of vendor staff
+        if (getVendorData) { // if we want to fetch the most updated data
+            const fetchData = async () => {
+                const response = await getAllVendors();
+                if (response.status) {
+                    console.log(response.data)
+                    var tempData = response.data.map((val) => ({
+                        ...val, 
+                        key: val.vendor_id,
+                    }));
+                    setVendorData(tempData);
+                    setGetVendorData(false);
+                } else {
+                    console.log("List of vendor staff not fetched!");
+                }
+            }
+    
+            fetchData();
+        }
+    },[getVendorData]);
+
     const vendorStaffColumns = [
         {
             title: 'Id',
@@ -490,19 +623,15 @@ export default function User() {
                     onClick={() => viewProfile(record.user_id)}
                 />)
 
-                actions.push(<CustomButton
-                    key={3}
-                    text="Add funds to wallet"
+                actions.push(
+                    <Popover content={content} title="Additional Actions" trigger="click" key={3}>
+                        <CustomButton
+                    text="Manage Wallet"
                     style={{marginRight: '10px'}}
-                    onClick={() => viewProfile(record.user_id)}
-                />)
+                   />
 
-                actions.push(<CustomButton
-                    key={3}
-                    text="Remove funds from wallet"
-                    style={{marginRight: '10px'}}
-                    onClick={() => viewProfile(record.user_id)}
-                />)
+                    </Popover>
+                  );
 
                 if (record.is_blocked) {
                     actions.push(<CustomButton
@@ -829,6 +958,14 @@ export default function User() {
                         />
                     }
 
+                    {/* vendor */}
+                    {currentTab === '5' && 
+                        <CustomTablePagination
+                            column={vendorColumns}
+                            data={vendorData}
+                        />
+                    }
+
                     {/* Modal to create new admin account */}
                     <CreateAdminModal
                         form={createAdminForm}
@@ -840,6 +977,12 @@ export default function User() {
 
                     {/* Modal to view user profile */}
                     <UserModal
+                        user={profileUser}
+                        showUserCard={showUserCard}
+                        onCancelProfile={onCancelProfile}
+                    />
+
+                    <WalletModal
                         user={profileUser}
                         showUserCard={showUserCard}
                         onCancelProfile={onCancelProfile}
