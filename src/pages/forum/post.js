@@ -162,7 +162,8 @@ export default function Post() {
         const postObj = {
             post_id: selectedPostId,
             title: values.title,
-            content: values.content
+            content: values.content,
+            post_image_list: values.post_image
         };
 
         console.log("postObj", postObj);
