@@ -56,7 +56,8 @@ export default function PostItems() {
                     postUser: user,
                     publish_time: item.publish_time,
                     updated_time: item.updated_time,
-                    post_image: item.post_image_list[0]
+                    post_image: item.post_image_list[0],
+                    comment_list: item.comment_list
                 }
 
                 setPost(formatItem)
@@ -69,6 +70,31 @@ export default function PostItems() {
         }
         fetchData();
     }, []);
+
+
+const Comment = ({ comment }) => {
+    let user;
+    if (comment.tourist_user != null) {
+        user = comment.tourist_user;
+    } else if (comment.local_user != null) {
+        user = comment.local_user;
+    } else if (comment.vendor_staff_user != null) {
+        user = comment.vendor_staff_user;
+    } else {
+        user = comment.internal_staff_user;
+    }
+
+    return (
+        <Card style={{ marginTop: '20px' }}>
+            <p>{user.name}</p>
+            <p>{comment.content}</p>
+            <p style={{ fontSize: '14px', color: '#666' }}>Commented on: {moment(comment.publish_time).format('L LT')}</p>
+            {/* Display child comments recursively */}
+            {comment.child_comment_list &&
+                comment.child_comment_list.map((child) => <Comment key={child.comment_id} comment={child} />)}
+        </Card>
+    );
+};
 
     return user ? (
         <Layout style={styles.layout}>
@@ -118,6 +144,11 @@ export default function PostItems() {
                         </Modal>
                     </div>
                 )}
+
+                {/* Display comments here */}
+                {post &&
+                post.comment_list &&
+                post.comment_list.map((comment) => <Comment key={comment.comment_id} comment={comment} />)}
                 </Card>
 
             </Content>
