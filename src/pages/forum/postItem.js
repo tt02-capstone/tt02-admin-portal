@@ -1,4 +1,4 @@
-import { Layout, Card, Button, List, Avatar, Modal } from 'antd';
+import { Layout, Card, Button, List, Avatar, Modal, InputNumber, Image } from 'antd';
 import { React, useEffect, useState, useRef } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";
@@ -48,6 +48,14 @@ export default function PostItems() {
             if (response.status) {
                 let item = response.data
                 const user = item.internal_staff_user || item.local_user || item.tourist_user || item.vendor_staff_user;
+                
+                let fileName = ""
+                const url = item.post_image_list[0]
+                if (typeof url !== "undefined") {
+                    const parts = url.split('/');
+                    const with_extension = parts[parts.length - 1];
+                    fileName = with_extension.split('_').slice(-1)[0];
+                }
 
                 const formatItem = {
                     post_id: item.post_id,
@@ -56,19 +64,19 @@ export default function PostItems() {
                     postUser: user,
                     publish_time: item.publish_time,
                     updated_time: item.updated_time,
-                    post_image: item.post_image_list[0]
+                    post_image: item.post_image_list[0],
+                    img_file : fileName
                 }
 
                 setPost(formatItem)
-
-                console.log('post output')
-                console.log(formatItem)
             } else {
                 console.log("Post not fetched!");
             }
         }
         fetchData();
     }, []);
+
+    const [visible, setVisible] = useState(false);
 
     return user ? (
         <Layout style={styles.layout}>
@@ -77,7 +85,7 @@ export default function PostItems() {
                 <Card
                     style={{
                         width: '100%',
-                        height: 300,
+                        height: 250,
                         marginLeft: '-5px',
                         marginRight: '50px',
                         fontSize: 20
@@ -94,28 +102,34 @@ export default function PostItems() {
 
                                 </div>
                             }
-                            description={post.content}
+                            description={
+                                <div style={{ fontSize: '16px', color: '#666', marginTop:'15px' }}>
+                                    {post.content}
+                                </div>
+                            }
                         />
                     )}
                     {post && post.post_image && (
                     <div>
-                        <img
+                        <Button 
+                            type="text"
+                            onClick={() => setVisible(true)}
+                            style={{ marginTop: '80px', marginLeft: '40px', color:'#FFA53F', fontWeight:"bold"}}>
+                            {post.img_file}
+                        </Button>
+                        
+                        <Image
+                            width={200}
+                            style={{ display: 'none' }}
                             src={post.post_image}
-                            alt="Post Image"
-                            style={{ marginTop: '20px', marginLeft: '50px', width: '25%', cursor: 'pointer' }}
-                            onClick={handleModalVisible}
+                            preview={{
+                                visible,
+                                src: post.post_image,
+                                onVisibleChange: (value) => {
+                                    setVisible(value);
+                                }
+                            }}
                         />
-                        <Modal
-                            visible={modalVisible}
-                            onCancel={handleModalVisible}
-                            footer={null}
-                        >
-                            <img
-                                src={post.post_image}
-                                alt="Post Image"
-                                style={{ width: '100%' }}
-                            />
-                        </Modal>
                     </div>
                 )}
                 </Card>

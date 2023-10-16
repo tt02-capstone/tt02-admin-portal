@@ -20,15 +20,10 @@ export default function UpdateCategoryItemModal(props) {
         return e && e.fileList;
     }
 
-    const uploadButton = (
-        <div>
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Upload</div>
-        </div>
-    );
-
     function handleRemove(file) {
         const updatedFiles = imageFiles.filter((item) => item.uid !== file.uid);
+        console.log('at handle remove')
+        console.log(updatedFiles)
         setImageFiles(updatedFiles);
     }
 
@@ -115,10 +110,9 @@ export default function UpdateCategoryItemModal(props) {
         if (props.isUpdateCategoryItemModalOpen) {
             form.setFieldsValue({
                 name: props.category_item.name,
-                category_item_id: props.category_item.category_item_id,
+                category_item_id: props.category_item.category_item_id
             });
         }
-
 
     }, [props.isUpdateCategoryItemModalOpen]);
 
@@ -134,7 +128,7 @@ export default function UpdateCategoryItemModal(props) {
                 <Form
                     name="basic"
                     form={form}
-                    labelCol={{ span: 8 }}
+                    labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }}
                     style={{ maxWidth: 600 }}
                     required={true}
@@ -172,8 +166,8 @@ export default function UpdateCategoryItemModal(props) {
                         </Upload>
                     </Form.Item>
 
-                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                        <Button type="primary" htmlType="submit">
+                    <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
+                        <Button type="primary" htmlType="submit" style={{backgroundColor: '#FFA53F', fontWeight:"bold", width:100}}>
                             Update
                         </Button>
                     </Form.Item>

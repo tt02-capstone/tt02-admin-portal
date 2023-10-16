@@ -295,6 +295,8 @@ export default function Post() {
                     visible={isDeleteConfirmationVisible}
                     onOk={() => onDeleteConfirmed()}
                     onCancel={closeDeleteConfirmation}
+                    okButtonProps={{ style: { backgroundColor: '#FFA53F', borderColor: '#FFA53F', fontWeight:"bold" } }}
+                    cancelButtonProps={{ style: { fontWeight:"bold"} }}
                 >
                     <p>Are you sure you want to delete this post?</p>
                 </Modal>

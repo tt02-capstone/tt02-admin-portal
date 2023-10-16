@@ -12,7 +12,7 @@ export default function CustomButton(props) {
     return (
         <Button
             type="primary"
-            style={{ ...props.style, backgroundColor: '#FFA53F' }}
+            style={{ ...props.style, backgroundColor: '#FFA53F', fontWeight:"bold" }}
             onClick={props.onClick}
             icon={props.icon}>
             {props.text}

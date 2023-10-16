@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Form, Input, Space, Button, Select, InputNumber, Upload, TimePicker } from "antd";
-import { MinusCircleOutlined, PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import { getLastCategoryItemId } from "../../redux/forumRedux";
 import AWS from 'aws-sdk';
 
@@ -134,7 +134,7 @@ export default function CreateCategoryItemModal(props) {
     return (
         <div>
             <Modal
-                title="Create New Category Item"
+                title="Add New Category Item"
                 centered
                 open={props.isCreateCategoryItemModalOpen}
                 onCancel={props.onClickCancelCreateCategoryItemModal}
@@ -143,7 +143,7 @@ export default function CreateCategoryItemModal(props) {
                 <Form
                     name="basic"
                     form={props.form}
-                    labelCol={{ span: 8 }}
+                    labelCol={{ span: 7 }}
                     wrapperCol={{ span: 16 }}
                     style={{ maxWidth: 600 }}
                     required={true}
@@ -180,8 +180,8 @@ export default function CreateCategoryItemModal(props) {
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
-                        <Button type="primary" htmlType="submit">
-                            Create
+                        <Button type="primary" htmlType="submit" style={{backgroundColor: '#FFA53F', fontWeight:"bold", width:80}}>
+                            Add
                         </Button>
                     </Form.Item>
                 </Form>

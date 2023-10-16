@@ -61,8 +61,8 @@ export default function ForumCategoryItems() {
 
     // Update category item
     const handleUpdate = (item_id) => {
-        console.log('update');
-        console.log(item_id);
+        // console.log('update');
+        // console.log(item_id);
         setSelectedCategoryItemId(item_id);
         setSelectedCategoryItem(categoryItems.find(item => item.category_item_id === item_id));
         setIsUpdateCategoryItemModalOpen(true);
@@ -81,10 +81,10 @@ export default function ForumCategoryItems() {
             image: values.image[0]
         };
 
-        console.log("categoryItemObj", categoryItemObj);
+        // console.log("categoryItemObj", categoryItemObj);
 
         let response = await updateCategoryItem(categoryItemObj);
-        console.log("updateCategoryItem response", response);
+        // console.log("updateCategoryItem response", response);
         if (response.status) {
             updateCategoryItemForm.resetFields();
             setIsUpdateCategoryItemModalOpen(false);
@@ -93,13 +93,12 @@ export default function ForumCategoryItems() {
                 autoClose: 1500
             });
 
-            console.log(response.data);
             setSelectedCategoryItemId(null);
             setSelectedCategoryItem(null);
             retrieveCategoryItems();
         } else {
-            console.log("Category item update failed!");
-            console.log(response.data);
+            // console.log("Category item update failed!");
+            // console.log(response.data);
             toast.error(response.data.errorMessage, {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 1500
@@ -107,10 +106,10 @@ export default function ForumCategoryItems() {
         }
     }
 
-    // Delete category item
+    // delete category item
     const handleDelete = (item_id) => {
-        console.log('delete');
-        console.log(item_id);
+        // console.log('delete');
+        // console.log(item_id);
         openDeleteConfirmation(item_id);
     }
 
@@ -144,7 +143,7 @@ export default function ForumCategoryItems() {
 
     // Create category item
     const handleCreate = () => {
-        console.log('create');
+        // console.log('create');
         setIsCreateCategoryItemModalOpen(true);
     }
 
@@ -158,10 +157,10 @@ export default function ForumCategoryItems() {
             image: values.image[0]
         };
 
-        console.log("categoryItemObj", categoryItemObj);
+        // console.log("categoryItemObj", categoryItemObj);
 
         let response = await createCategoryItem(category_id, categoryItemObj);
-        console.log("createCategoryItem response", response);
+        // console.log("createCategoryItem response", response);
         if (response.status) {
             createCategoryItemForm.resetFields();
             setIsCreateCategoryItemModalOpen(false);
@@ -170,11 +169,11 @@ export default function ForumCategoryItems() {
                 autoClose: 1500
             });
 
-            console.log(response.data)
+            // console.log(response.data)
             retrieveCategoryItems();
         } else {
-            console.log("Category item creation failed!");
-            console.log(response.data);
+            // console.log("Category item creation failed!");
+            // console.log(response.data);
             toast.error(response.data.errorMessage, {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 1500
@@ -209,16 +208,17 @@ export default function ForumCategoryItems() {
 
                 <br /><br />
 
-                <div style={{ display: 'flex', flexWrap: 'wrap', width: 1200 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', width: 1800 }}>
                     {categoryItems.map((item, index) => (
                         <Card
                             style={{
-                                width: 400,
-                                height: 530,
+                                width: 500,
+                                height: 630,
                                 marginLeft: '-5px',
-                                marginRight: '50px'
+                                marginRight: '50px',
+                                marginBottom: '50px'
                             }}
-                            cover={<img alt={item.name} src={item.image} style={{ width: 400, height: 400 }} />}
+                            cover={<img alt={item.name} src={item.image} style={{ width: 500, height: 500 }} />}
                             bordered={false}
                             key={index}
                         >
@@ -249,6 +249,8 @@ export default function ForumCategoryItems() {
                     visible={isDeleteConfirmationVisible}
                     onOk={() => onDeleteConfirmed()}
                     onCancel={closeDeleteConfirmation}
+                    okButtonProps={{ style: { backgroundColor: '#FFA53F', borderColor: '#FFA53F', fontWeight:"bold" } }}
+                    cancelButtonProps={{ style: { fontWeight:"bold"} }}
                 >
                     <p>Are you sure you want to delete this category item?</p>
                 </Modal>
