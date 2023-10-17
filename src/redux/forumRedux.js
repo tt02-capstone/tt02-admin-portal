@@ -116,3 +116,24 @@ export async function getPost(postId) {
         return { status: false, data: error.message };
     }
 }
+
+export async function upvote(userId, postId) {
+    try {
+        const response = await postApi.put(`/upvote/${userId}/${postId}`);
+        console.log(response)
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux upvote Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function downvote(userId, postId) {
+    try {
+        const response = await postApi.put(`/downvote/${userId}/${postId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux downvote Error : ", error);
+        return {status: false, data: error.message};
+    }
+}

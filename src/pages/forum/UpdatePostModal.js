@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, Space, Button, Select, InputNumber, Upload, TimePicker } from "antd";
-import { MinusCircleOutlined, PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import { ToastContainer, toast } from 'react-toastify';
+import { Modal, Form, Input, Button, Upload } from "antd";
+import { UploadOutlined } from '@ant-design/icons';
 import AWS from 'aws-sdk';
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
@@ -9,7 +8,6 @@ window.Buffer = window.Buffer || require("buffer").Buffer;
 export default function UpdatePostModal(props) {
 
     const { TextArea } = Input;
-    const { Option } = Select;
     const [form] = Form.useForm();
     const [imageFiles, setImageFiles] = useState([]);
     const [uploadedImage, setUploadedImage] = useState([]);
@@ -21,13 +19,6 @@ export default function UpdatePostModal(props) {
         return e && e.fileList;
     }
 
-    const uploadButton = (
-        <div>
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Upload</div>
-        </div>
-    );
-
     function handleRemove(file) {
         const updatedFiles = imageFiles.filter((item) => item.uid !== file.uid);
         setImageFiles(updatedFiles);
@@ -38,8 +29,6 @@ export default function UpdatePostModal(props) {
     const TT02REGION = 'ap-southeast-1';
     const ACCESS_KEY = 'AKIART7KLOHBGOHX2Y7T';
     const SECRET_ACCESS_KEY = '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';
-
-    const [file, setFile] = useState(null);
 
     const handleFileChange = (e) => {
         const fileList = e.fileList;
@@ -127,7 +116,7 @@ export default function UpdatePostModal(props) {
                 <Form
                     name="basic"
                     form={form}
-                    labelCol={{ span: 8 }}
+                    labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }}
                     style={{ maxWidth: 600 }}
                     required={true}
@@ -171,8 +160,8 @@ export default function UpdatePostModal(props) {
                         </Upload>
                     </Form.Item>
 
-                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                        <Button type="primary" htmlType="submit">
+                    <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
+                        <Button type="primary" htmlType="submit" style={{backgroundColor: '#FFA53F', fontWeight:"bold", width:100}}>
                             Update
                         </Button>
                     </Form.Item>
@@ -180,28 +169,4 @@ export default function UpdatePostModal(props) {
             </Modal>
         </div>
     )
-}
-
-const styles = {
-    layout: {
-        minHeight: '100vh',
-    },
-    content: {
-        margin: '24px 16px 0',
-        alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    customRow: {
-        height: '280px',
-    },
-    imageContainer: {
-        maxWidth: '180px',
-        maxHeight: '100px',
-        overflow: 'hidden',
-    },
-    image: {
-        width: '100%',
-        height: 'auto',
-    },
 }

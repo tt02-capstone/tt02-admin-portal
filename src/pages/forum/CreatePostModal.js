@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, Space, Button, Select, InputNumber, Upload, TimePicker } from "antd";
-import { MinusCircleOutlined, PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import { ToastContainer, toast } from 'react-toastify';
+import { Modal, Form, Input, Button, Select, Upload } from "antd";
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import AWS from 'aws-sdk';
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
@@ -105,7 +104,7 @@ export default function CreatePostModal(props) {
     return (
         <div>
             <Modal
-                title="Create New Post"
+                title="New Post"
                 centered
                 open={props.isCreatePostModalOpen}
                 onCancel={props.onClickCancelCreatePostModal}
@@ -114,7 +113,7 @@ export default function CreatePostModal(props) {
                 <Form
                     name="basic"
                     form={props.form}
-                    labelCol={{ span: 8 }}
+                    labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }}
                     style={{ maxWidth: 600 }}
                     required={true}
@@ -158,7 +157,7 @@ export default function CreatePostModal(props) {
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" style={{backgroundColor: '#FFA53F', fontWeight:"bold", width:120}}>
                             Create
                         </Button>
                     </Form.Item>

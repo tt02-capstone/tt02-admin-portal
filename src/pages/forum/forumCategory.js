@@ -1,8 +1,7 @@
 import { getAllCategory } from "../../redux/forumRedux";
 import  { Layout, List, Avatar } from 'antd';
-import { React , useEffect, useState , useRef } from 'react';
+import { React , useEffect, useState  } from 'react';
 import CustomHeader from "../../components/CustomHeader";
-import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, Link } from 'react-router-dom';
 

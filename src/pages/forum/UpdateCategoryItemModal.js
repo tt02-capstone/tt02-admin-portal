@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, Space, Button, Select, InputNumber, Upload, TimePicker } from "antd";
-import { MinusCircleOutlined, PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import { Modal, Form, Input, Button, Upload } from "antd";
+import { UploadOutlined } from '@ant-design/icons';
 import AWS from 'aws-sdk';
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
@@ -20,15 +20,10 @@ export default function UpdateCategoryItemModal(props) {
         return e && e.fileList;
     }
 
-    const uploadButton = (
-        <div>
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Upload</div>
-        </div>
-    );
-
     function handleRemove(file) {
         const updatedFiles = imageFiles.filter((item) => item.uid !== file.uid);
+        console.log('at handle remove')
+        console.log(updatedFiles)
         setImageFiles(updatedFiles);
     }
 
@@ -116,10 +111,9 @@ export default function UpdateCategoryItemModal(props) {
         if (props.isUpdateCategoryItemModalOpen) {
             form.setFieldsValue({
                 name: props.category_item.name,
-                category_item_id: props.category_item.category_item_id,
+                category_item_id: props.category_item.category_item_id
             });
         }
-
 
     }, [props.isUpdateCategoryItemModalOpen]);
 
@@ -135,7 +129,7 @@ export default function UpdateCategoryItemModal(props) {
                 <Form
                     name="basic"
                     form={form}
-                    labelCol={{ span: 8 }}
+                    labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }}
                     style={{ maxWidth: 600 }}
                     required={true}
@@ -173,8 +167,8 @@ export default function UpdateCategoryItemModal(props) {
                         </Upload>
                     </Form.Item>
 
-                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                        <Button type="primary" htmlType="submit">
+                    <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
+                        <Button type="primary" htmlType="submit" style={{backgroundColor: '#FFA53F', fontWeight:"bold", width:100}}>
                             Update
                         </Button>
                     </Form.Item>
@@ -182,28 +176,4 @@ export default function UpdateCategoryItemModal(props) {
             </Modal>
         </div>
     )
-}
-
-const styles = {
-    layout: {
-        minHeight: '100vh',
-    },
-    content: {
-        margin: '24px 16px 0',
-        alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    customRow: {
-        height: '280px',
-    },
-    imageContainer: {
-        maxWidth: '180px',
-        maxHeight: '100px',
-        overflow: 'hidden',
-    },
-    image: {
-        width: '100%',
-        height: 'auto',
-    },
 }
