@@ -218,7 +218,11 @@ export default function ForumCategoryItems() {
                                 marginRight: '50px',
                                 marginBottom: '50px'
                             }}
-                            cover={<img alt={item.name} src={item.image} style={{ width: 500, height: 500 }} />}
+                            cover={
+                                <Link style={{ color: '#FFA53F', marginLeft: '17px' }} to={`/forum/post/${category_id}/${category_name}/${item.category_item_id}/${item.name}`}>
+                                    <img alt={item.name} src={item.image} style={{ width: 500, height: 500 }} />
+                                </Link>
+                            }
                             bordered={false}
                             key={index}
                         >
@@ -226,15 +230,13 @@ export default function ForumCategoryItems() {
                                 title={item.name}
                                 description={"Explore Posts Related to " + item.name} />
 
-                            <div style={{ marginTop: '10px', marginLeft: '-10px' }}>
+                            <div style={{ marginTop: '15px', marginLeft: '-10px', fontSize: 18 }}>
                                 <Link style={{ color: '#FFA53F', marginLeft: '10px' }} onClick={() => handleUpdate(item.category_item_id)}>
                                     <EditOutlined />
                                 </Link>
-                                <Link style={{ color: '#FFA53F', marginLeft: '17px' }} onClick={() => handleDelete(item.category_item_id)}>
+                                <Link style={{ color: '#FFA53F', marginLeft: '20px' }} onClick={() => handleDelete(item.category_item_id)}>
                                     <DeleteOutlined />
                                 </Link>
-
-                                <Link style={{ color: '#FFA53F', marginLeft: '17px' }} to={`/forum/post/${category_id}/${category_name}/${item.category_item_id}/${item.name}`}>< EyeOutlined /></Link>
                             </div>
                         </Card>
                     ))}
