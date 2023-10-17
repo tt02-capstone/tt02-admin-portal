@@ -231,7 +231,7 @@ export default function Post() {
         <Layout style={styles.layout}>
             <CustomHeader items={forumBreadCrumb} />
             <Content style={styles.content}>
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex' , marginBottom: 25}}>
                     <div style={{ fontWeight: "bold", fontSize: 26 }}>
                         {category_item_name} Posts
                     </div>
@@ -253,36 +253,35 @@ export default function Post() {
                     />
                 </div>
 
-                <br />
-
                 <List
                     itemLayout="horizontal"
                     dataSource={postList}
                     renderItem={(item, index) => (
-                        <List.Item>
-                            <List.Item.Meta
-                                avatar={<Avatar size="large" src={`${item.postUser.profile_pic}`} />}
-                                title={item.title}
-                                description={item.content}
-                                style={{ fontSize: 25, marginBottom: 10 }}
-                            />
+                            <>
+                            <List.Item style={{ fontSize: 25, marginTop: -10, marginBottom: -12}}>
+                                <Link to={`/forum/post/${category_id}/${category_name}/${category_item_id}/${category_item_name}/${item.post_id}/${item.title}`}>
+                                    <List.Item.Meta
+                                        avatar={<Avatar size="large" src={`${item.postUser.profile_pic}`} />}
+                                        title={item.title}
+                                        description={item.content}
+                                        style={{width:'1300px'}}
+                                    />
+                                </Link>
 
-                            {item.postUser.user_id === user.user_id && ( // only can edit and delete ur own post 
-                                <div style={{ marginRight: 5 }}>
-                                    <Link style={{ color: '#FFA53F' , marginRight: '17px'}} onClick={() => handleUpdate(item.post_id)}>
-                                        <EditOutlined />
-                                    </Link>
-                                    <Link style={{ color: '#FFA53F', marginRight: '10px' }}  onClick={() => handleDelete(item.post_id)}>
-                                        <DeleteOutlined />
-                                    </Link>
-                                </div>
-                            )}
+                                {item.postUser.user_id === user.user_id && ( // only can edit and delete ur own post 
+                                    <div style={{ marginRight: 60, fontSize: 18 }}>
+                                        <Link style={{ color: '#FFA53F' , marginRight: '30px'}} onClick={() => handleUpdate(item.post_id)}>
+                                            <EditOutlined />
+                                        </Link>
+                                        <Link style={{ color: '#FFA53F', marginRight: '20px' }}  onClick={() => handleDelete(item.post_id)}>
+                                            <DeleteOutlined />
+                                        </Link>
+                                    </div>
+                                )}
 
-                            <div style={{ marginRight: 100 }}>
-                                <Link to={`/forum/post/${category_id}/${category_name}/${category_item_id}/${category_item_name}/${item.post_id}/${item.title}`} style={{ color: "#FFA53F" }}>< EyeOutlined /></Link>
-                            </div>
-
-                        </List.Item>
+                            </List.Item>
+                            <br/>
+                            </>
                     )}
                 />
 
