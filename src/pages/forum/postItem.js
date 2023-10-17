@@ -4,7 +4,7 @@ import CustomHeader from "../../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, useParams, Link } from 'react-router-dom';
 import { getPost } from '../../redux/forumRedux';
-import { PaperClipOutlined, CaretUpOutlined , CaretDownOutlined } from '@ant-design/icons';
+import { PaperClipOutlined, ArrowUpOutlined , ArrowDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { downvote, upvote } from '../../redux/forumRedux';
 import { ToastContainer, toast } from 'react-toastify';
@@ -22,6 +22,8 @@ export default function PostItems() {
     const { Meta } = Card;
     const [visible, setVisible] = useState(false);
     const [refreshCount, setRefreshCount] = useState(0);
+    const [upColour, setUpColour] = useState("black")
+    const [downColour, setDownColour] = useState("black")
 
     const forumBreadCrumb = [
         {
@@ -103,10 +105,14 @@ export default function PostItems() {
         if (!user.upvoted_user_id_list || !user.upvoted_user_id_list.includes(user.user_id)) {
             const response = await upvote(user.user_id, post_id);
             if (response.status) {
-                // console.log(response.data.upvoted_user_id_list.length)
-                // console.log(response.data.downvoted_user_id_list.length)
                 let count = response.data.upvoted_user_id_list.length - response.data.downvoted_user_id_list.length
+                let colour1 = response.data.upvoted_user_id_list && response.data.upvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black";
+                let colour2 = response.data.downvoted_user_id_list && response.data.downvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black";
+                
                 setRefreshCount(count)
+                setUpColour(colour1)
+                setDownColour(colour2)
+
                 console.log('success');
             } else {
                 toast.error(response.data.errorMessage, {
@@ -121,10 +127,14 @@ export default function PostItems() {
         if (!user.downvoted_user_id_list || !user.downvoted_user_id_list.includes(user.user_id)) {
             const response = await downvote(user.user_id, post_id);
             if (response.status) {
-                // console.log(response.data.upvoted_user_id_list.length)
-                // console.log(response.data.downvoted_user_id_list.length)
-                let count = response.data.upvoted_user_id_list.length - response.data.downvoted_user_id_list.length
-                setRefreshCount(count)
+                let count = response.data.upvoted_user_id_list.length - response.data.downvoted_user_id_list.length;
+                let colour1 = response.data.upvoted_user_id_list && response.data.upvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black"
+                let colour2 = response.data.downvoted_user_id_list && response.data.downvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black";
+
+                setRefreshCount(count);
+                setUpColour(colour1)
+                setDownColour(colour2)
+
                 console.log('success');
             } else {
                 toast.error(response.data.errorMessage, {
@@ -199,14 +209,14 @@ export default function PostItems() {
                             )}
 
                             <div style={{ marginLeft: 'auto', marginTop: '80px', marginRight: 30, display:'flex'}}>
-                                <Link style={{ color:'#FFA53F', fontWeight:"bold", fontSize:'25px'}} onClick={() => onDownvote(post.post_id)}>  
-                                    <CaretDownOutlined />
+                                <Link style={{ color: (downColour) , fontWeight:"bold", fontSize:'20px'}} onClick={() => onDownvote(post.post_id)}>  
+                                    <ArrowDownOutlined />
                                 </Link>
 
-                                <p style={{marginLeft:10, marginRight:10, marginTop: 10, fontSize:13, fontWeight:'bold'}}> { refreshCount }</p>
+                                <p style={{marginLeft:10, marginRight:10, marginTop: 6, fontSize:13, fontWeight:'bold'}}> { refreshCount }</p>
                                 
-                                <Link style={{ color:'#FFA53F', fontWeight:"bold", fontSize:'25px'}} onClick={() => onUpvote(post.post_id)} > 
-                                    <CaretUpOutlined />
+                                <Link style={{ color: (upColour) , fontWeight:"bold", fontSize:'20px'}} onClick={() => onUpvote(post.post_id)} > 
+                                    <ArrowUpOutlined />
                                 </Link>
                             </div>
                         </div>
