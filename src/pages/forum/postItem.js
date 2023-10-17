@@ -1,11 +1,13 @@
-import { Layout, Card, Button, List, Avatar, Modal, InputNumber, Image } from 'antd';
-import { React, useEffect, useState, useRef } from 'react';
+import { Layout, Card, Avatar, Image } from 'antd';
+import { React, useEffect, useState } from 'react';
 import CustomHeader from "../../components/CustomHeader";
-import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
-import { Navigate, Link, useParams } from 'react-router-dom';
+import { Navigate, useParams, Link } from 'react-router-dom';
 import { getPost } from '../../redux/forumRedux';
+import { PaperClipOutlined, CaretUpOutlined , CaretDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { downvote, upvote } from '../../redux/forumRedux';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function PostItems() {
     let { category_name } = useParams();
@@ -18,12 +20,8 @@ export default function PostItems() {
     const user = JSON.parse(localStorage.getItem("user"));
     const [post, setPost] = useState();
     const { Meta } = Card;
-    const [modalVisible, setModalVisible] = useState(false);
     const [visible, setVisible] = useState(false);
-
-    const handleModalVisible = () => {
-        setModalVisible(!modalVisible);
-    };
+    const [refreshCount, setRefreshCount] = useState(0);
 
     const forumBreadCrumb = [
         {
@@ -69,7 +67,6 @@ export default function PostItems() {
                     img_file : fileName,
                     comment_list: item.comment_list
                 }
-
                 setPost(formatItem)
             } else {
                 console.log("Post not fetched!");
@@ -102,6 +99,42 @@ export default function PostItems() {
         );
     };
 
+    const onUpvote = async (post_id) => {
+        if (!user.upvoted_user_id_list || !user.upvoted_user_id_list.includes(user.user_id)) {
+            const response = await upvote(user.user_id, post_id);
+            if (response.status) {
+                // console.log(response.data.upvoted_user_id_list.length)
+                // console.log(response.data.downvoted_user_id_list.length)
+                let count = response.data.upvoted_user_id_list.length - response.data.downvoted_user_id_list.length
+                setRefreshCount(count)
+                console.log('success');
+            } else {
+                toast.error(response.data.errorMessage, {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 1500
+                });
+            }
+        }
+    }
+
+    const onDownvote = async (post_id) => {
+        if (!user.downvoted_user_id_list || !user.downvoted_user_id_list.includes(user.user_id)) {
+            const response = await downvote(user.user_id, post_id);
+            if (response.status) {
+                // console.log(response.data.upvoted_user_id_list.length)
+                // console.log(response.data.downvoted_user_id_list.length)
+                let count = response.data.upvoted_user_id_list.length - response.data.downvoted_user_id_list.length
+                setRefreshCount(count)
+                console.log('success');
+            } else {
+                toast.error(response.data.errorMessage, {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 1500
+                });
+            }
+        }
+    }
+
     return user ? (
         <Layout style={styles.layout}>
             <CustomHeader items={forumBreadCrumb} />
@@ -133,35 +166,71 @@ export default function PostItems() {
                             }
                         />
                     )}
-                    {post && post.post_image && (
-                    <div>
-                        <Button 
-                            type="text"
-                            onClick={() => setVisible(true)}
-                            style={{ marginTop: '80px', marginLeft: '40px', color:'#FFA53F', fontWeight:"bold"}}>
-                            {post.img_file}
-                        </Button>
-                        
-                        <Image
-                            width={200}
-                            style={{ display: 'none' }}
-                            src={post.post_image}
-                            preview={{
-                                visible,
-                                src: post.post_image,
-                                onVisibleChange: (value) => {
-                                    setVisible(value);
-                                }
-                            }}
-                        />
-                    </div>
-                )}
 
-                {/* Display comments here */}
-                {post &&
-                post.comment_list &&
-                post.comment_list.map((comment) => <Comment key={comment.comment_id} comment={comment} />)}
+                    { post && (
+                        <div style={{display: 'flex'}}>
+                            {/* display image attachment if there is any */}
+                            { post.post_image && (
+                                <>
+                                    <p style={{ marginTop: '80px', marginLeft: '60px', color:'#FFA53F', fontWeight:"bold", fontSize:'18px'}}>
+                                        <PaperClipOutlined />
+                                    </p>
+
+                                    <Link 
+                                        type="text"
+                                        onClick={() => setVisible(true)}
+                                        style={{ marginTop: '82px', marginLeft: '5px', color:'#FFA53F', fontWeight:"bold", fontSize:'15px'}}>
+                                        {post.img_file}
+                                    </Link>
+                                    
+                                    <Image
+                                        width={200}
+                                        style={{ display: 'none' }}
+                                        src={post.post_image}
+                                        preview={{
+                                            visible,
+                                            src: post.post_image,
+                                            onVisibleChange: (value) => {
+                                                setVisible(value);
+                                            }
+                                        }}
+                                    />
+                                </>
+                            )}
+
+                            <div style={{ marginLeft: 'auto', marginTop: '80px', marginRight: 30, display:'flex'}}>
+                                <Link style={{ color:'#FFA53F', fontWeight:"bold", fontSize:'25px'}} onClick={() => onDownvote(post.post_id)}>  
+                                    <CaretDownOutlined />
+                                </Link>
+
+                                <p style={{marginLeft:10, marginRight:10, marginTop: 10, fontSize:13, fontWeight:'bold'}}> { refreshCount }</p>
+                                
+                                <Link style={{ color:'#FFA53F', fontWeight:"bold", fontSize:'25px'}} onClick={() => onUpvote(post.post_id)} > 
+                                    <CaretUpOutlined />
+                                </Link>
+                            </div>
+                        </div>
+                    )}
                 </Card>
+
+                <Card style={{
+                        width: '100%',
+                        height: 250,
+                        marginLeft: '-5px',
+                        marginRight: '50px',
+                        marginTop: '30px',
+                        fontSize: 20,
+                        border:'none'
+                    }}
+                    >
+
+                      {/* Display comments here */}
+                      {post && post.comment_list &&
+                        post.comment_list.map((comment) => <Comment key={comment.comment_id} comment={comment} />)}
+                </Card>
+                
+
+                <ToastContainer />
 
             </Content>
         </Layout>

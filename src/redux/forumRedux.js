@@ -120,6 +120,7 @@ export async function getPost(postId) {
 export async function upvote(userId, postId) {
     try {
         const response = await postApi.put(`/upvote/${userId}/${postId}`);
+        console.log(response)
         return handleApiErrors(response);
     } catch (error) {
         console.error("forumRedux upvote Error : ", error);

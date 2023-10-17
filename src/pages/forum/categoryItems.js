@@ -1,5 +1,5 @@
 import { Layout, Card, Button, Form, Modal } from 'antd';
-import { React, useEffect, useState, useRef } from 'react';
+import { React, useEffect, useState } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
@@ -226,10 +226,15 @@ export default function ForumCategoryItems() {
                                 title={item.name}
                                 description={"Explore Posts Related to " + item.name} />
 
-                            <div style={{ marginTop: '10px', marginLeft: '-12px' }}>
-                                <Button type="text" style={{ color: '#FFA53F' }} onClick={() => handleUpdate(item.category_item_id)}><EditOutlined /></Button>
-                                <Button type="text" style={{ color: '#FFA53F', marginLeft: '-2px' }} onClick={() => handleDelete(item.category_item_id)}><DeleteOutlined /></Button>
-                                <Link style={{ color: '#FFA53F', marginLeft: '10px' }} to={`/forum/post/${category_id}/${category_name}/${item.category_item_id}/${item.name}`}>< EyeOutlined /></Link>
+                            <div style={{ marginTop: '10px', marginLeft: '-10px' }}>
+                                <Link style={{ color: '#FFA53F', marginLeft: '10px' }} onClick={() => handleUpdate(item.category_item_id)}>
+                                    <EditOutlined />
+                                </Link>
+                                <Link style={{ color: '#FFA53F', marginLeft: '17px' }} onClick={() => handleDelete(item.category_item_id)}>
+                                    <DeleteOutlined />
+                                </Link>
+
+                                <Link style={{ color: '#FFA53F', marginLeft: '17px' }} to={`/forum/post/${category_id}/${category_name}/${item.category_item_id}/${item.name}`}>< EyeOutlined /></Link>
                             </div>
                         </Card>
                     ))}

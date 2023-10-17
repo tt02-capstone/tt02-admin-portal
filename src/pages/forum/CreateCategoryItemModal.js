@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, Space, Button, Select, InputNumber, Upload, TimePicker } from "antd";
-import { PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import { Modal, Form, Input, Button, Upload } from "antd";
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { getLastCategoryItemId } from "../../redux/forumRedux";
 import AWS from 'aws-sdk';
 

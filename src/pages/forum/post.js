@@ -1,5 +1,5 @@
-import { Layout, Card, Button, List, Avatar, Form, Modal } from 'antd';
-import { React, useEffect, useState, useRef } from 'react';
+import { Layout, Button, List, Avatar, Form, Modal } from 'antd';
+import { React, useEffect, useState } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
@@ -269,8 +269,12 @@ export default function Post() {
 
                             {item.postUser.user_id === user.user_id && ( // only can edit and delete ur own post 
                                 <div style={{ marginRight: 5 }}>
-                                    <Button type="text" style={{ color: '#FFA53F' }} onClick={() => handleUpdate(item.post_id)}><EditOutlined /></Button>
-                                    <Button type="text" style={{ color: '#FFA53F', marginLeft: '-10px' }} onClick={() => handleDelete(item.post_id)}><DeleteOutlined /></Button>
+                                    <Link style={{ color: '#FFA53F' , marginRight: '17px'}} onClick={() => handleUpdate(item.post_id)}>
+                                        <EditOutlined />
+                                    </Link>
+                                    <Link style={{ color: '#FFA53F', marginRight: '10px' }}  onClick={() => handleDelete(item.post_id)}>
+                                        <DeleteOutlined />
+                                    </Link>
                                 </div>
                             )}
 

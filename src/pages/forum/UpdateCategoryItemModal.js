@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, Space, Button, Select, InputNumber, Upload, TimePicker } from "antd";
-import { MinusCircleOutlined, PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import { Modal, Form, Input, Button, Upload } from "antd";
+import { UploadOutlined } from '@ant-design/icons';
 import AWS from 'aws-sdk';
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
@@ -176,28 +176,4 @@ export default function UpdateCategoryItemModal(props) {
             </Modal>
         </div>
     )
-}
-
-const styles = {
-    layout: {
-        minHeight: '100vh',
-    },
-    content: {
-        margin: '24px 16px 0',
-        alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    customRow: {
-        height: '280px',
-    },
-    imageContainer: {
-        maxWidth: '180px',
-        maxHeight: '100px',
-        overflow: 'hidden',
-    },
-    image: {
-        width: '100%',
-        height: 'auto',
-    },
 }

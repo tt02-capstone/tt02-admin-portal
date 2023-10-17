@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, Space, Button, Select, InputNumber, Upload, TimePicker } from "antd";
-import { MinusCircleOutlined, PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import { ToastContainer, toast } from 'react-toastify';
+import { Modal, Form, Input, Button, Select, Upload } from "antd";
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import AWS from 'aws-sdk';
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
