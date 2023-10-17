@@ -96,6 +96,7 @@ export default function UpdateCategoryItemModal(props) {
             console.log("nextCategoryItemId", categoryItemId);
 
             props.onClickSubmitCategoryItemUpdate({ ...form.getFieldsValue(), image: uploadedImage });
+            form.resetFields();
         } catch (error) {
             console.error("Error uploading image:", error);
         }
