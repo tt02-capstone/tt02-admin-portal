@@ -21,9 +21,7 @@ export default function PostItems() {
     const [post, setPost] = useState();
     const { Meta } = Card;
     const [visible, setVisible] = useState(false);
-    const [refreshCount, setRefreshCount] = useState(0);
-    const [upColour, setUpColour] = useState("black")
-    const [downColour, setDownColour] = useState("black")
+    const [trigger, setTrigger] = useState(true);
 
     const forumBreadCrumb = [
         {
@@ -67,15 +65,22 @@ export default function PostItems() {
                     updated_time: item.updated_time,
                     post_image: item.post_image_list[0],
                     img_file : fileName,
-                    comment_list: item.comment_list
+                    upvote_list: item.upvoted_user_id_list,
+                    downvote_list: item.downvoted_user_id_list,
+                    comment_list: item.comment_list,
                 }
                 setPost(formatItem)
             } else {
                 console.log("Post not fetched!");
             }
         }
-        fetchData();
-    }, []);
+
+        if ((post_id && trigger)) {
+            fetchData();
+            setTrigger(false);
+        }
+
+    }, [trigger]);
 
     const Comment = ({ comment }) => {
         let user;
@@ -105,15 +110,8 @@ export default function PostItems() {
         if (!user.upvoted_user_id_list || !user.upvoted_user_id_list.includes(user.user_id)) {
             const response = await upvote(user.user_id, post_id);
             if (response.status) {
-                let count = response.data.upvoted_user_id_list.length - response.data.downvoted_user_id_list.length
-                let colour1 = response.data.upvoted_user_id_list && response.data.upvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black";
-                let colour2 = response.data.downvoted_user_id_list && response.data.downvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black";
-                
-                setRefreshCount(count)
-                setUpColour(colour1)
-                setDownColour(colour2)
-
-                console.log('success');
+                setTrigger(true);
+                console.log('upvote success');
             } else {
                 toast.error(response.data.errorMessage, {
                     position: toast.POSITION.TOP_RIGHT,
@@ -127,15 +125,8 @@ export default function PostItems() {
         if (!user.downvoted_user_id_list || !user.downvoted_user_id_list.includes(user.user_id)) {
             const response = await downvote(user.user_id, post_id);
             if (response.status) {
-                let count = response.data.upvoted_user_id_list.length - response.data.downvoted_user_id_list.length;
-                let colour1 = response.data.upvoted_user_id_list && response.data.upvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black"
-                let colour2 = response.data.downvoted_user_id_list && response.data.downvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black";
-
-                setRefreshCount(count);
-                setUpColour(colour1)
-                setDownColour(colour2)
-
-                console.log('success');
+                setTrigger(true);
+                console.log('downvote success');
             } else {
                 toast.error(response.data.errorMessage, {
                     position: toast.POSITION.TOP_RIGHT,
@@ -166,7 +157,6 @@ export default function PostItems() {
                                 <div>
                                     {post.postUser.name}
                                     <div style={{ fontSize: '14px', color: '#666' }}>Posted on: {moment(post.publish_time).format('L')} {moment(post.publish_time).format('LT')}</div>
-
                                 </div>
                             }
                             description={
@@ -209,13 +199,13 @@ export default function PostItems() {
                             )}
 
                             <div style={{ marginLeft: 'auto', marginTop: '80px', marginRight: 30, display:'flex'}}>
-                                <Link style={{ color: (downColour) , fontWeight:"bold", fontSize:'20px'}} onClick={() => onDownvote(post.post_id)}>  
+                                <Link style={{ color: (post.downvote_list && post.downvote_list.includes(user.user_id) ? "#FFA53F" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onDownvote(post.post_id)}>  
                                     <ArrowDownOutlined />
                                 </Link>
-
-                                <p style={{marginLeft:10, marginRight:10, marginTop: 6, fontSize:13, fontWeight:'bold'}}> { refreshCount }</p>
                                 
-                                <Link style={{ color: (upColour) , fontWeight:"bold", fontSize:'20px'}} onClick={() => onUpvote(post.post_id)} > 
+                                <p style={{marginLeft:10, marginRight:10, marginTop: 6, fontSize:13, fontWeight:'bold'}}> {post.upvote_list.length - post.downvote_list.length } </p>
+                            
+                                <Link style={{ color: (post.upvote_list && post.upvote_list.includes(user.user_id) ? "#FFA53F" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onUpvote(post.post_id)} > 
                                     <ArrowUpOutlined />
                                 </Link>
                             </div>
