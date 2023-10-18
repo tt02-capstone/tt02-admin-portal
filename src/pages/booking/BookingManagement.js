@@ -159,7 +159,7 @@ export default function BookingManagement() {
               } else if (text === 'TOURIST') {
                 return <Tag color='error'>TOURIST</Tag>;
               } else {
-                return 'Bug';
+                return <Tag color='success'>LOCAL</Tag>;
               }
             },
         },
