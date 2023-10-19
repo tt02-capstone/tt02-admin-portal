@@ -1,14 +1,15 @@
-import { Layout , Badge, Tag} from 'antd';
-import { React , useEffect, useState , useRef } from 'react';
+import { Layout, Badge, Tag } from 'antd';
+import { React, useEffect, useState, useRef } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, Link } from 'react-router-dom';
 import { getAttractionList } from '../../redux/AttractionRedux';
-import  { Table, Input, Button, Space } from 'antd';
+import { Table, Input, Button, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import CustomTablePagination from '../../components/CustomTablePagination';
 import ViewTicketModal from './ViewTicketModal';
+import ViewAttractionModal from "./ViewAttractionModal";
 import CustomButton from '../../components/CustomButton';
 
 
@@ -18,6 +19,7 @@ export default function Attraction() {
     const [loading, setLoading] = useState(false);
     const [viewModal, setViewModal] = useState(false);
     const [viewId, setViewId] = useState();
+    const [selectedAttractionId, setSelectedAttractionId] = useState(null);
 
     const breadCrumbItems = [
         {
@@ -36,15 +38,15 @@ export default function Attraction() {
     }
 
     useEffect(() => {
-        const fetchData = async() => {
+        const fetchData = async () => {
             try {
                 let listOfAttractions = await getAttractionList();
                 setData(listOfAttractions);
                 setLoading(false);
             } catch (error) {
-                alert ('An error occur! Failed to retrieve attraction list!');
+                alert('An error occur! Failed to retrieve attraction list!');
                 setLoading(false);
-            }    
+            }
         };
         fetchData();
     }, []);
@@ -64,36 +66,36 @@ export default function Attraction() {
 
         const activityList = item.seasonal_activity_list;
 
-            const validActivityList = activityList.filter(item => {
-                const today = new Date();
-                const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, '0');
-                const day = String(today.getDate()).padStart(2, '0'); // format to current timezone 
-    
-                const todayFormatted = `${year}-${month}-${day}`;
-    
-                return item.start_date >= todayFormatted && item.end_date >=  todayFormatted;
-            });
+        const validActivityList = activityList.filter(item => {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0'); // format to current timezone 
 
-            let activityListString; 
+            const todayFormatted = `${year}-${month}-${day}`;
 
-            if (validActivityList.length > 0) {
-                activityListString = validActivityList.map((item, index) => {
-                    return `${index + 1}. ${item.name} from ${item.start_date} to ${item.end_date}`;
-                }).join('\n');
-            } else {
-                activityListString = 'No Activities Created!';
-            }
+            return item.start_date >= todayFormatted && item.end_date >= todayFormatted;
+        });
 
-            const formattedPriceTier = item.estimated_price_tier.split('_').join(' ');
+        let activityListString;
+
+        if (validActivityList.length > 0) {
+            activityListString = validActivityList.map((item, index) => {
+                return `${index + 1}. ${item.name} from ${item.start_date} to ${item.end_date}`;
+            }).join('\n');
+        } else {
+            activityListString = 'No Activities Created!';
+        }
+
+        const formattedPriceTier = item.estimated_price_tier.split('_').join(' ');
 
         return {
             key: index,
-            attraction_id : item.attraction_id,
+            attraction_id: item.attraction_id,
             name: item.name,
             address: item.address,
             age_group: item.age_group,
-            category: item.attraction_category, 
+            category: item.attraction_category,
             description: item.description,
             status: item.is_published, // change to match others
             price_list: (
@@ -108,7 +110,7 @@ export default function Attraction() {
             attraction_image_list: item.attraction_image_list
         };
     });
-    
+
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
@@ -254,7 +256,7 @@ export default function Attraction() {
             sorter: (a, b) => a.category.localeCompare(b.category),
             ...getColumnSearchProps('category'),
             render: (attractionCategory) => {
-                let tagColor = 'default'; 
+                let tagColor = 'default';
                 switch (attractionCategory) {
                     case 'HISTORICAL':
                         tagColor = 'purple';
@@ -282,15 +284,15 @@ export default function Attraction() {
                     <Tag color={tagColor}>{attractionCategory}</Tag>
                 );
             },
-            width:140
+            width: 140
         },
         {
             title: 'Description',
             dataIndex: 'description',
-            key: 'description', 
+            key: 'description',
             sorter: (a, b) => a.description.localeCompare(b.description),
             ...getColumnSearchProps('description'),
-            width:300
+            width: 300
         },
         {
             title: 'Published',
@@ -303,7 +305,7 @@ export default function Attraction() {
                     return <Badge status="error" text="No" />
                 }
             },
-            width:100
+            width: 100
         },
         {
             title: 'Price Tier',
@@ -312,7 +314,7 @@ export default function Attraction() {
             sorter: (a, b) => a.estimated_price_tier.localeCompare(b.estimated_price_tier),
             ...getColumnSearchProps('estiminated_price_tier'),
             render: (priceTier) => {
-                let tagColor = 'default'; 
+                let tagColor = 'default';
                 switch (priceTier) {
                     case 'TIER 1':
                         tagColor = 'green';
@@ -345,33 +347,56 @@ export default function Attraction() {
             key: 'seasonal_activity_list',
             sorter: (a, b) => a.seasonal_activity_list.localeCompare(b.seasonal_activity_list),
             ...getColumnSearchProps('seasonal_activity_list'),
-            width:150
+            width: 150
         },
         {
             title: 'Price List',
             dataIndex: 'price_list',
-            key: 'price_list', 
+            key: 'price_list',
             width: 250
-        }, 
+        },
         {
             title: 'Action(s)',
             key: 'view',
             dataIndex: 'view',
             width: 200,
             align: 'center',
-            render: (text, record) => (
-                <div>
-                    <CustomButton text="View Current Ticket(s)" onClick={() => showViewModal(record.attraction_id)} style={styles.button} />
+            render: (text, record) => {
+                return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ marginBottom: '10px' }}>
+                        <Space direction="vertical">
+                            <CustomButton
+                                text="View Details"
+                                style={{ fontWeight: "bold", fontSize: 12 }}
+                                onClick={() => onClickOpenViewAttractionModal(record.attraction_id)}
+                            />
+                            <CustomButton text="View Current Ticket(s)" onClick={() => showViewModal(record.attraction_id)} style={styles.button} />
+                        </Space>
+                    </div>
                 </div>
-            ),
-        }
+            },
+        },
     ];
-    
+
+    // VIEW ATTRACTION
+    const [isViewAttractionModalOpen, setIsViewAttractionModalOpen] = useState(false);
+
+    //view attraction modal open button
+    function onClickOpenViewAttractionModal(attractionId) {
+        setSelectedAttractionId(attractionId);
+        setIsViewAttractionModalOpen(true);
+    }
+
+    // view attraction modal cancel button
+    function onClickCancelViewAttractionModal() {
+        setIsViewAttractionModalOpen(false);
+    }
+
     return user ? (
         <Layout style={styles.layout}>
-             <CustomHeader items={breadCrumbItems} />
-             <Content style={styles.content}>
-             
+            <CustomHeader items={breadCrumbItems} />
+            <Content style={styles.content}>
+
                 <CustomTablePagination
                     title="Attraction"
                     column={columns}
@@ -379,17 +404,23 @@ export default function Attraction() {
                     tableLayout="fixed"
                 />
 
+                <ViewAttractionModal
+                    isViewAttractionModalOpen={isViewAttractionModalOpen}
+                    onClickCancelViewAttractionModal={onClickCancelViewAttractionModal}
+                    attractionId={selectedAttractionId}
+                />
+
                 <ViewTicketModal
                     isVisible={viewModal}
                     onCancel={viewModalCancel}
                     id={viewId}
                 />
-             </Content>
+            </Content>
         </Layout>
-    ):
-    ( 
-        <Navigate to="/" />
-    )  
+    ) :
+        (
+            <Navigate to="/" />
+        )
 
 }
 

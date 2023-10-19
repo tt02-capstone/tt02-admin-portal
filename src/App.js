@@ -34,6 +34,7 @@ import ForumCategory from "./pages/forum/forumCategory";
 import ForumCategoryItems from "./pages/forum/categoryItems";
 import Post from "./pages/forum/post";
 import PostItems from "./pages/forum/postItem";
+import SupportTicketManagement from "./pages/support/SupportTicketManagement";
 
 export function AppLayout() {
 

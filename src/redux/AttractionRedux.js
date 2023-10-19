@@ -14,6 +14,16 @@ export async function getAttractionList() {
     }
 }
 
+export async function getAttraction(attractionId) {
+    try {
+        const response = await attractionApi.get(`/getAttraction/${attractionId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("attractionRedux getAttraction Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
 export async function getAllTicketListedByAttractionInTimeRange(attractionId, startDate, endDate) {
     try {
         const response = await attractionApi.get(`/getAllTicketListedByAttractionInTimeRange/${attractionId}/${startDate}/${endDate}`);
