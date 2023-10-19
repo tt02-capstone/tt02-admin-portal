@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Input, Button, List, Avatar, Descriptions, Switch, Select, Modal, Form } from 'antd';
+import { Layout, Input, Button, List, Avatar, Descriptions, Switch, Select, Modal, Form, Badge } from 'antd';
 import { SendOutlined, UserOutlined } from '@ant-design/icons';
 import { createReply, getAllRepliesBySupportTicket, getSupportTicket, updateReply, deleteReply, updateSupportTicketStatus } from "../../redux/supportRedux";
 import moment from "moment/moment";
@@ -120,35 +120,18 @@ export default function MessageBox(props) {
     }
 
     const getDescriptions = () => [
-        { label: "Support Ticket ID", content: supportTicket.support_ticket_id },
+        { label: "Ticket Category", content: supportTicket.ticket_category.split('_').join(' ') },
+        {
+            label: "Status", content: (
+                <Badge
+                    status={supportTicket.is_resolved ? 'error' : 'success'}
+                    text={supportTicket.is_resolved ? 'Closed' : 'Open'}
+                />
+            )
+        },
         { label: "Created Time", content: moment(supportTicket.created_time).format('llll') },
         { label: "Last Updated", content: moment(supportTicket.updated_time).format('llll') },
-        {
-            label: "Description", content: isEditing ? (
-                <TextArea
-                    value={values.description}
-                    onChange={(e) => setValues({ ...values, description: e.target.value })}
-                    autoSize={{ minRows: 2, maxRows: 6 }}
-                />
-            ) : supportTicket.description
-        },
-        {
-            label: "Resolved", content: isEditing ? (
-                <Switch
-                    checked={values.is_resolved}
-                    onChange={(is_resolved) => setValues({ ...values, is_resolved })}
-                />
-            ) : supportTicket.is_resolved ? 'YES' : 'NO'
-        },
-        {
-            label: "Ticket Category", content: isEditing ? (
-                <Select value={values.ticket_category} style={{ minWidth: 200 }} onChange={(value) => setValues({ ...values, ticket_category: value })}>
-                    <Option value='MASTER_ACCOUNT_CREATION'>Admin Account Creation</Option>
-                    <Option value='WALLET'>Finance Related</Option>
-                    <Option value='GENERAL_ENQUIRY'>General Inquiries</Option>
-                </Select>
-            ) : supportTicket.ticket_category
-        },
+        { label: "Description", content: supportTicket.description },
     ];
 
     const handleTicketStatus = async () => {
@@ -402,17 +385,19 @@ export default function MessageBox(props) {
                 ) : null}
 
                 <Descriptions
-                    title="Support Ticket Info"
+                    title={`Support Ticket ID: #${supportTicket.support_ticket_id}`}
                     bordered
                     style={styles.descriptions}
                     extra={<Button type="primary" onClick={handleTicketStatus}> {supportTicket.is_resolved ? "Open Ticket" : "Close Ticket"} </Button>}
                     column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 4 }}>
                     {getDescriptions().map((item, index) => (
-                        <>
-                            <Descriptions.Item key={index} label={item.label} style={styles.item}>
-                                {item.content}
-                            </Descriptions.Item>
-                        </>
+                        <Descriptions.Item key={index} label={item.label} style={styles.item}>
+                            {item.label === 'Description' ? (
+                                <div style={{ height: '150px', overflow: 'auto', display: 'flex', alignItems: 'center' }}>{item.content}</div>
+                            ) : (
+                                item.content
+                            )}
+                        </Descriptions.Item>
                     ))}
                 </Descriptions>
 
@@ -502,9 +487,9 @@ export default function MessageBox(props) {
 
 const styles = {
     layout: {
-        minHeight: '60vh',
-        minWidth: '91.5vw',
-        backgroundColor: 'darkgrey'
+        minHeight: '100%',
+        minWidth: '100%',
+        backgroundColor: 'darkgray'
     },
     content: {
         margin: '1vh 3vh 1vh 3vh',
@@ -539,7 +524,6 @@ const styles = {
         border: '1px solid #d9d9d9', // Border style
         borderRadius: '4px', // Border radius
         padding: '16px', // Padding
-        marginBottom: '16px', // Add some margin at the bottom
     },
     item: {
         // You can style the individual items here, for example:
