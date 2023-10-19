@@ -4,12 +4,12 @@ import { SendOutlined, UserOutlined } from '@ant-design/icons';
 import { createReply, getAllRepliesBySupportTicket, getSupportTicket, updateReply, deleteReply, updateSupportTicketStatus } from "../../redux/supportRedux";
 import moment from "moment/moment";
 import { toast } from "react-toastify";
-// import ViewAttractionModal from "../attractions/ViewAttractionModal";
+import ViewAttractionModal from "../attraction/ViewAttractionModal";
 import CustomButton from "../../components/CustomButton";
 import ViewTelecomModal from "../telecom/ViewTelecomModal";
 import ViewDealModal from "../deal/ViewDealModal";
 import ViewAccommodationModal from "../accommodation/ViewAccommodationModal";
-// import ViewRestaurantModal from "../restaurant/ViewRestaurantModal";
+import ViewRestaurantModal from "../restaurant/ViewRestaurantModal";
 import ViewTourModal from "../tour/ViewTourTypeModal";
 import { set } from 'local-storage';
 
@@ -88,48 +88,6 @@ export default function MessageBox(props) {
         }
 
     }, [fetchSupportTicket, fetchReplyList]);
-
-    // repurpose for edit reply
-    // const handleEdit = async () => {
-    //     console.log(values)
-
-    //     if (values.is_resolved !== supportTicket.is_resolved) {
-    //         await handleTicketStatus()
-    //     }
-
-    //     if (values.description === supportTicket.description && values.ticket_category === supportTicket.ticket_category) {
-    //         return
-    //     }
-
-    //     let supportTicketObj = {
-    //         description: values.description,
-    //         ticket_category: values.ticket_category,
-    //     }
-
-    //     console.log("supportTicketObj", supportTicketObj);
-    //     console.log("supportTicketId", supportTicket.support_ticket_id);
-
-    //     let response = await updateSupportTicket(supportTicket.support_ticket_id, supportTicketObj);
-    //     if (response.status) {
-    //         setFetchSupportTicket(true)
-    //         props.toggleFetchAdminList()
-    //         toast.success('Ticket Updated', {
-    //             position: toast.POSITION.TOP_RIGHT,
-    //             autoClose: 1500
-    //         });
-
-    //     } else {
-    //         console.log("Support ticket edit failed!");
-    //         console.log(response.data);
-    //         toast.error(response.data.errorMessage, {
-    //             position: toast.POSITION.TOP_RIGHT,
-    //             autoClose: 1500
-    //         });
-    //     }
-
-    //     setIsEditing(!isEditing);
-
-    // }
 
     const handleReplySubmit = async () => {
         let replyObj;
@@ -339,7 +297,7 @@ export default function MessageBox(props) {
         <Layout style={styles.layout}>
             <Content style={{ padding: '16px' }}>
 
-                {/* {supportTicket.attraction ? (
+                {supportTicket.attraction ? (
                     <div>
                         <CustomButton
                             text="View Attraction"
@@ -354,7 +312,7 @@ export default function MessageBox(props) {
                             />
                         ) : null}
                     </div>
-                ) : null} */}
+                ) : null}
 
                 {supportTicket.telecom ? (
                     <div>
@@ -409,7 +367,7 @@ export default function MessageBox(props) {
                     </div>
                 ) : null}
 
-                {/* {supportTicket.restaurant ? (
+                {supportTicket.restaurant ? (
                     <div>
                         <CustomButton
                             text="View Telecom"
@@ -424,7 +382,7 @@ export default function MessageBox(props) {
                             />
                         ) : null}
                     </div>
-                ) : null} */}
+                ) : null}
 
                 {supportTicket.tour ? (
                     <div>
