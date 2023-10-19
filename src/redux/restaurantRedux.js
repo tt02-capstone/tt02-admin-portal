@@ -22,3 +22,13 @@ export async function getRestaurantDish(restId) { // get all the dish belonging 
         return { status: false, data: error.message };
     }
 }
+
+export async function getRestaurant(restId) {
+    try {
+        const response = await restaurantApi.get(`${restURL}/getRestaurant/${restId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("restaurantRedux getRestaurant Error : ", error);
+        return { status: false, data: error.message };
+    }
+}

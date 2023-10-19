@@ -1,12 +1,13 @@
 import { getAllRestaurant, getRestaurantDish } from "../../redux/restaurantRedux";
-import  { Table, Input, Button, Space , Badge, Layout, Form, Tag } from 'antd';
+import { Table, Input, Button, Space, Badge, Layout, Form, Tag } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
-import { React , useEffect, useState , useRef } from 'react';
+import { React, useEffect, useState, useRef } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";
 import CustomTablePagination from "../../components/CustomTablePagination";
 import ViewAllDishModal from "./viewAllDishModal";
+import ViewRestaurantModal from './ViewRestaurantModal';
 import { Content } from "antd/es/layout/layout";
 import { Navigate, Link } from 'react-router-dom';
 
@@ -15,10 +16,10 @@ export default function Restaurant() {
     const [getRestaurantData, setGetRestaurantData] = useState(true);
     const [selectedRestId, setSelectedRestId] = useState("");
     const [data, setData] = useState([]); // list of restaurant 
-    
+
     const restBreadCrumb = [
         {
-          title: 'Restaurant',
+            title: 'Restaurant',
         }
     ];
 
@@ -42,6 +43,18 @@ export default function Restaurant() {
             setGetRestaurantData(false);
         }
     }, [getRestaurantData]);
+
+    // view restaurant details  
+    const [isViewRestaurantModalOpen, setIsViewRestaurantModalOpen] = useState(false);
+
+    function onClickOpenViewRestaurantModal(restId) {
+        setSelectedRestId(restId);
+        setIsViewRestaurantModalOpen(true);
+    }
+
+    function onClickCancelViewRestaurantModal() {
+        setIsViewRestaurantModalOpen(false);
+    }
 
     // table filters 
     const [searchText, setSearchText] = useState('');
@@ -149,7 +162,7 @@ export default function Restaurant() {
 
         return {
             key: index,
-            restaurant_id : item.restaurant_id,
+            restaurant_id: item.restaurant_id,
             name: item.name,
             description: item.description,
             address: item.address,
@@ -163,7 +176,7 @@ export default function Restaurant() {
             restaurant_image_list: item.restaurant_image_list
         };
     }) : [];
-    
+
     const columns = [
         {
             title: 'Cover Image',
@@ -231,7 +244,7 @@ export default function Restaurant() {
             ],
             onFilter: (value, record) => record.restaurant_type.indexOf(value) === 0,
             render: (type) => {
-                let tagColor = 'default'; 
+                let tagColor = 'default';
                 switch (type) {
                     case 'FAST FOOD':
                         tagColor = 'purple';
@@ -301,7 +314,7 @@ export default function Restaurant() {
             key: 'estimated_price_tier',
             sorter: (a, b) => a.estimated_price_tier.localeCompare(b.estimated_price_tier),
             render: (priceTier) => {
-                let tagColor = 'default'; 
+                let tagColor = 'default';
                 switch (priceTier) {
                     case 'TIER 0':
                         tagColor = 'grey';
@@ -337,13 +350,21 @@ export default function Restaurant() {
             key: 'operation',
             align: 'center',
             render: (text, record) => {
-                return <div>
-                    <CustomButton
-                        text="View Menu"
-                        style ={{ fontSize : 12, fontWeight: "bold"}}
-                        onClick={() => onClickViewAllDish(record.restaurant_id)}
-                    />
-                    <br/><br/>
+                return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ marginBottom: '10px' }}>
+                        <Space direction="horizontal">
+                            <CustomButton
+                                text="View"
+                                style={{ fontWeight: "bold" }}
+                                onClick={() => onClickOpenViewRestaurantModal(record.restaurant_id)}
+                            />
+                            <CustomButton
+                                text="View Menu"
+                                style={{ fontSize: 12, fontWeight: "bold" }}
+                                onClick={() => onClickViewAllDish(record.restaurant_id)}
+                            />
+                        </Space>
+                    </div>
                 </div>
             },
             width: 180
@@ -351,7 +372,7 @@ export default function Restaurant() {
     ];
 
     // view all dish 
-    const[isViewAllDishModalOpen, setIsViewAllDishModalOpen] = useState(false);
+    const [isViewAllDishModalOpen, setIsViewAllDishModalOpen] = useState(false);
 
     function onClickViewAllDish(restId) {
         setSelectedRestId(restId);
@@ -364,8 +385,8 @@ export default function Restaurant() {
 
     return user ? (
         <Layout style={styles.layout}>
-             <CustomHeader items={restBreadCrumb}/>
-             <Content style={styles.content}>
+            <CustomHeader items={restBreadCrumb} />
+            <Content style={styles.content}>
 
                 <CustomTablePagination
                     title="Restaurants"
@@ -374,18 +395,24 @@ export default function Restaurant() {
                     tableLayout="fixed"
                 />
 
+                <ViewRestaurantModal
+                    isViewRestaurantModalOpen={isViewRestaurantModalOpen}
+                    onClickCancelViewRestaurantModal={onClickCancelViewRestaurantModal}
+                    restId={selectedRestId}
+                />
+
                 {/* view all dish by restaurant */}
                 <ViewAllDishModal
                     isViewAllDishModalOpen={isViewAllDishModalOpen}
                     onClickCancelViewAllDish={onClickCancelViewAllDish}
                     restId={selectedRestId}
-                /> 
-             </Content>
+                />
+            </Content>
         </Layout>
-    ):
-    ( 
-        <Navigate to="/" />
-    )
+    ) :
+        (
+            <Navigate to="/" />
+        )
 }
 
 
