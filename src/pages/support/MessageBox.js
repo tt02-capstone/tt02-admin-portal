@@ -30,6 +30,7 @@ export default function MessageBox(props) {
     const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
     const [openEditReplyModal, setOpenEditReplyModal] = React.useState(false);
     const [editedMessage, setEditedMessage] = useState('');
+    const [ticketStatus, setTicketStatus] = useState(false);
     const { TextArea } = Input;
     const [form] = Form.useForm();
     const admin = JSON.parse(localStorage.getItem("user"));
@@ -120,7 +121,7 @@ export default function MessageBox(props) {
     }
 
     const getDescriptions = () => [
-        { label: "Ticket Category", content: supportTicket.ticket_category.split('_').join(' ') },
+        { label: "Ticket Category", content: supportTicket.ticket_category ? supportTicket.ticket_category.split('_').join(' ') : 'N/A' },
         {
             label: "Status", content: (
                 <Badge
@@ -135,6 +136,9 @@ export default function MessageBox(props) {
     ];
 
     const handleTicketStatus = async () => {
+        setTicketStatus(!supportTicket.is_resolved);
+        console.log("Ticket Status", supportTicket.is_resolved);
+
         let response = await updateSupportTicketStatus(supportTicket.support_ticket_id);
         if (response.status) {
             setFetchSupportTicket(true);
@@ -388,7 +392,15 @@ export default function MessageBox(props) {
                     title={`Support Ticket ID: #${supportTicket.support_ticket_id}`}
                     bordered
                     style={styles.descriptions}
-                    extra={<Button type="primary" onClick={handleTicketStatus}> {supportTicket.is_resolved ? "Open Ticket" : "Close Ticket"} </Button>}
+                    extra={
+                        <Button
+                            type="primary"
+                            onClick={handleTicketStatus}
+                            style={{ backgroundColor: supportTicket.is_resolved ? "#1da31d" : "#db2c45", fontWeight: 'bold' }}
+                        >
+                            {supportTicket.is_resolved ? "Reopen Ticket" : "Close Ticket"}
+                        </Button>
+                    }
                     column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 4 }}>
                     {getDescriptions().map((item, index) => (
                         <Descriptions.Item key={index} label={item.label} style={styles.item}>
@@ -413,7 +425,7 @@ export default function MessageBox(props) {
                                 <List.Item
                                     actions={
                                         ((reply.internal_staff_user != null && reply.internal_staff_user.user_id === admin.user_id)) &&
-                                            index === replyList.length - 1
+                                            index === replyList.length - 1 && !supportTicket.is_resolved
                                             ? [
                                                 <Button key="edit" type="primary" onClick={() => handleEditReply(reply.reply_id)}>
                                                     Edit
@@ -433,22 +445,32 @@ export default function MessageBox(props) {
                             )}
                         />
                     </div>
-                    <Content style={styles.replyInput}>
-                        <Input
-                            placeholder="Type a message..."
-                            value={inputText}
-                            onChange={(e) => setInputText(e.target.value)}
-                            onPressEnter={handleReplySubmit}
-                            style={{ flex: 1, marginRight: '8px' }}
-                        />
-                        <Button
-                            type="primary"
-                            icon={<SendOutlined />}
-                            onClick={handleReplySubmit}
-                        >
-                            Send
-                        </Button>
-                    </Content>
+                    {!supportTicket.is_resolved && (
+                        <Content style={styles.replyInput}>
+                            <Input
+                                placeholder="Type a message..."
+                                value={inputText}
+                                onChange={(e) => setInputText(e.target.value)}
+                                onPressEnter={handleReplySubmit}
+                                style={{ flex: 1, marginRight: '8px', height: '40px' }}
+                            />
+                            <Button
+                                type="primary"
+                                icon={<SendOutlined />}
+                                onClick={handleReplySubmit}
+                                style={{ height: '40px' }}
+                            >
+                                Send
+                            </Button>
+                        </Content>
+                    )}
+                    {supportTicket.is_resolved && (
+                        <span style={{ display: 'flex', alignItems: 'center' }}>
+                            <hr style={{ flex: 1, border: '1px solid lightgray', marginRight: '8px' }} />
+                            <p style={{ color: 'black', fontSize: '16px', marginLeft: '20px', marginRight: '20px' }}>Ticket is closed</p>
+                            <hr style={{ flex: 1, border: '1px solid lightgray', marginLeft: '8px' }} />
+                        </span>
+                    )}
 
                     <Modal
                         title="Edit Reply"
