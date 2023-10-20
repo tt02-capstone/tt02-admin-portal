@@ -12,7 +12,7 @@ import {
     HomeOutlined,
     UserOutlined,
     UsergroupAddOutlined,
-    MoneyCollectOutlined, BankOutlined, FormOutlined, AlertOutlined
+    MoneyCollectOutlined, BankOutlined, FormOutlined, AlertOutlined, SolutionOutlined
 } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
@@ -49,7 +49,7 @@ export function AppLayout() {
       {key: '/forum', label: 'Forum', icon: <FormOutlined />,},
       {key: '/booking', label: 'Bookings', icon: <MoneyCollectOutlined />,},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
-      {key: '/supportTicket', label: 'Support Tickets', icon: <AlertOutlined />,},
+      {key: '/supportTicket', label: 'Support Tickets', icon: <SolutionOutlined />,},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
 

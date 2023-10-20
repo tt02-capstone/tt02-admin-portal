@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Input, Button, List, Avatar, Descriptions, Switch, Select, Modal, Form, Badge } from 'antd';
+import { Layout, Input, Button, List, Avatar, Descriptions, Switch, Select, Modal, Form, Badge, Tag } from 'antd';
 import { SendOutlined, UserOutlined } from '@ant-design/icons';
 import { createReply, getAllRepliesBySupportTicket, getSupportTicket, updateReply, deleteReply, updateSupportTicketStatus } from "../../redux/supportRedux";
 import moment from "moment/moment";
@@ -120,8 +120,42 @@ export default function MessageBox(props) {
         }
     }
 
+    const formatUserType = (userType) => {
+        if (userType === "VENDOR_STAFF" || userType === "VENDOR") {
+            return 'Vendor';
+        } else if (userType === "ADMIN") {
+            return 'Admin';
+        } else if (userType === "TOURIST") {
+            return 'Tourist';
+        } else if (userType === "LOCAL") {
+            return 'Local';
+        }
+        return '';
+    };
+
+    const categoryColorMap = {
+        REFUND: 'red',
+        CANCELLATION: 'blue',
+        GENERAL_ENQUIRY: 'purple',
+        BOOKING: 'gold',
+        DEAL: 'cyan',
+        RESTAURANT: 'magenta',
+        ATTRACTION: 'orange',
+        TELECOM: 'volcano',
+        ACCOMMODATION: 'lime',
+        TOUR: 'geekblue',
+    };
+
+    const getColorForCategory = (category) => {
+        const color = categoryColorMap[category] || 'gray';
+        const formattedCategory = category ? category.replace('_', ' ') : 'N/A';
+        return { color, formattedCategory };
+    };
+
     const getDescriptions = () => [
-        { label: "Ticket Category", content: supportTicket.ticket_category ? supportTicket.ticket_category.split('_').join(' ') : 'N/A' },
+        { label: "Submitted By", content: supportTicket.submitted_user_name },
+        { label: "From / To", content: `From ${formatUserType(supportTicket.submitted_user)} to ${formatUserType(supportTicket.ticket_type)}` },
+        { label: "Ticket Category", content: supportTicket.ticket_category },
         {
             label: "Status", content: (
                 <Badge
@@ -142,6 +176,8 @@ export default function MessageBox(props) {
         let response = await updateSupportTicketStatus(supportTicket.support_ticket_id);
         if (response.status) {
             setFetchSupportTicket(true);
+            setFetchReplyList(true);
+            props.toggleFetchUserListAdmin();
             console.log("updateSupportTicketStatus response", response.status)
             toast.success('Support ticket marked as ' + (supportTicket.is_resolved ? 'resolved' : 'unresolved') + '!', {
                 position: toast.POSITION.TOP_RIGHT,
@@ -177,12 +213,15 @@ export default function MessageBox(props) {
     }
 
     function handleEditReply(replyId) {
+        console.log("replyId", replyId);
         setReplyIdToEdit(replyId);
-        console.log("replyIdToEdit", replyIdToEdit);
+        setEditedMessage(replyList.find(reply => reply.reply_id === replyId).message);
         setOpenEditReplyModal(true);
     };
 
     async function handleEditReplySubmission(replyIdToEdit) {
+
+        console.log("replyIdToEdit", replyIdToEdit);
 
         let replyObj = {
             message: editedMessage,
@@ -191,7 +230,7 @@ export default function MessageBox(props) {
         let response = await updateReply(replyIdToEdit, replyObj);
 
         if (response.status) {
-            toast.success('Reply deleted!', {
+            toast.success('Reply edited!', {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 1500
             });
@@ -280,113 +319,130 @@ export default function MessageBox(props) {
             return 'Error';
         }
     }
+
+    const renderCategoryButtons = () => {
+        const buttons = [];
+
+        if (supportTicket.attraction) {
+            buttons.push(
+                <div key="attraction">
+                    <CustomButton
+                        text="View Attraction"
+                        style={{ fontWeight: "bold", marginTop: '10px' }}
+                        onClick={() => { setIsViewAttractionModalOpen(true); }}
+                    />
+                    {supportTicket.attraction.attraction_id ? (
+                        <ViewAttractionModal
+                            isViewAttractionModalOpen={isViewAttractionModalOpen}
+                            onClickCancelViewAttractionModal={() => { setIsViewAttractionModalOpen(false); }}
+                            attractionId={supportTicket.attraction.attraction_id}
+                        />
+                    ) : null}
+                </div>
+            );
+        }
+
+        if (supportTicket.telecom) {
+            buttons.push(
+                <div key="telecom">
+                    <CustomButton
+                        text="View Telecom"
+                        style={{ fontWeight: "bold", marginTop: '10px' }}
+                        onClick={() => { setIsViewTelecomModal(true); }}
+                    />
+                    {supportTicket.telecom.telecom_id ? (
+                        <ViewTelecomModal
+                            selectedTelecomId={supportTicket.telecom.telecom_id}
+                            viewTelecomModal={isViewTelecomModal}
+                            onCancelViewModal={() => { setIsViewTelecomModal(false); }}
+                        />
+                    ) : null}
+                </div>
+            );
+        }
+
+        if (supportTicket.deal) {
+            buttons.push(
+                <div key="deal">
+                    <CustomButton
+                        text="View Deal"
+                        style={{ fontWeight: "bold", marginTop: '10px' }}
+                        onClick={() => { setIsViewDealModal(true); }}
+                    />
+                    {supportTicket.deal.deal_id ? (
+                        <ViewDealModal
+                            selectedDealId={supportTicket.deal.deal_id}
+                            viewDealModal={isViewDealModal}
+                            onCancelViewModal={() => { setIsViewDealModal(false); }}
+                        />
+                    ) : null}
+                </div>
+            );
+        }
+
+        if (supportTicket.accommodation) {
+            buttons.push(
+                <div key="accommodation">
+                    <CustomButton
+                        text="View Accommodation"
+                        style={{ fontWeight: "bold", marginTop: '10px' }}
+                        onClick={() => { setIsViewAccommodationModal(true); }}
+                    />
+                    {supportTicket.accommodation.accommodation_id ? (
+                        <ViewAccommodationModal
+                            isViewAccommodationModalOpen={isViewAccommodationModal}
+                            onClickCancelViewAccommodationModal={() => { setIsViewAccommodationModal(false); }}
+                            accommodationId={supportTicket.accommodation.accommodation_id}
+                        />
+                    ) : null}
+                </div>
+            );
+        }
+
+        if (supportTicket.restaurant) {
+            buttons.push(
+                <div key="restaurant">
+                    <CustomButton
+                        text="View Restaurant"
+                        style={{ fontWeight: "bold", marginTop: '10px' }}
+                        onClick={() => { setIsViewRestaurantModal(true); }}
+                    />
+                    {supportTicket.restaurant.restaurant_id ? (
+                        <ViewRestaurantModal
+                            isViewRestaurantModalOpen={isViewRestaurantModal}
+                            onClickCancelViewRestaurantModal={() => { setIsViewRestaurantModal(false); }}
+                            restId={supportTicket.restaurant.restaurant_id}
+                        />
+                    ) : null}
+                </div>
+            );
+        }
+
+        if (supportTicket.tour) {
+            buttons.push(
+                <div key="tour">
+                    <CustomButton
+                        text="View Tour"
+                        style={{ fontWeight: "bold", marginTop: '10px' }}
+                        onClick={() => { setIsViewTourModal(true); }}
+                    />
+                    {supportTicket.tour.tour_id ? (
+                        <ViewTourModal
+                            isViewTourModalOpen={isViewTourModal}
+                            onClickCancelViewTourModal={() => { setIsViewTourModal(false); }}
+                            tourId={supportTicket.tour.tour_id}
+                        />
+                    ) : null}
+                </div>
+            );
+        }
+
+        return buttons;
+    };
+
     return (
         <Layout style={styles.layout}>
             <Content style={{ padding: '16px' }}>
-
-                {supportTicket.attraction ? (
-                    <div>
-                        <CustomButton
-                            text="View Attraction"
-                            style={{ fontWeight: "bold" }}
-                            onClick={() => { setIsViewAttractionModalOpen(true); }}
-                        />
-                        {supportTicket.attraction.attraction_id ? (
-                            <ViewAttractionModal
-                                isViewAttractionModalOpen={isViewAttractionModalOpen}
-                                onClickCancelViewAttractionModal={() => { setIsViewAttractionModalOpen(false); }}
-                                attractionId={supportTicket.attraction.attraction_id}
-                            />
-                        ) : null}
-                    </div>
-                ) : null}
-
-                {supportTicket.telecom ? (
-                    <div>
-                        <CustomButton
-                            text="View Telecom"
-                            style={{ fontWeight: "bold" }}
-                            onClick={() => { setIsViewTelecomModal(true); }}
-                        />
-                        {supportTicket.telecom.telecom_id ? (
-                            <ViewTelecomModal
-                                selectedTelecomId={supportTicket.telecom.telecom_id}
-                                viewTelecomModal={isViewTelecomModal}
-                                onCancelViewModal={() => { setIsViewTelecomModal(false); }}
-                            />
-                        ) : null}
-                    </div>
-                ) : null}
-
-
-                {supportTicket.deal ? (
-                    <div>
-                        <CustomButton
-                            text="View Deal"
-                            style={{ fontWeight: "bold" }}
-                            onClick={() => { setIsViewDealModal(true); }}
-                        />
-                        {supportTicket.deal.deal_id ? (
-                            <ViewDealModal
-                                selectedDealId={supportTicket.deal.deal_id}
-                                viewDealModal={isViewDealModal}
-                                onCancelViewModal={() => { setIsViewDealModal(false); }}
-                            />
-                        ) : null}
-                    </div>
-                ) : null}
-
-
-                {supportTicket.accommodation ? (
-                    <div>
-                        <CustomButton
-                            text="View Accommodation"
-                            style={{ fontWeight: "bold" }}
-                            onClick={() => { setIsViewAccommodationModal(true); }}
-                        />
-                        {supportTicket.accommodation.accommodation_id ? (
-                            <ViewAccommodationModal
-                                isViewAccommodationModalOpen={isViewAccommodationModal}
-                                onClickCancelViewAccommodationModal={() => { setIsViewAccommodationModal(false); }}
-                                accommodationId={supportTicket.accommodation.accommodation_id}
-                            />
-                        ) : null}
-                    </div>
-                ) : null}
-
-                {supportTicket.restaurant ? (
-                    <div>
-                        <CustomButton
-                            text="View Telecom"
-                            style={{ fontWeight: "bold" }}
-                            onClick={() => { setIsViewRestaurantModal(true); }}
-                        />
-                        {supportTicket.restaurant.restaurant_id ? (
-                            <ViewRestaurantModal
-                                isViewRestaurantModalOpen={isViewRestaurantModal}
-                                onClickCancelViewRestaurantModal={() => { setIsViewRestaurantModal(false); }}
-                                restId={supportTicket.restaurant.restaurant_id}
-                            />
-                        ) : null}
-                    </div>
-                ) : null}
-
-                {supportTicket.tour ? (
-                    <div>
-                        <CustomButton
-                            text="View Telecom"
-                            style={{ fontWeight: "bold" }}
-                            onClick={() => { setIsViewTourModal(true); }}
-                        />
-                        {supportTicket.tour.tour_id ? (
-                            <ViewTourModal
-                                isViewTourModalOpen={isViewTourModal}
-                                onClickCancelViewTourModal={() => { setIsViewTourModal(false); }}
-                                tourId={supportTicket.tour.tour_id}
-                            />
-                        ) : null}
-                    </div>
-                ) : null}
 
                 <Descriptions
                     title={`Support Ticket ID: #${supportTicket.support_ticket_id}`}
@@ -401,11 +457,18 @@ export default function MessageBox(props) {
                             {supportTicket.is_resolved ? "Reopen Ticket" : "Close Ticket"}
                         </Button>
                     }
-                    column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 4 }}>
+                    column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3 }}>
                     {getDescriptions().map((item, index) => (
                         <Descriptions.Item key={index} label={item.label} style={styles.item}>
                             {item.label === 'Description' ? (
                                 <div style={{ height: '150px', overflow: 'auto', display: 'flex', alignItems: 'center' }}>{item.content}</div>
+                            ) : item.label === 'Ticket Category' ? (
+                                <div>
+                                    <Tag color={getColorForCategory(supportTicket.ticket_category).color}>
+                                        {getColorForCategory(supportTicket.ticket_category).formattedCategory}
+                                    </Tag>
+                                    {renderCategoryButtons()}
+                                </div>
                             ) : (
                                 item.content
                             )}
@@ -438,8 +501,13 @@ export default function MessageBox(props) {
                                     }>
                                     <List.Item.Meta
                                         avatar={<Avatar icon={reply.internal_staff_user ? null : <UserOutlined />} style={{ backgroundColor: reply.internal_staff_user ? '#1890ff' : '#52c41a' }} />}
-                                        title={getReplyUser(reply)}
-                                        description={reply.message}
+                                        title={
+                                            <div>
+                                                <div style={styles.replyUserType}>{getReplyUserType(reply)}</div>
+                                                <div>{getReplyUser(reply)}</div>
+                                            </div>
+                                        }
+                                        description={<span style={{ color: 'black' }}>{reply.message}</span>}
                                     />
                                 </List.Item>
                             )}
@@ -475,17 +543,18 @@ export default function MessageBox(props) {
                     <Modal
                         title="Edit Reply"
                         visible={openEditReplyModal}
-                        onOk={() => handleEditReplySubmission(supportTicket.support_ticket_id, replyIdToEdit)}
+                        onOk={() => handleEditReplySubmission(replyIdToEdit)}
                         onCancel={() => setOpenEditReplyModal(false)}
                         okText="Submit"
                         cancelText="Cancel"
                     >
-                        <div>
-                            <label htmlFor="editedMessage">Message</label>
+                        <div style={{ marginTop: '20px', marginBottom: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <label htmlFor="editedMessage">Message: </label>
                             <input
                                 type="text"
                                 id="editedMessage"
                                 value={editedMessage}
+                                style={{ marginLeft: '10px', width: '60%', height: '40px' }}
                                 onChange={(e) => setEditedMessage(e.target.value)}
                             />
                         </div>
@@ -496,7 +565,7 @@ export default function MessageBox(props) {
                         visible={openDeleteModal}
                         onOk={() => handleConfirmDelete(supportTicket.support_ticket_id, replyIdToDelete)}
                         onCancel={() => setOpenDeleteModal(false)}
-                        okText="OK"
+                        okText="Yes"
                         cancelText="Cancel"
                     >
                         <p>Are you sure you want to delete this reply?</p>
@@ -533,7 +602,7 @@ const styles = {
         backgroundColor: 'white'
     },
     scrollableList: {
-        maxHeight: '200px',
+        maxHeight: '450px',
         overflowY: 'auto',
     },
     replyInput: {
@@ -552,5 +621,9 @@ const styles = {
         // fontSize: '16px',
         // fontWeight: 'bold',
         // color: 'blue',
+    },
+    replyUserType: {
+        fontSize: 13,
+        color: 'gray',
     },
 }
