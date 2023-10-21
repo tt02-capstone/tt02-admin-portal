@@ -11,6 +11,7 @@ import ViewDealModal from "../deal/ViewDealModal";
 import ViewAccommodationModal from "../accommodation/ViewAccommodationModal";
 import ViewRestaurantModal from "../restaurant/ViewRestaurantModal";
 import ViewTourModal from "../tour/ViewTourTypeModal";
+import ViewBookingModal from "../booking/ViewBookingModal";
 import { set } from 'local-storage';
 
 const { Content } = Layout;
@@ -177,7 +178,12 @@ export default function MessageBox(props) {
         if (response.status) {
             setFetchSupportTicket(true);
             setFetchReplyList(true);
-            props.toggleFetchUserListAdmin();
+            if (props.toggleFetchUserListAdmin) {
+                props.toggleFetchUserListAdmin();
+            } else {
+                props.toggleFetchUserListFull();
+            }
+
             console.log("updateSupportTicketStatus response", response.status)
             toast.success('Support ticket marked as ' + (supportTicket.is_resolved ? 'resolved' : 'unresolved') + '!', {
                 position: toast.POSITION.TOP_RIGHT,
@@ -437,6 +443,25 @@ export default function MessageBox(props) {
             );
         }
 
+        if (supportTicket.booking) {
+            buttons.push(
+                <div key="booking">
+                    <CustomButton
+                        text="View Booking"
+                        style={{ fontWeight: "bold", marginTop: '10px' }}
+                        onClick={() => { setIsViewBookingModal(true); }}
+                    />
+                    {supportTicket.booking.booking_id ? (
+                        <ViewBookingModal
+                            isViewBookingModalOpen={isViewBookingModal}
+                            onClickCancelViewBookingModal={() => { setIsViewBookingModal(false); }}
+                            bookingId={supportTicket.booking.booking_id}
+                        />
+                    ) : null}
+                </div>
+            );
+        }
+
         return buttons;
     };
 
@@ -463,7 +488,7 @@ export default function MessageBox(props) {
                             {item.label === 'Description' ? (
                                 <div style={{ height: '150px', overflow: 'auto', display: 'flex', alignItems: 'center' }}>{item.content}</div>
                             ) : item.label === 'Ticket Category' ? (
-                                <div>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
                                     <Tag color={getColorForCategory(supportTicket.ticket_category).color}>
                                         {getColorForCategory(supportTicket.ticket_category).formattedCategory}
                                     </Tag>
