@@ -154,13 +154,11 @@ export default function BookingManagement() {
             ],
             onFilter: (value, record) => record.booked_user === value,
             render: (text, record) => {
-              if (text === 'LOCAL') {
+              if (record.local_user != null) {
                 return <Tag color='success'>LOCAL</Tag>;
-              } else if (text === 'TOURIST') {
+              } else if (record.tourist_user != null) {
                 return <Tag color='error'>TOURIST</Tag>;
-              } else {
-                return 'Bug';
-              }
+              } 
             },
         },
         {

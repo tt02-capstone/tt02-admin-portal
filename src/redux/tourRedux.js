@@ -31,3 +31,13 @@ export async function getAttractionForTourTypeId(tourTypeId) {
         return { status: false, data: error.message };
     }
 }
+
+export async function adminUpdateTourType(tourTypeIdToUpdate, newPublishedStatus) {
+    try {
+        const response = await tourApi.put(`/adminUpdateTourType/${tourTypeIdToUpdate}/${newPublishedStatus}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("tourRedux adminUpdateTourType Error : ", error);
+        return { status: false, data: error.message };
+    }
+}

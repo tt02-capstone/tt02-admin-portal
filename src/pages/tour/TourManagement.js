@@ -3,7 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import CustomHeader from "../../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
 import { Navigate } from 'react-router-dom';
-import { getAllTourTypesCreated } from '../../redux/tourRedux';
+import { getAllTourTypesCreated, adminUpdateTourType } from '../../redux/tourRedux';
 import { Layout, Form, Input, Badge, Space, Tag, Button, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
@@ -242,7 +242,9 @@ export default function TourManagement() {
             render: (text, record) => {
                 return <div>
                     <Space>
-                        <CustomButton key='1' text="View" style ={{fontWeight:"bold"}} onClick={() => onClickOpenViewTourTypeModal(record.tour_type_id)} />
+                        <CustomButton key='1' text="View" style={{ fontWeight: "bold" }} onClick={() => onClickOpenViewTourTypeModal(record.tour_type_id)} />
+                        {record.is_published && <CustomButton key='1' text="Unpublish" style={{ fontWeight: "bold" }} onClick={() => updatePublishedStatus(record)} />}
+                        {!record.is_published && <CustomButton key='1' text="Publish" style={{ fontWeight: "bold" }} onClick={() => updatePublishedStatus(record)} />}
                     </Space>
                 </div>
             },
@@ -261,6 +263,34 @@ export default function TourManagement() {
     function onClickCancelViewTourTypeModal() {
         setIsViewTourTypeModalOpen(false);
     }
+
+    const updatePublishedStatus = async (record) => {
+        try {
+            let newPublishedStatus;
+            if (record.is_published) {
+                newPublishedStatus = false;
+            } else {
+                newPublishedStatus = true;
+            }
+
+            setLoading(true);
+            console.log(record.tour_type_id);
+            await adminUpdateTourType(record.tour_type_id, newPublishedStatus);
+            toast.success(`Tour type ${newPublishedStatus ? 'published' : 'unpublished'} successfully.`, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+              });
+            let listOfTourTypes = await getAllTourTypesCreated();
+            setData(listOfTourTypes.data);
+            setLoading(false);
+        } catch (error) {
+            toast.error(`Failed to update published status: ${error.message}`, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+              });
+            setLoading(false);
+        }
+    };
 
     return (
         <Layout style={styles.layout}>

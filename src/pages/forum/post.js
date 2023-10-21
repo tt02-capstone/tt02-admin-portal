@@ -1,5 +1,5 @@
-import { Layout, Card, Button, List, Avatar, Form, Modal } from 'antd';
-import { React, useEffect, useState, useRef } from 'react';
+import { Layout, Button, List, Avatar, Form, Modal } from 'antd';
+import { React, useEffect, useState } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
@@ -115,7 +115,8 @@ export default function Post() {
     async function onClickSubmitPostCreate(values) {
         const postObj = {
             title: values.title,
-            content: values.content
+            content: values.content,
+            post_image_list: values.post_image
         };
 
         console.log("postObj", postObj);
@@ -161,7 +162,8 @@ export default function Post() {
         const postObj = {
             post_id: selectedPostId,
             title: values.title,
-            content: values.content
+            content: values.content,
+            post_image_list: values.post_image
         };
 
         console.log("postObj", postObj);
@@ -229,7 +231,7 @@ export default function Post() {
         <Layout style={styles.layout}>
             <CustomHeader items={forumBreadCrumb} />
             <Content style={styles.content}>
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex' , marginBottom: 25}}>
                     <div style={{ fontWeight: "bold", fontSize: 26 }}>
                         {category_item_name} Posts
                     </div>
@@ -246,35 +248,40 @@ export default function Post() {
                         isCreatePostModalOpen={isCreatePostModalOpen}
                         onClickCancelCreatePostModal={onClickCancelCreatePostModal}
                         onClickSubmitPostCreate={onClickSubmitPostCreate}
+                        user_id={user.user_id}
+                        category_item_id={category_item_id}
                     />
                 </div>
-
-                <br />
 
                 <List
                     itemLayout="horizontal"
                     dataSource={postList}
                     renderItem={(item, index) => (
-                        <List.Item>
-                            <List.Item.Meta
-                                avatar={<Avatar size="large" src={`${item.postUser.profile_pic}`} />}
-                                title={item.title}
-                                description={item.content}
-                                style={{ fontSize: 25, marginBottom: 10 }}
-                            />
+                            <>
+                            <List.Item style={{ fontSize: 25, marginTop: -10, marginBottom: -12}}>
+                                <Link to={`/forum/post/${category_id}/${category_name}/${category_item_id}/${category_item_name}/${item.post_id}/${item.title}`}>
+                                    <List.Item.Meta
+                                        avatar={<Avatar size="large" src={`${item.postUser.profile_pic}`} />}
+                                        title={item.title}
+                                        description={item.content}
+                                        style={{width:'1600px'}}
+                                    />
+                                </Link>
 
-                            {item.postUser.user_id === user.user_id && ( // only can edit and delete ur own post 
-                                <div style={{ marginRight: 5 }}>
-                                    <Button type="text" style={{ color: '#FFA53F' }} onClick={() => handleUpdate(item.post_id)}><EditOutlined /></Button>
-                                    <Button type="text" style={{ color: '#FFA53F', marginLeft: '-10px' }} onClick={() => handleDelete(item.post_id)}><DeleteOutlined /></Button>
-                                </div>
-                            )}
+                                {item.postUser.user_id === user.user_id && ( // only can edit and delete ur own post 
+                                    <div style={{ marginRight: 60, fontSize: 18 }}>
+                                        <Link style={{ color: '#FFA53F' , marginRight: '30px'}} onClick={() => handleUpdate(item.post_id)}>
+                                            <EditOutlined />
+                                        </Link>
+                                        <Link style={{ color: '#FFA53F', marginRight: '20px' }}  onClick={() => handleDelete(item.post_id)}>
+                                            <DeleteOutlined />
+                                        </Link>
+                                    </div>
+                                )}
 
-                            <div style={{ marginRight: 100 }}>
-                                <Link to={`/forum/post/${category_id}/${category_name}/${category_item_id}/${category_item_name}/${item.post_id}/${item.title}`} style={{ color: "#FFA53F" }}>< EyeOutlined /></Link>
-                            </div>
-
-                        </List.Item>
+                            </List.Item>
+                            <br/>
+                            </>
                     )}
                 />
 
@@ -291,6 +298,8 @@ export default function Post() {
                     visible={isDeleteConfirmationVisible}
                     onOk={() => onDeleteConfirmed()}
                     onCancel={closeDeleteConfirmation}
+                    okButtonProps={{ style: { backgroundColor: '#FFA53F', borderColor: '#FFA53F', fontWeight:"bold" } }}
+                    cancelButtonProps={{ style: { fontWeight:"bold"} }}
                 >
                     <p>Are you sure you want to delete this post?</p>
                 </Modal>
