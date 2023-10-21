@@ -339,12 +339,22 @@ export default function SupportTicketManagement() {
         setFetchFullSupportTicketList(true);
     };
 
+    const handleTabChange = (activeKey) => {
+        if (activeKey === 'adminTicketList') {
+            setViewReplySection(false)
+            setFetchAdminSupportTicketList(true); 
+        } else if (activeKey === 'fullTicketList') {
+            setViewReplySection(false)
+            setFetchFullSupportTicketList(true);
+        }
+    };
+
     return (
         <Layout style={styles.layout}>
             <CustomHeader items={viewUserSupportBreadCrumb} />
             <Layout style={{ padding: '0 24px 24px', backgroundColor: 'white' }}>
                 <Content style={styles.content}>
-                    <Tabs defaultActiveKey="supportTicket" onChange={() => { }}>
+                    <Tabs defaultActiveKey="supportTicket" onChange={handleTabChange}>
                         <TabPane tab="Tickets to Admin" key="adminTicketList">
                             <div>
                                 <Input
