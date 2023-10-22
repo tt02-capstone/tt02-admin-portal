@@ -185,7 +185,7 @@ export default function MessageBox(props) {
             }
 
             console.log("updateSupportTicketStatus response", response.status)
-            toast.success('Support ticket marked as ' + (supportTicket.is_resolved ? 'resolved' : 'unresolved') + '!', {
+            toast.success('Support ticket is ' + (supportTicket.is_resolved ? 'closed' : 'reopened') + '!', {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 1500
             });
