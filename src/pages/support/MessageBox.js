@@ -465,6 +465,20 @@ export default function MessageBox(props) {
         return buttons;
     };
 
+    const getUserImage = (reply) => {
+        if (reply.internal_staff_user && reply.internal_staff_user.profile_pic) {
+          return reply.internal_staff_user.profile_pic
+        } else if(reply.local_user && reply.local_user.profile_pic) {
+          return reply.local_user.profile_pic
+        } else if(reply.vendor_staff_user && reply.vendor_staff_user.profile_pic) {
+          return reply.vendor_staff_user.profile_pic
+        } else if(reply.tourist_user && reply.tourist_user.profile_pic) {
+          return reply.tourist_user.profile_pic
+        } else {
+          return 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg'
+        }
+      }
+
     return (
         <Layout style={styles.layout}>
             <Content style={{ padding: '16px' }}>
@@ -525,7 +539,10 @@ export default function MessageBox(props) {
                                             : null
                                     }>
                                     <List.Item.Meta
-                                        avatar={<Avatar icon={reply.internal_staff_user ? null : <UserOutlined />} style={{ backgroundColor: reply.internal_staff_user ? '#1890ff' : '#52c41a' }} />}
+                                        avatar={<img
+                                            src={getUserImage(reply)}
+                                            style={{borderRadius: '50%', width: '20px', height: '20px'}}
+                                        />}
                                         title={
                                             <div>
                                                 <div style={styles.replyUserType}>{getReplyUserType(reply)}</div>
@@ -575,12 +592,10 @@ export default function MessageBox(props) {
                     >
                         <div style={{ marginTop: '20px', marginBottom: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <label htmlFor="editedMessage"> </label>
-                            <input
-                                type="text"
-                                id="editedMessage"
+                            <Input
                                 value={editedMessage}
-                                style={{ marginLeft: '10px', width: '100%', height: '40px' }}
                                 onChange={(e) => setEditedMessage(e.target.value)}
+                                style={{ width: '100%', height: '40px' }}
                             />
                         </div>
                     </Modal>
