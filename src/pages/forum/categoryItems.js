@@ -78,8 +78,8 @@ export default function ForumCategoryItems() {
         const categoryItemObj = {
             category_item_id: selectedCategoryItemId,
             name: values.name,
-            image: values.image[0],
-            is_published: true,
+            image: values.image.length == 0 ? selectedCategoryItem.image : values.image[0],
+            is_published: true
         };
 
         // console.log("categoryItemObj", categoryItemObj);
