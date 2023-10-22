@@ -286,6 +286,7 @@ export default function MessageBox(props) {
     }
 
     const getReplyUserType = (item) => {
+        console.log("item", item);
         if (item.tourist_user != null) {
             return 'Tourist';
         } else if (item.local_user != null) {
