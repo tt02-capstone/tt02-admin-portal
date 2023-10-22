@@ -352,12 +352,13 @@ export default function User() {
         <div>
           <CustomButton
                         //key={1}
-                        text="Add/Remove Funds to Wallet"
+                        text="Add/Remove Wallet Funds"
                         onClick={() => onClickOpenWallet(id, type, wallet_balance)}
+                        style={{ marginRight: '20px' }}
                         />
           <CustomButton
                         //key={1}
-                        text="View Withdrawal Requests"
+                        text="View Wallet Transactions"
                         onClick={() => onClickOpenTransactionsModal(id, type)}
                         />
 
