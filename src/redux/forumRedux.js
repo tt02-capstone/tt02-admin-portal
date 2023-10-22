@@ -130,3 +130,63 @@ export async function downvote(userId, postId) {
         return {status: false, data: error.message};
     }
 }
+
+export async function createComment(postId, parentCommentId, userId, commentToCreate) {
+    try {
+        const response = await postApi.post(`/createComment/${postId}/${parentCommentId}/${userId}`, commentToCreate);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux createComment Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function updateComment(commentToUpdate) {
+    try {
+        const response = await postApi.put(`/updateComment`, commentToUpdate);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux updateComment Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function deleteComment(commentIdToDelete) {
+    try {
+        const response = await postApi.delete(`/deleteComment/${commentIdToDelete}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux deleteComment Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function upvoteComment(userId, commentId) {
+    try {
+        const response = await postApi.put(`/upvoteComment/${userId}/${commentId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux upvoteComment Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function downvoteComment(userId, commentId) {
+    try {
+        const response = await postApi.put(`/downvoteComment/${userId}/${commentId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux downvoteComment Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function getAllPostComment(postId) {
+    try {
+        const response = await postApi.get(`/getAllPostComment/${postId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux getAllPostComment Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
