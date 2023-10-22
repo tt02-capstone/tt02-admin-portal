@@ -51,65 +51,67 @@ export default function Attraction() {
         fetchData();
     }, []);
 
-    const datasource = data.map((item, index) => {
-        const priceList = item.price_list;
+    const datasource = data.length
+        ? data.map((item, index) => {
+            const priceList = item.price_list;
 
-        const formatPriceList = priceList.map(priceItem => {
-            return (
-                <tr key={priceItem.ticket_type}>
-                    <td>{priceItem.ticket_type}</td>
-                    <td>${priceItem.local_amount} (Local)</td>
-                    <td>${priceItem.tourist_amount} (Tourist)</td>
-                </tr>
-            );
-        });
+            const formatPriceList = priceList.map(priceItem => {
+                return (
+                    <tr key={priceItem.ticket_type}>
+                        <td>{priceItem.ticket_type}</td>
+                        <td>${priceItem.local_amount} (Local)</td>
+                        <td>${priceItem.tourist_amount} (Tourist)</td>
+                    </tr>
+                );
+            });
 
-        const activityList = item.seasonal_activity_list;
+            const activityList = item.seasonal_activity_list;
 
-        const validActivityList = activityList.filter(item => {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0'); // format to current timezone 
+            const validActivityList = activityList.filter(item => {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0'); // format to current timezone 
 
-            const todayFormatted = `${year}-${month}-${day}`;
+                const todayFormatted = `${year}-${month}-${day}`;
 
-            return item.start_date >= todayFormatted && item.end_date >= todayFormatted;
-        });
+                return item.start_date >= todayFormatted && item.end_date >= todayFormatted;
+            });
 
-        let activityListString;
+            let activityListString;
 
-        if (validActivityList.length > 0) {
-            activityListString = validActivityList.map((item, index) => {
-                return `${index + 1}. ${item.name} from ${item.start_date} to ${item.end_date}`;
-            }).join('\n');
-        } else {
-            activityListString = 'No Activities Created!';
-        }
+            if (validActivityList.length > 0) {
+                activityListString = validActivityList.map((item, index) => {
+                    return `${index + 1}. ${item.name} from ${item.start_date} to ${item.end_date}`;
+                }).join('\n');
+            } else {
+                activityListString = 'No Activities Created!';
+            }
 
-        const formattedPriceTier = item.estimated_price_tier.split('_').join(' ');
+            const formattedPriceTier = item.estimated_price_tier.split('_').join(' ');
 
-        return {
-            key: index,
-            attraction_id: item.attraction_id,
-            name: item.name,
-            address: item.address,
-            age_group: item.age_group,
-            category: item.attraction_category,
-            description: item.description,
-            status: item.is_published, // change to match others
-            price_list: (
-                <table>
-                    <tbody>
-                        {formatPriceList}
-                    </tbody>
-                </table>
-            ),
-            seasonal_activity_list: activityListString,
-            estimated_price_tier: formattedPriceTier,
-            attraction_image_list: item.attraction_image_list
-        };
-    });
+            return {
+                key: index,
+                attraction_id: item.attraction_id,
+                name: item.name,
+                address: item.address,
+                age_group: item.age_group,
+                category: item.attraction_category,
+                description: item.description,
+                status: item.is_published, // change to match others
+                price_list: (
+                    <table>
+                        <tbody>
+                            {formatPriceList}
+                        </tbody>
+                    </table>
+                ),
+                seasonal_activity_list: activityListString,
+                estimated_price_tier: formattedPriceTier,
+                attraction_image_list: item.attraction_image_list
+            };
+        })
+        : [];
 
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
