@@ -152,9 +152,6 @@ export default function UpdateCategoryItemModal(props) {
                         name="image"
                         valuePropName="fileList"
                         getValueFromEvent={normFile}
-                        rules={[
-                            { required: true, message: 'Please upload an image!' },
-                        ]}
                     >
                         <Upload
                             beforeUpload={() => false} // To prevent auto-upload on file selection
