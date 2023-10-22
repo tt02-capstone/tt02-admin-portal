@@ -185,7 +185,7 @@ export default function MessageBox(props) {
             }
 
             console.log("updateSupportTicketStatus response", response.status)
-            toast.success('Support ticket is ' + (supportTicket.is_resolved ? 'closed' : 'reopened') + '!', {
+            toast.success('Support ticket is ' + (supportTicket.is_resolved ? 'reopened' : 'closed') + '!', {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 1500
             });
@@ -518,7 +518,7 @@ export default function MessageBox(props) {
                                                 <Button key="edit" type="primary" onClick={() => handleEditReply(reply.reply_id)}>
                                                     Edit
                                                 </Button>,
-                                                <Button key="delete" type="danger" onClick={() => handleDelete(reply.reply_id)}>
+                                                <Button key="delete" type="primary" onClick={() => handleDelete(reply.reply_id)}>
                                                     Delete
                                                 </Button>,
                                             ]
@@ -574,12 +574,12 @@ export default function MessageBox(props) {
                         cancelText="Cancel"
                     >
                         <div style={{ marginTop: '20px', marginBottom: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <label htmlFor="editedMessage">Message: </label>
+                            <label htmlFor="editedMessage"> </label>
                             <input
                                 type="text"
                                 id="editedMessage"
                                 value={editedMessage}
-                                style={{ marginLeft: '10px', width: '60%', height: '40px' }}
+                                style={{ marginLeft: '10px', width: '100%', height: '40px' }}
                                 onChange={(e) => setEditedMessage(e.target.value)}
                             />
                         </div>
