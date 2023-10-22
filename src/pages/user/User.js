@@ -338,6 +338,11 @@ export default function User() {
               } else {
                 setGetVendorData(true);
               }
+
+              toast.success('Wallet Funds Is Updated!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
             } else {
               console.log("List of vendor staff not fetched!");
             }

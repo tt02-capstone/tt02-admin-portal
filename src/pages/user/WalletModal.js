@@ -51,7 +51,7 @@ export default function WalletModal(props) {
 
   return (
     <Modal
-      title="Add/Remove Funds"
+      title="Add/Remove Wallet Funds"
       centered
       open={props.isWalletModalOpen}
       onCancel={props.onCancelWalletModal}
@@ -60,6 +60,9 @@ export default function WalletModal(props) {
     >
        <Form
         form={props.form}
+        labelCol={{ span: 10 }}
+        wrapperCol={{ span: 16 }}
+        style={{ maxWidth: 500 }}
         onFinish={props.onSubmitUpdateWallet}
         initialValues={{
           operation: 'Add',  // default operation
@@ -85,8 +88,8 @@ export default function WalletModal(props) {
           />
         </Form.Item>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
+        <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
+          <Button type="primary" htmlType="submit" style={{ backgroundColor: '#FFA53F', fontWeight:"bold" }}>
             Confirm
           </Button>
         </Form.Item>
