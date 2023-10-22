@@ -3,7 +3,7 @@ import { React, useEffect, useState } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, useParams, Link } from 'react-router-dom';
-import { getPost } from '../../redux/forumRedux';
+import { createComment, deleteComment, getPost, updateComment } from '../../redux/forumRedux';
 import { PaperClipOutlined, ArrowUpOutlined , ArrowDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { downvote, upvote } from '../../redux/forumRedux';
@@ -135,6 +135,135 @@ export default function PostItems() {
             }
         }
     }
+
+    // Properties for create/update/delete comment
+    const [createCommentForm] = Form.useForm();
+    const [updateCommentForm] = Form.useForm();
+    const [isCreateCommentModalOpen, setIsCreateCommentModalOpen] = useState(false);
+    const [isUpdateCommentModalOpen, setIsUpdateCommentModalOpen] = useState(false);
+    const [selectedCommentId, setSelectedCommentId] = useState(null);
+    const [selectedComment, setSelectedComment] = useState(null);
+    const [isDeleteConfirmationVisible, setDeleteConfirmationVisible] = useState(false);
+    const [commentIdToDelete, setCommentIdToDelete] = useState('');
+
+    // Create a comment
+    const handleCreateComment = () => {
+        setIsCreateCommentModalOpen(true);
+    }
+
+    function onClickCancelCreateCommentModal() {
+        setIsCreateCommentModalOpen(false);
+    }
+
+    async function onClickSubmitCommentCreate(values) {
+        const commentObj = {
+            content: values.content
+        };
+
+        console.log("commentObj", commentObj);
+
+        // Will need to test / update the parent_comment_id
+        let response = await createComment(post_id, parent_comment_id, user.user_id, commentObj);
+        console.log("createComment response", response);
+        if (response.status) {
+            createCommentForm.resetFields();
+            setIsCreateCommentModalOpen(false);
+            toast.success('Comment successfully created!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+
+            console.log(response.data)
+            setTrigger(true);
+        } else {
+            console.log("Comment creation failed!");
+            console.log(response.data);
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+    }
+
+    // Update a comment
+    const handleUpdate = (comment_id) => {
+        console.log(comment_id);
+        setSelectedCommentId(post_id);
+        setSelectedComment(comment_list.find(item => item.comment_id === comment_id));
+        setIsUpdateCommentModalOpen(true);
+    }
+
+    function onClickCancelUpdateCommentModal() {
+        setIsUpdateCommentModalOpen(false);
+        setSelectedComment(null);
+        setSelectedCommentId(null);
+    }
+
+    async function onClickSubmitCommentUpdate(values) {
+        const commentObj = {
+            comment_id: selectedCommentId,
+            content: values.content
+        };
+
+        console.log("commentObj", commentObj);
+
+        let response = await updateComment(commentObj);
+        console.log("updateComment response", response);
+        if (response.status) {
+            updateCommentForm.resetFields();
+            setIsUpdateCommentModalOpen(false);
+            toast.success('Comment successfully updated!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+
+            console.log(response.data);
+            setSelectedCommentId(null);
+            setSelectedComment(null);
+            setTrigger(true);
+        } else {
+            console.log("Comment update failed!");
+            console.log(response.data);
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+    }
+
+    // Delete a comment
+    const handleDelete = (comment_id) => {
+        console.log(comment_id);
+        openDeleteConfirmation(comment_id);
+    }
+
+    const openDeleteConfirmation = (comment_id) => {
+        setCommentIdToDelete(comment_id);
+        setDeleteConfirmationVisible(true);
+    };
+
+    const closeDeleteConfirmation = () => {
+        setDeleteConfirmationVisible(false);
+    };
+
+    const onDeleteConfirmed = async () => {
+        let response = await deleteComment(commentIdToDelete);
+        if (response.status) {
+            toast.success(response.data, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+            setTrigger(true);
+            setCommentIdToDelete('');
+        } else {
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+
+        closeDeleteConfirmation();
+    };
 
     return user ? (
         <Layout style={styles.layout}>
