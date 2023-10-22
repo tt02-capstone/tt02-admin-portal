@@ -39,11 +39,13 @@ export default function TourManagement() {
         fetchData();
     }, []);
 
-    const datasource = data.map((val) => ({
-        ...val,
-        no_of_tours: val && val.tour_list ? val.tour_list.length : 0,
-        key: val.user_id,
-    }));
+    const datasource = data.length
+        ? data.map((val) => ({
+            ...val,
+            no_of_tours: val && val.tour_list ? val.tour_list.length : 0,
+            key: val.user_id,
+        }))
+        : [];
 
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
@@ -279,7 +281,7 @@ export default function TourManagement() {
             toast.success(`Tour type ${newPublishedStatus ? 'published' : 'unpublished'} successfully.`, {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 1500
-              });
+            });
             let listOfTourTypes = await getAllTourTypesCreated();
             setData(listOfTourTypes.data);
             setLoading(false);
@@ -287,7 +289,7 @@ export default function TourManagement() {
             toast.error(`Failed to update published status: ${error.message}`, {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 1500
-              });
+            });
             setLoading(false);
         }
     };
