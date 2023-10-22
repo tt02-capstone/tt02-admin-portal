@@ -261,7 +261,7 @@ export default function Post() {
                             <List.Item style={{ fontSize: 25, marginTop: -10, marginBottom: -12}}>
                                 <Link to={`/forum/post/${category_id}/${category_name}/${category_item_id}/${category_item_name}/${item.post_id}/${item.title}`}>
                                     <List.Item.Meta
-                                        avatar={<Avatar size="large" src={`${item.postUser.profile_pic}`} />}
+                                        avatar={<Avatar size="large" src={`${item.postUser.profile_pic ? item.postUser.profile_pic : 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg'}`} />}
                                         title={item.title}
                                         description={item.content}
                                         style={{width:'1600px'}}

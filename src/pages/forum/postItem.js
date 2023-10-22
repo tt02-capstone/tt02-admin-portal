@@ -152,7 +152,7 @@ export default function PostItems() {
                 >
                     {post && (
                         <Meta
-                            avatar={<Avatar size="large" src={`${post.postUser.profile_pic}`} />}
+                            avatar={<Avatar size="large" src={`${post.postUser.profile_pic ? post.postUser.profile_pic : 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg'}`} />}
                             title={
                                 <div>
                                     {post.postUser.name}

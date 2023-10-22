@@ -78,7 +78,8 @@ export default function ForumCategoryItems() {
         const categoryItemObj = {
             category_item_id: selectedCategoryItemId,
             name: values.name,
-            image: values.image[0]
+            image: values.image[0],
+            is_published: true,
         };
 
         // console.log("categoryItemObj", categoryItemObj);
@@ -154,7 +155,8 @@ export default function ForumCategoryItems() {
     async function onClickSubmitCategoryItemCreate(values) {
         const categoryItemObj = {
             name: values.name,
-            image: values.image[0]
+            image: values.image[0],
+            is_published: true
         };
 
         // console.log("categoryItemObj", categoryItemObj);
