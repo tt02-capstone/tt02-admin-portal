@@ -78,7 +78,8 @@ export default function Post() {
                             content: item.content,
                             postUser: user,
                             publish_time: item.publish_time,
-                            updated_time: item.updated_time
+                            updated_time: item.updated_time,
+                            post_image: item.post_image_list
                         }
 
                         return processItem;
