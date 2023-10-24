@@ -161,7 +161,9 @@ export default function Post() {
 
     async function onClickSubmitPostUpdate(values) {
         let oldPostImage = [];
-        oldPostImage.push(selectedPost.post_image[0]);
+        if (selectedPost.post_image != []) {
+            oldPostImage.push(selectedPost.post_image[0]);
+        }
         const postObj = {
             post_id: selectedPostId,
             title: values.title,
