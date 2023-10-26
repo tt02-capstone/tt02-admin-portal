@@ -1,4 +1,4 @@
-import { categoryApi, categoryItemApi, postApi } from "./api";
+import { categoryApi, categoryItemApi, postApi, commentApi } from "./api";
 import { handleApiErrors } from "../helper/errorCatching";
 
 export async function createCategoryItem(categoryId, categoryItemToCreate) {
@@ -133,7 +133,7 @@ export async function downvote(userId, postId) {
 
 export async function createComment(postId, parentCommentId, userId, commentToCreate) {
     try {
-        const response = await postApi.post(`/createComment/${postId}/${parentCommentId}/${userId}`, commentToCreate);
+        const response = await commentApi.post(`/createComment/${postId}/${parentCommentId}/${userId}`, commentToCreate);
         return handleApiErrors(response);
     } catch (error) {
         console.error("forumRedux createComment Error : ", error);
@@ -143,7 +143,7 @@ export async function createComment(postId, parentCommentId, userId, commentToCr
 
 export async function updateComment(commentToUpdate) {
     try {
-        const response = await postApi.put(`/updateComment`, commentToUpdate);
+        const response = await commentApi.put(`/updateComment`, commentToUpdate);
         return handleApiErrors(response);
     } catch (error) {
         console.error("forumRedux updateComment Error : ", error);
@@ -153,7 +153,7 @@ export async function updateComment(commentToUpdate) {
 
 export async function deleteComment(commentIdToDelete) {
     try {
-        const response = await postApi.delete(`/deleteComment/${commentIdToDelete}`);
+        const response = await commentApi.delete(`/deleteComment/${commentIdToDelete}`);
         return handleApiErrors(response);
     } catch (error) {
         console.error("forumRedux deleteComment Error : ", error);
@@ -163,7 +163,7 @@ export async function deleteComment(commentIdToDelete) {
 
 export async function upvoteComment(userId, commentId) {
     try {
-        const response = await postApi.put(`/upvoteComment/${userId}/${commentId}`);
+        const response = await commentApi.put(`/upvoteComment/${userId}/${commentId}`);
         return handleApiErrors(response);
     } catch (error) {
         console.error("forumRedux upvoteComment Error : ", error);
@@ -173,7 +173,7 @@ export async function upvoteComment(userId, commentId) {
 
 export async function downvoteComment(userId, commentId) {
     try {
-        const response = await postApi.put(`/downvoteComment/${userId}/${commentId}`);
+        const response = await commentApi.put(`/downvoteComment/${userId}/${commentId}`);
         return handleApiErrors(response);
     } catch (error) {
         console.error("forumRedux downvoteComment Error : ", error);
@@ -183,7 +183,7 @@ export async function downvoteComment(userId, commentId) {
 
 export async function getAllPostComment(postId) {
     try {
-        const response = await postApi.get(`/getAllPostComment/${postId}`);
+        const response = await commentApi.get(`/getAllPostComment/${postId}`);
         return handleApiErrors(response);
     } catch (error) {
         console.error("forumRedux getAllPostComment Error : ", error);

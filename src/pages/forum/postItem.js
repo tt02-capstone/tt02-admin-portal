@@ -1,13 +1,15 @@
-import { Layout, Card, Avatar, Image } from 'antd';
+import { Layout, Card, Avatar, Image, Input } from 'antd';
 import { React, useEffect, useState } from 'react';
 import CustomHeader from "../../components/CustomHeader";
+import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, useParams, Link } from 'react-router-dom';
-import { createComment, deleteComment, getPost, updateComment } from '../../redux/forumRedux';
+import { createComment, deleteComment, getPost, updateComment, getAllPostComment, upvoteComment, downvoteComment } from '../../redux/forumRedux';
 import { PaperClipOutlined, ArrowUpOutlined , ArrowDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { downvote, upvote } from '../../redux/forumRedux';
 import { ToastContainer, toast } from 'react-toastify';
+import { Button, Comment, Header, Form } from 'semantic-ui-react';
 
 export default function PostItems() {
     let { category_name } = useParams();
@@ -20,8 +22,12 @@ export default function PostItems() {
     const user = JSON.parse(localStorage.getItem("user"));
     const [post, setPost] = useState();
     const { Meta } = Card;
-    const [visible, setVisible] = useState(false);
-    const [trigger, setTrigger] = useState(true);
+    const [visible, setVisible] = useState(false); // to check if the post have an img or not 
+    const [triggerPost, setTriggerPost] = useState(true);
+
+    // comments 
+    const [comments, setComments] = useState([]);
+    const [triggerComment, setTriggerComment] = useState(true);
 
     const forumBreadCrumb = [
         {
@@ -66,51 +72,304 @@ export default function PostItems() {
                     post_image: item.post_image_list[0],
                     img_file : fileName,
                     upvote_list: item.upvoted_user_id_list,
-                    downvote_list: item.downvoted_user_id_list,
-                    comment_list: item.comment_list,
+                    downvote_list: item.downvoted_user_id_list
                 }
                 setPost(formatItem)
+                console.log(formatItem)
             } else {
                 console.log("Post not fetched!");
             }
         }
 
-        if ((post_id && trigger)) {
+        if ((post_id && triggerPost)) {
             fetchData();
-            setTrigger(false);
+            setTriggerPost(false);
         }
 
-    }, [trigger]);
+    }, [triggerPost]);
 
-    const Comment = ({ comment }) => {
-        let user;
-        if (comment.tourist_user != null) {
-            user = comment.tourist_user;
-        } else if (comment.local_user != null) {
-            user = comment.local_user;
-        } else if (comment.vendor_staff_user != null) {
-            user = comment.vendor_staff_user;
+    useEffect(() => {
+        const fetchData = async () => {
+            let response = await getAllPostComment(post_id);
+            if (response.status) {
+                setComments([]);
+                setComments(response.data);
+            } else {
+                console.log("Comments not fetch!");
+            }
+        };
+
+        if ((post_id && triggerComment)) {
+            fetchData(post_id);
+            setTriggerComment(false);
+        }
+    }, [post_id,triggerComment]);
+
+    async function reply_comment(values) {
+        const replyObj = {
+            content: values.content
+        };
+
+        let response = await createComment(post_id, values.parent_comment_id , user.user_id, replyObj);
+
+        if (response.status) {
+            toast.success('Reply Successful!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+
+            setTriggerPost(true);
+            setTriggerComment(true);
         } else {
-            user = comment.internal_staff_user;
-        }   
+            console.log("Reply Failed!");
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+    }
+
+    async function create_comment() {
+        const commentObj = {
+            content: newComment,
+        };
+
+        let response = await createComment(post_id, 0, user.user_id, commentObj);
+
+        if (response.status) {
+            toast.success('Comment Added!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+
+            setNewComment("");
+            setTriggerPost(true);
+            setTriggerComment(true);
+        } else {
+            console.log("Comment Failed!");
+            setNewComment("");
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+    }
+
+    async function remove_comment(commentIdToDelete) {
+        let response = await deleteComment(commentIdToDelete);
+        if (response.status) {
+            toast.success('Comment Deleted!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+            setTriggerPost(true);
+            setTriggerComment(true);
+
+        } else {
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+    }
+
+    async function edit_comment(values) {
+        const commentObj = {
+            comment_id: values.comment_id,
+            content: values.content
+        };
+
+        let response = await updateComment(commentObj);
+
+        if (response.status) {
+            toast.success('Comment Updated!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+            setTriggerComment(true);
+            setTriggerPost(true);
+
+        } else {
+            console.log("Comment Update Failed!");
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+    }
+
+    const DataComment = (props) => {
+        let comment = props.data;
+        const [hideReply, setHideReply] = useState(true); // to hide and display the REPLY text area
+        const [hideEdit, setHideEdit] = useState(true); // to hide and display the EDIT text area
+        
+        const [userReply, setUserReply] = useState(""); // REPLY CONTENT FIELD
+        const [editComment, setEditComment] = useState(""); // EDIT CONTENT FIELD
+
+        let commenter;
+        if (comment.tourist_user != null) {
+            commenter = comment.tourist_user;
+        } else if (comment.local_user != null) {
+            commenter = comment.local_user;
+        } else if (comment.vendor_staff_user != null) {
+            commenter = comment.vendor_staff_user;
+        } else {
+            commenter = comment.internal_staff_user;
+            commenter.profile_pic = "http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg"
+        }  
+
 
         return (
-            <Card style={{ marginTop: '20px' }}>
-                <p>{user.name}</p>
-                <p>{comment.content}</p>
-                <p style={{ fontSize: '14px', color: '#666' }}>Commented on: {moment(comment.publish_time).format('L LT')}</p>
-                {/* Display child comments recursively */}
-                {comment.child_comment_list &&
-                    comment.child_comment_list.map((child) => <Comment key={child.comment_id} comment={child} />)}
-            </Card>
-        );
-    };
+            <Comment>
+                <Comment.Avatar src={commenter.profile_pic} />
+                <Comment.Content>
+                    <Comment.Author as="a">{commenter.name}</Comment.Author>
+                    <Comment.Metadata>
+                        <div> {moment(comment.publish_time).format('L LT')}</div>
+                    </Comment.Metadata>
+                    <Comment.Text>
+                        {comment.content}
+                    </Comment.Text>
+                    <Comment.Actions>
+                        <div style={{display:'flex'}}>
+                        
+                        <Comment.Action
+                            onClick={() => { setHideReply(!hideReply); setHideEdit(true);}}>
+                            Reply
+                        </Comment.Action>
 
-    const onUpvote = async (post_id) => {
+                        { commenter.user_id === user.user_id && (     // only the user that commented can edit / delete 
+                            <>
+                            <Comment.Action
+                                onClick={() => { setHideEdit(!hideEdit); setHideReply(true);}}>
+                                Edit
+                            </Comment.Action>
+                            <Comment.Action
+                                onClick={() => { remove_comment(comment.comment_id);}}>
+                                Delete
+                            </Comment.Action>
+                            </>
+                        )} 
+
+                        <Comment.Action
+                                onClick={() => { onUpvoteComment(comment.comment_id);}}
+                                style= {{ color: (comment.upvoted_user_id_list && comment.upvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black")}} >
+                                <ArrowUpOutlined/>
+                        </Comment.Action>
+
+                        <div style={{marginRight:10}}> {comment.upvoted_user_id_list.length} </div>
+
+                        <Comment.Action
+                            onClick={() => { onDownvoteComment(comment.comment_id); }}
+                            style= {{ color: (comment.downvoted_user_id_list && comment.downvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black")}} >
+                            <ArrowDownOutlined/>
+                        </Comment.Action>
+
+                        <div style={{marginLeft:2, color:'#FFA53F', fontWeight:'bold'}}> {comment.child_comment_list.length} Replies </div>
+                        </div>
+
+                        <Form // form to reply to a comment 
+                            reply
+                            hidden={hideReply}
+                            onSubmit={() => {
+                                console.log(userReply);
+                                if (!userReply || userReply === "") return;
+
+                                const reply = {
+                                    parent_comment_id: comment.comment_id,
+                                    content: userReply
+                                };
+                                
+                                reply_comment(reply);
+                                setUserReply("");
+                                setHideReply(true);
+                            }}
+                        >
+                            <Form.TextArea
+                                value={userReply}
+                                onChange={(e) => setUserReply(e.target.value)}
+                            />
+                            <Button
+                                type="submit"
+                                content="Add a Reply"
+                                labelPosition="left"
+                                icon="add"
+                                color='yellow'
+                            />
+                        </Form>
+
+                        <Form // form to edit the existing comment 
+                            reply
+                            hidden={hideEdit}
+                            onSubmit={() => {
+                                console.log(editComment);
+                                if (!editComment || editComment === "") return;
+
+                                const new_comment = {
+                                    comment_id: comment.comment_id,
+                                    content: editComment
+                                };
+                                
+                                edit_comment(new_comment);
+                                setEditComment("");
+                                setHideEdit(true);
+                            }}
+                        >
+                            <Form.TextArea
+                                value={editComment}
+                                onChange={(e) => setEditComment(e.target.value)}
+                            />
+                            <Button
+                                type="submit"
+                                content="Edit Comment"
+                                labelPosition="left"
+                                icon="edit"
+                                color='yellow'
+                            />
+                        </Form>
+                    </Comment.Actions>
+                    <div style={{marginBottom: -18}}>
+                        <Comment.Group>
+                            {comment.parent_comment == null && comment.child_comment_list.length > 0 &&
+                                comment.child_comment_list.map((e, i) => {
+                                    return <DataComment data={e} />;
+                            })}
+                        </Comment.Group>
+                    </div>
+                </Comment.Content>
+            </Comment>
+        );
+    }
+
+    const onUpvoteComment = async (comment_id) => {
+        const response = await upvoteComment(user.user_id, comment_id);
+        if (response.status) {
+            setTriggerComment(true);
+        } else {
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+    }
+
+    const onDownvoteComment = async (comment_id) => {
+        const response = await downvoteComment(user.user_id, comment_id);
+        if (response.status) {
+            setTriggerComment(true);
+        } else {
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+    }
+
+    const onUpvotePost = async (post_id) => {
         if (!user.upvoted_user_id_list || !user.upvoted_user_id_list.includes(user.user_id)) {
             const response = await upvote(user.user_id, post_id);
             if (response.status) {
-                setTrigger(true);
+                setTriggerPost(true);
                 console.log('upvote success');
             } else {
                 toast.error(response.data.errorMessage, {
@@ -121,11 +380,11 @@ export default function PostItems() {
         }
     }
 
-    const onDownvote = async (post_id) => {
+    const onDownvotePost = async (post_id) => {
         if (!user.downvoted_user_id_list || !user.downvoted_user_id_list.includes(user.user_id)) {
             const response = await downvote(user.user_id, post_id);
             if (response.status) {
-                setTrigger(true);
+                setTriggerPost(true);
                 console.log('downvote success');
             } else {
                 toast.error(response.data.errorMessage, {
@@ -136,135 +395,7 @@ export default function PostItems() {
         }
     }
 
-    // Properties for create/update/delete comment
-    const [createCommentForm] = Form.useForm();
-    const [updateCommentForm] = Form.useForm();
-    const [isCreateCommentModalOpen, setIsCreateCommentModalOpen] = useState(false);
-    const [isUpdateCommentModalOpen, setIsUpdateCommentModalOpen] = useState(false);
-    const [selectedCommentId, setSelectedCommentId] = useState(null);
-    const [selectedComment, setSelectedComment] = useState(null);
-    const [isDeleteConfirmationVisible, setDeleteConfirmationVisible] = useState(false);
-    const [commentIdToDelete, setCommentIdToDelete] = useState('');
-
-    // Create a comment
-    const handleCreateComment = () => {
-        setIsCreateCommentModalOpen(true);
-    }
-
-    function onClickCancelCreateCommentModal() {
-        setIsCreateCommentModalOpen(false);
-    }
-
-    async function onClickSubmitCommentCreate(values) {
-        const commentObj = {
-            content: values.content
-        };
-
-        console.log("commentObj", commentObj);
-
-        // Will need to test / update the parent_comment_id
-        let response = await createComment(post_id, parent_comment_id, user.user_id, commentObj);
-        console.log("createComment response", response);
-        if (response.status) {
-            createCommentForm.resetFields();
-            setIsCreateCommentModalOpen(false);
-            toast.success('Comment successfully created!', {
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: 1500
-            });
-
-            console.log(response.data)
-            setTrigger(true);
-        } else {
-            console.log("Comment creation failed!");
-            console.log(response.data);
-            toast.error(response.data.errorMessage, {
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: 1500
-            });
-        }
-    }
-
-    // Update a comment
-    const handleUpdate = (comment_id) => {
-        console.log(comment_id);
-        setSelectedCommentId(post_id);
-        setSelectedComment(comment_list.find(item => item.comment_id === comment_id));
-        setIsUpdateCommentModalOpen(true);
-    }
-
-    function onClickCancelUpdateCommentModal() {
-        setIsUpdateCommentModalOpen(false);
-        setSelectedComment(null);
-        setSelectedCommentId(null);
-    }
-
-    async function onClickSubmitCommentUpdate(values) {
-        const commentObj = {
-            comment_id: selectedCommentId,
-            content: values.content
-        };
-
-        console.log("commentObj", commentObj);
-
-        let response = await updateComment(commentObj);
-        console.log("updateComment response", response);
-        if (response.status) {
-            updateCommentForm.resetFields();
-            setIsUpdateCommentModalOpen(false);
-            toast.success('Comment successfully updated!', {
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: 1500
-            });
-
-            console.log(response.data);
-            setSelectedCommentId(null);
-            setSelectedComment(null);
-            setTrigger(true);
-        } else {
-            console.log("Comment update failed!");
-            console.log(response.data);
-            toast.error(response.data.errorMessage, {
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: 1500
-            });
-        }
-    }
-
-    // Delete a comment
-    const handleDelete = (comment_id) => {
-        console.log(comment_id);
-        openDeleteConfirmation(comment_id);
-    }
-
-    const openDeleteConfirmation = (comment_id) => {
-        setCommentIdToDelete(comment_id);
-        setDeleteConfirmationVisible(true);
-    };
-
-    const closeDeleteConfirmation = () => {
-        setDeleteConfirmationVisible(false);
-    };
-
-    const onDeleteConfirmed = async () => {
-        let response = await deleteComment(commentIdToDelete);
-        if (response.status) {
-            toast.success(response.data, {
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: 1500
-            });
-            setTrigger(true);
-            setCommentIdToDelete('');
-        } else {
-            toast.error(response.data.errorMessage, {
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: 1500
-            });
-        }
-
-        closeDeleteConfirmation();
-    };
-
+    const [newComment, setNewComment] = useState("");
     return user ? (
         <Layout style={styles.layout}>
             <CustomHeader items={forumBreadCrumb} />
@@ -298,13 +429,13 @@ export default function PostItems() {
 
                     { post && (
                         <div style={{display: 'flex'}}>
-                            {/* display image attachment if there is any */}
                             { post.post_image && (
                                 <>
                                     <p style={{ marginTop: '80px', marginLeft: '60px', color:'#FFA53F', fontWeight:"bold", fontSize:'18px'}}>
                                         <PaperClipOutlined />
                                     </p>
-
+                                    
+                                    {/* display image attachment if there is any */}        
                                     <Link 
                                         type="text"
                                         onClick={() => setVisible(true)}
@@ -328,13 +459,13 @@ export default function PostItems() {
                             )}
 
                             <div style={{ marginLeft: 'auto', marginTop: '80px', marginRight: 30, display:'flex'}}>
-                                <Link style={{ color: (post.upvote_list && post.upvote_list.includes(user.user_id) ? "#FFA53F" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onUpvote(post.post_id)} > 
+                                <Link style={{ color: (post.upvote_list && post.upvote_list.includes(user.user_id) ? "#FFA53F" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onUpvotePost(post.post_id)} > 
                                     <ArrowUpOutlined />
                                 </Link>
                                 
                                 <p style={{marginLeft:10, marginRight:10, marginTop: 6, fontSize:13, fontWeight:'bold'}}> {post.upvote_list.length} </p>
                             
-                                <Link style={{ color: (post.downvote_list && post.downvote_list.includes(user.user_id) ? "#FFA53F" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onDownvote(post.post_id)}>  
+                                <Link style={{ color: (post.downvote_list && post.downvote_list.includes(user.user_id) ? "#FFA53F" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onDownvotePost(post.post_id)}>  
                                     <ArrowDownOutlined />
                                 </Link>
                             </div>
@@ -342,25 +473,50 @@ export default function PostItems() {
                     )}
                 </Card>
 
-                <Card style={{
-                        width: '100%',
-                        height: 250,
-                        marginLeft: '-5px',
-                        marginRight: '50px',
-                        marginTop: '30px',
-                        fontSize: 20,
-                        border:'none'
-                    }}
+                { post && (
+                    <Card style={{
+                            width: '100%',
+                            height: 250,
+                            marginLeft: '-5px',
+                            marginRight: '50px',
+                            marginTop: '5px',
+                            fontSize: 20,
+                            border:'none'
+                        }}
                     >
+                        {/* Display comments here */}
+                        <Header as="h3" dividing>
+                            Comments
+                        </Header>
 
-                      {/* Display comments here */}
-                      {post && post.comment_list &&
-                        post.comment_list.map((comment) => <Comment key={comment.comment_id} comment={comment} />)}
-                </Card>
-                
+                        {post && comments &&
+                            comments.map((comment) => 
+                            <div style={{ marginBottom: -20 }}>
+                                <Comment.Group>
+                                    <DataComment data={comment} />
+                                </Comment.Group>
+                            </div>
+                        )}
 
+                        <Content style={styles.replyInput}>
+                            <Input
+                                placeholder="Type a comment..."
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                                onPressEnter={create_comment}
+                                style={{ flex: 1, marginRight: '10px', height: '40px' }}
+                            />
+                            <Button
+                                type="submit"
+                                content="Comment"
+                                color='yellow'
+                                onClick={create_comment}
+                            />
+                        </Content>
+                                
+                    </Card>
+                )}
                 <ToastContainer />
-
             </Content>
         </Layout>
     ) :
@@ -370,6 +526,11 @@ export default function PostItems() {
 }
 
 const styles = {
+    replyInput: {
+        marginTop: '16px',
+        display: 'flex',
+        alignItems: 'center',
+    },
     layout: {
         minHeight: '100vh',
         minWidth: '90vw',
