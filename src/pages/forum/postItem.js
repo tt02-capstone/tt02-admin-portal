@@ -29,6 +29,7 @@ export default function PostItems() {
     // comments 
     const [comments, setComments] = useState([]);
     const [triggerComment, setTriggerComment] = useState(true);
+    const [newComment, setNewComment] = useState("");
 
     const forumBreadCrumb = [
         {
@@ -88,6 +89,36 @@ export default function PostItems() {
         }
 
     }, [triggerPost]);
+
+    const onUpvotePost = async (post_id) => {
+        if (!user.upvoted_user_id_list || !user.upvoted_user_id_list.includes(user.user_id)) {
+            const response = await upvote(user.user_id, post_id);
+            if (response.status) {
+                setTriggerPost(true);
+                console.log('upvote success');
+            } else {
+                toast.error(response.data.errorMessage, {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 1500
+                });
+            }
+        }
+    }
+
+    const onDownvotePost = async (post_id) => {
+        if (!user.downvoted_user_id_list || !user.downvoted_user_id_list.includes(user.user_id)) {
+            const response = await downvote(user.user_id, post_id);
+            if (response.status) {
+                setTriggerPost(true);
+                console.log('downvote success');
+            } else {
+                toast.error(response.data.errorMessage, {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 1500
+                });
+            }
+        }
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -385,36 +416,6 @@ export default function PostItems() {
         }
     }
 
-    const onUpvotePost = async (post_id) => {
-        if (!user.upvoted_user_id_list || !user.upvoted_user_id_list.includes(user.user_id)) {
-            const response = await upvote(user.user_id, post_id);
-            if (response.status) {
-                setTriggerPost(true);
-                console.log('upvote success');
-            } else {
-                toast.error(response.data.errorMessage, {
-                    position: toast.POSITION.TOP_RIGHT,
-                    autoClose: 1500
-                });
-            }
-        }
-    }
-
-    const onDownvotePost = async (post_id) => {
-        if (!user.downvoted_user_id_list || !user.downvoted_user_id_list.includes(user.user_id)) {
-            const response = await downvote(user.user_id, post_id);
-            if (response.status) {
-                setTriggerPost(true);
-                console.log('downvote success');
-            } else {
-                toast.error(response.data.errorMessage, {
-                    position: toast.POSITION.TOP_RIGHT,
-                    autoClose: 1500
-                });
-            }
-        }
-    }
-
     // to view the commenter / poster profile 
     const viewProfile = async (user_id) => {
         const response = await viewUserProfile(user_id)
@@ -463,7 +464,6 @@ export default function PostItems() {
         setOpen(true)
     }
 
-    const [newComment, setNewComment] = useState("");
     const [open, setOpen] = useState(false)
     const [userProfile, setUserProfile] = useState('')
     const [tabs, setTabs] = useState([]);
@@ -495,7 +495,6 @@ export default function PostItems() {
 
                     </Modal>
                 )}
-
 
                 <Card
                     style={{
