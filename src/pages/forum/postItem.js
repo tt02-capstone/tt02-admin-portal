@@ -166,10 +166,27 @@ export default function PostItems() {
             setTriggerComment(true);
 
         } else {
-            toast.error(response.data.errorMessage, {
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: 1500
-            });
+            const temp_comment = {
+                comment_id: commentIdToDelete,
+                content: '[deleted]', 
+                updated_time : new Date()
+            };
+
+            const response = await updateComment(temp_comment); // to update any comments w child to be 'deleted'
+            if (response.status) {
+                setTriggerPost(true);
+                setTriggerComment(true);
+                
+                toast.success('Comment cannot be deleted, but is modified!!', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 1500
+                });
+            } else { // cant update to 'deleted'
+                toast.error(response.data.errorMessage, {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 1500
+                });
+            }
         }
     }
 
