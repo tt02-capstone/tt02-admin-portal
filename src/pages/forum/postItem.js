@@ -9,7 +9,8 @@ import { PaperClipOutlined, ArrowUpOutlined , ArrowDownOutlined } from '@ant-des
 import moment from 'moment';
 import { downvote, upvote } from '../../redux/forumRedux';
 import { ToastContainer, toast } from 'react-toastify';
-import { Button, Comment, Header, Form } from 'semantic-ui-react';
+import { Button, Comment, Header, Form, Modal, Tab } from 'semantic-ui-react';
+import { viewUserProfile } from '../../redux/userRedux';
 
 export default function PostItems() {
     let { category_name } = useParams();
@@ -240,7 +241,9 @@ export default function PostItems() {
             <Comment>
                 <Comment.Avatar src={commenter.profile_pic} />
                 <Comment.Content>
-                    <Comment.Author as="a">{commenter.name}</Comment.Author>
+                    <Link onClick={() => viewProfile(commenter.user_id)}>
+                        <Comment.Author as="a">{commenter.name}</Comment.Author>
+                    </Link>
                     <Comment.Metadata>
                         <div> {moment(comment.publish_time).format('L LT')}</div>
                     </Comment.Metadata>
@@ -412,11 +415,88 @@ export default function PostItems() {
         }
     }
 
+    // to view the commenter / poster profile 
+    const viewProfile = async (user_id) => {
+        const response = await viewUserProfile(user_id)
+        if (response.status) {
+            setUserProfile(response.data)
+
+            const postList = response.data.post_list.length > 0 ? (
+                response.data.post_list.map((post) => (
+                    <Card key={post.post_id} style={{marginBottom:10}}> 
+                        <h3 style={{fontSize:15}}>{post.title}</h3>
+                        <p style={{fontSize:13}}>{post.content}</p>
+                        <p style={{fontSize:12, color:'grey'}}> posted on: {moment(post.publish_time).format('L LT')} </p>
+                    </Card>
+                )))
+            : (
+                <div> No post created! </div>
+            );
+
+            const commentList = response.data.comment_list.length > 0 ? (
+                response.data.comment_list.map((comment) => (
+                    <Card key={comment.comment_id} style={{marginBottom:10}}> 
+                        <h3 style={{fontSize:15}} >{comment.content}</h3>
+                        <p style={{fontSize:12, color:'grey'}}> commented on: {moment(comment.publish_time).format('L LT')} </p>
+                    </Card>
+                )))
+            : (
+                <div> No comments posted! </div>
+            );
+            
+
+            const tabInfo = [
+                {
+                  menuItem: 'Post(s)',
+                  render: () => <Tab.Pane attached={false}> {postList}</Tab.Pane>,
+                },
+                {
+                  menuItem: 'Comment(s)',
+                  render: () => <Tab.Pane attached={false}>{commentList}</Tab.Pane>,
+                }
+            ]
+            setTabs(tabInfo)
+        } else {
+            console.log('user profile not fetched')
+        }
+
+        setOpen(true)
+    }
+
     const [newComment, setNewComment] = useState("");
+    const [open, setOpen] = useState(false)
+    const [userProfile, setUserProfile] = useState('')
+    const [tabs, setTabs] = useState([]);
+
     return user ? (
         <Layout style={styles.layout}>
             <CustomHeader items={forumBreadCrumb} />
             <Content style={styles.content}>
+                { userProfile && tabs && (
+                    <Modal
+                    onClose={() => setOpen(false)}
+                    onOpen={() => setOpen(true)}
+                    open={open}
+                    >
+
+                    <Modal.Header>User Profile</Modal.Header>
+                    <Modal.Content>
+                        <Modal.Description style={{marginLeft: 0}}>
+                            <div style={{display:'flex'}}>
+                                <Image size='small' src={userProfile.profile_pic ? userProfile.profile_pic : 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg'} wrapped/>
+                                <div style={{marginLeft: 15}}>
+                                    <Header>{userProfile.name}</Header>
+                                    <p style={{fontWeight:"bold"}}> Recent Forum Activity </p>
+                                    <Tab menu={{ pointing: true }} panes={tabs}  style={{width:750}} />
+                                </div>
+                            </div>
+                        </Modal.Description>
+                    </Modal.Content>
+
+                    </Modal>
+                )}
+
+
                 <Card
                     style={{
                         width: '100%',
@@ -432,7 +512,9 @@ export default function PostItems() {
                             avatar={<Avatar size="large" src={`${post.postUser.profile_pic ? post.postUser.profile_pic : 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg'}`} />}
                             title={
                                 <div>
-                                    {post.postUser.name}
+                                    <Link style={{color:'black'}} onClick={() => viewProfile(post.postUser.user_id)}>
+                                        {post.postUser.name}
+                                    </Link>
                                     <div style={{ fontSize: '14px', color: '#666' }}>Posted on: {moment(post.publish_time).format('L')} {moment(post.publish_time).format('LT')}</div>
                                 </div>
                             }
