@@ -172,10 +172,10 @@ export default function Post() {
             post_image_list: values.post_image && values.post_image.length == 0 ? oldPostImage : values.post_image,
         };
 
-        console.log("postObj", postObj);
+        // console.log("postObj", postObj);
 
         let response = await updatePost(postObj);
-        console.log("updatePost response", response);
+        // console.log("updatePost response", response);
         if (response.status) {
             updatePostForm.resetFields();
             setIsUpdatePostModalOpen(false);
@@ -270,7 +270,7 @@ export default function Post() {
                                         avatar={<Avatar size="large" src={`${item.postUser.profile_pic ? item.postUser.profile_pic : 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg'}`} />}
                                         title={item.title}
                                         description={item.content}
-                                        style={{width:'1600px'}}
+                                        style={{width:'1200px'}}
                                     />
                                 </Link>
 

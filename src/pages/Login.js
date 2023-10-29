@@ -23,6 +23,7 @@ function Login() {
 
   const formStyle = {
     maxWidth: "800px",
+    marginTop: 200, 
     margin: "10% auto",
     padding: "20px"
   }
@@ -76,8 +77,8 @@ function Login() {
 
   return (
     <div className="Login" style={{backgroundColor: 'white'}}>
-      <br /><br /><br />
-      <center><h1>WithinSG Admin Portal</h1></center>
+      <br />
+      <center><h1 style={{marginTop: 250, marginBottom: -150}}>WithinSG Admin Portal</h1></center>
       <form onSubmit={handleSubmit} style={formStyle}>
         <FormLabel>Email</FormLabel>
         <TextField
