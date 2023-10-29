@@ -422,7 +422,7 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         width: "98%",
-        marginTop: '-5px'
+        marginTop: '-40px'
     },
     customRow: {
         height: '280px',

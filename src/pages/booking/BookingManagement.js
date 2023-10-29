@@ -25,7 +25,7 @@ export default function BookingManagement() {
 
     const viewBookingBreadCrumb = [
         {
-          title: <strong>Bookings</strong>,
+          title: 'Bookings',
         }
     ];
 
