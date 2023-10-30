@@ -1,4 +1,4 @@
-import { categoryApi, categoryItemApi, postApi, commentApi } from "./api";
+import { categoryApi, categoryItemApi, postApi, commentApi, reportApi } from "./api";
 import { handleApiErrors } from "../helper/errorCatching";
 
 export async function createCategoryItem(categoryId, categoryItemToCreate) {
@@ -187,6 +187,76 @@ export async function getAllPostComment(postId) {
         return handleApiErrors(response);
     } catch (error) {
         console.error("forumRedux getAllPostComment Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function viewAllReportedPost() {
+    try {
+        const response = await reportApi.get(`/viewAllReportedPost`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux viewAllReportedPost Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function viewAllReportedComment() {
+    try {
+        const response = await reportApi.get(`/viewAllReportedComment`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux viewAllReportedComment Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function approveCommentReport(reportId, commentId) {
+    try {
+        const response = await reportApi.put(`/approveCommentReport/${reportId}/${commentId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux approveCommentReport Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function approvePostReport(reportId, postId) {
+    try {
+        const response = await reportApi.put(`/approvePostReport/${reportId}/${postId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux approvePostReport Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function rejectReport(reportId) {
+    try {
+        const response = await reportApi.put(`/rejectReport/${reportId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux rejectReport Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function autoApproveCommentReport(commentId) {
+    try {
+        const response = await reportApi.put(`/autoApproveCommentReport/${commentId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux autoApproveCommentReport Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
+export async function autoApprovePostReport(postId) {
+    try {
+        const response = await reportApi.put(`/autoApprovePostReport/${postId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux autoApprovePostReport Error : ", error);
         return {status: false, data: error.message};
     }
 }
