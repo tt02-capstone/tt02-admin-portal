@@ -1,10 +1,9 @@
-import { Layout, Card, Avatar, Image, Input } from 'antd';
+import { Layout, Card, Avatar, Image, Input, Tag } from 'antd';
 import { React, useEffect, useState } from 'react';
 import CustomHeader from "../../components/CustomHeader";
-import CustomButton from "../../components/CustomButton";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, useParams, Link } from 'react-router-dom';
-import { createComment, deleteComment, getPost, updateComment, getAllPostComment, upvoteComment, downvoteComment } from '../../redux/forumRedux';
+import { createComment, deleteComment, getPost, updateComment, getAllPostComment, upvoteComment, downvoteComment, autoApproveCommentReport, autoApprovePostReport } from '../../redux/forumRedux';
 import { PaperClipOutlined, ArrowUpOutlined , ArrowDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { downvote, upvote } from '../../redux/forumRedux';
@@ -19,6 +18,8 @@ export default function PostItems() {
     let { category_item_id } = useParams();
     let { post_title } = useParams();
     let { post_id } = useParams();
+
+    let { reportPostTitle } = useParams();
 
     const user = JSON.parse(localStorage.getItem("user"));
     const [post, setPost] = useState();
@@ -49,6 +50,16 @@ export default function PostItems() {
         },
     ];
 
+    const reportCrumb = [
+        {
+            title: 'Manage Forum Report',
+            to: '/forumReport'
+        },
+        {
+            title: reportPostTitle,
+        },
+    ]
+
     useEffect(() => {
         const fetchData = async () => {
             const response = await getPost(post_id);
@@ -74,7 +85,8 @@ export default function PostItems() {
                     post_image: item.post_image_list[0],
                     img_file : fileName,
                     upvote_list: item.upvoted_user_id_list,
-                    downvote_list: item.downvoted_user_id_list
+                    downvote_list: item.downvoted_user_id_list,
+                    is_published : item.is_published
                 }
                 setPost(formatItem)
                 console.log(formatItem)
@@ -201,7 +213,8 @@ export default function PostItems() {
             const temp_comment = {
                 comment_id: commentIdToDelete,
                 content: '[deleted]', 
-                updated_time : new Date()
+                updated_time : new Date(), 
+                is_published : false
             };
 
             const response = await updateComment(temp_comment); // to update any comments w child to be 'deleted'
@@ -225,7 +238,8 @@ export default function PostItems() {
     async function edit_comment(values) {
         const commentObj = {
             comment_id: values.comment_id,
-            content: values.content
+            content: values.content,
+            is_published : true
         };
 
         let response = await updateComment(commentObj);
@@ -240,6 +254,46 @@ export default function PostItems() {
 
         } else {
             console.log("Comment Update Failed!");
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+    }
+
+    async function report_comment(comment_id) {
+        let response = await autoApproveCommentReport(comment_id);
+
+        if (response.status) {
+            toast.success('Comment Reported!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+            setTriggerComment(true);
+            setTriggerPost(true);
+
+        } else {
+            console.log("Report Comment Failed!");
+            toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+        }
+    }
+
+    async function report_post(post_id) {
+        let response = await autoApprovePostReport(post_id);
+
+        if (response.status) {
+            toast.success('Post Reported!', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+            setTriggerComment(true);
+            setTriggerPost(true);
+
+        } else {
+            console.log("Report Post Failed!");
             toast.error(response.data.errorMessage, {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 1500
@@ -277,6 +331,15 @@ export default function PostItems() {
                     </Link>
                     <Comment.Metadata>
                         <div> {moment(comment.publish_time).format('L LT')}</div>
+                        { comment.is_published && commenter.user_id !== user.user_id && commenter.user_type !== "INTERNAL_STAFF" && (   // user can report any comment except for theirs + admin 
+                            <>
+                            <Comment.Action
+                                onClick={() => report_comment(comment.comment_id) }
+                                style={{ color:'#FFA53F', marginLeft:4, fontWeight:'bold'}}>
+                                Report
+                            </Comment.Action>
+                            </>
+                        )} 
                     </Comment.Metadata>
                     <Comment.Text>
                         {comment.content}
@@ -284,12 +347,14 @@ export default function PostItems() {
                     <Comment.Actions>
                         <div style={{display:'flex'}}>
                         
-                        <Comment.Action
-                            onClick={() => { setHideReply(!hideReply); setHideEdit(true);}}>
-                            Reply
-                        </Comment.Action>
+                        { comment.is_published && ( // cnnt reply to a reported comment 
+                            <Comment.Action
+                                onClick={() => { setHideReply(!hideReply); setHideEdit(true);}}>
+                                Reply
+                            </Comment.Action>
+                        )}
 
-                        { commenter.user_id === user.user_id && (     // only the user that commented can edit / delete 
+                        { commenter.user_id === user.user_id && comment.is_published  && (   // only the user that commented can edit / delete  
                             <>
                             <Comment.Action
                                 onClick={() => { setHideEdit(!hideEdit); setHideReply(true);}}>
@@ -302,19 +367,23 @@ export default function PostItems() {
                             </>
                         )} 
 
-                        <Comment.Action
-                                onClick={() => { onUpvoteComment(comment.comment_id);}}
-                                style= {{ color: (comment.upvoted_user_id_list && comment.upvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black")}} >
-                                <ArrowUpOutlined/>
-                        </Comment.Action>
+                        { comment.is_published && ( // remove upvote and downvote for reported comment  
+                            <>
+                                <Comment.Action
+                                        onClick={() => { onUpvoteComment(comment.comment_id);}}
+                                        style= {{ color: (comment.upvoted_user_id_list && comment.upvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black")}} >
+                                        <ArrowUpOutlined/>
+                                </Comment.Action>
 
-                        <div style={{marginRight:10}}> {comment.upvoted_user_id_list.length} </div>
+                                <div style={{marginRight:10}}> {comment.upvoted_user_id_list.length} </div>
 
-                        <Comment.Action
-                            onClick={() => { onDownvoteComment(comment.comment_id); }}
-                            style= {{ color: (comment.downvoted_user_id_list && comment.downvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black")}} >
-                            <ArrowDownOutlined/>
-                        </Comment.Action>
+                                <Comment.Action
+                                    onClick={() => { onDownvoteComment(comment.comment_id); }}
+                                    style= {{ color: (comment.downvoted_user_id_list && comment.downvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black")}} >
+                                    <ArrowDownOutlined/>
+                                </Comment.Action>
+                            </>
+                        )}
 
                         <div style={{marginLeft:2, color:'#FFA53F', fontWeight:'bold'}}> {comment.child_comment_list.length} Replies </div>
                         </div>
@@ -470,7 +539,8 @@ export default function PostItems() {
 
     return user ? (
         <Layout style={styles.layout}>
-            <CustomHeader items={forumBreadCrumb} />
+            { reportPostTitle ? <CustomHeader items={reportCrumb} /> : <CustomHeader items={forumBreadCrumb} />}
+            {/* <CustomHeader items={forumBreadCrumb} /> */}
             <Content style={styles.content}>
                 { userProfile && tabs && (
                     <Modal
@@ -515,6 +585,11 @@ export default function PostItems() {
                                         {post.postUser.name}
                                     </Link>
                                     <div style={{ fontSize: '14px', color: '#666' }}>Posted on: {moment(post.publish_time).format('L')} {moment(post.publish_time).format('LT')}</div>
+                                    {post.is_published ? (
+                                        <Tag color={'geekblue'}>PUBLISHED</Tag>
+                                        ) : (
+                                        <Tag color={'volcano'}>UNPUBLISHED</Tag>
+                                    )}
                                 </div>
                             }
                             description={
@@ -557,6 +632,12 @@ export default function PostItems() {
                             )}
 
                             <div style={{ marginLeft: 'auto', marginTop: '80px', marginRight: 30, display:'flex'}}>
+                                { post.is_published && (
+                                    <Link style = {{ color: '#FFA53F', fontWeight:'bold', fontSize:'15px', marginRight:20, marginTop:4 }} onClick={() => report_post(post.post_id) }>
+                                        Report 
+                                    </Link>
+                                )}
+                                
                                 <Link style={{ color: (post.upvote_list && post.upvote_list.includes(user.user_id) ? "#FFA53F" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onUpvotePost(post.post_id)} > 
                                     <ArrowUpOutlined />
                                 </Link>
