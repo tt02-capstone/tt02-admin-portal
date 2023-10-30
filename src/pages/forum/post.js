@@ -1,4 +1,4 @@
-import { Layout, Button, List, Avatar, Form, Modal } from 'antd';
+import { Layout, Button, List, Avatar, Form, Modal, Tag } from 'antd';
 import { React, useEffect, useState } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";
@@ -48,7 +48,8 @@ export default function Post() {
                             postUser: user,
                             publish_time: item.publish_time,
                             updated_time: item.updated_time,
-                            post_image: item.post_image_list
+                            post_image: item.post_image_list, 
+                            is_published: item.is_published
                         }
 
                         return processItem;
@@ -79,7 +80,8 @@ export default function Post() {
                             postUser: user,
                             publish_time: item.publish_time,
                             updated_time: item.updated_time,
-                            post_image: item.post_image_list
+                            post_image: item.post_image_list, 
+                            is_published: item.is_published
                         }
 
                         return processItem;
@@ -272,6 +274,11 @@ export default function Post() {
                                         description={item.content}
                                         style={{width:'1200px'}}
                                     />
+                                    {item.is_published ? (
+                                        <Tag color={'geekblue'} style={{fontWeight: 'bold'}}>PUBLISHED</Tag>
+                                        ) : (
+                                        <Tag color={'volcano'} style={{fontWeight: 'bold'}}>UNPUBLISHED</Tag>
+                                    )}
                                 </Link>
 
                                 {item.postUser.user_id === user.user_id && ( // only can edit and delete ur own post 

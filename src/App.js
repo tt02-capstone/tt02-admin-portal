@@ -7,12 +7,11 @@ import Navbar from "./components/Navbar";
 import {Layout, Menu} from "antd";
 import React, {useContext, useEffect, useState} from "react";
 import {
-    MailOutlined,
     FileOutlined,
     HomeOutlined,
     UserOutlined,
     UsergroupAddOutlined,
-    MoneyCollectOutlined, BankOutlined, FormOutlined, AlertOutlined, SolutionOutlined
+    MoneyCollectOutlined, FormOutlined, SolutionOutlined, ExclamationCircleOutlined, WechatOutlined
 } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
@@ -35,6 +34,7 @@ import ForumCategoryItems from "./pages/forum/categoryItems";
 import Post from "./pages/forum/post";
 import PostItems from "./pages/forum/postItem";
 import SupportTicketManagement from "./pages/support/SupportTicketManagement";
+import ManageForumReport from "./pages/forum/manageForumReport";
 
 export function AppLayout() {
 
@@ -46,7 +46,12 @@ export function AppLayout() {
       {key: '/home', label: 'Home', icon: <HomeOutlined />},
       {key: '/profile', label: 'Profile', icon: <UserOutlined />},
       {key: '/user', label: 'User', icon: <UsergroupAddOutlined />},
-      {key: '/forum', label: 'Forum', icon: <FormOutlined />,},
+      {key: '/forumMain', label: 'Forum', icon: <FormOutlined/>, 
+        children: [
+            {key: '/forum', label: 'Discussion', icon: <WechatOutlined/>,},
+            {key: '/forumReport', label: 'Reports', icon: <ExclamationCircleOutlined/>,},
+        ]
+      },
       {key: '/booking', label: 'Bookings', icon: <MoneyCollectOutlined />,},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
       {key: '/supportTicket', label: 'Support Tickets', icon: <SolutionOutlined />,},
@@ -90,6 +95,8 @@ export function AppLayout() {
                         <Route path="/tour" element={<TourManagement />}/>
                         <Route path="/accommodation/viewRoomCount" element={<ViewRoomCount />}/>
                         <Route path="/forum" element={<ForumCategory />}/>
+                        <Route path="/forumReport" element={< ManageForumReport/>}/>
+                        <Route path="/forumReport/:post_id/:reportPostTitle" element={< PostItems/>}/>
                         <Route path="/forum/:category_id/:category_name" element={<ForumCategoryItems />}/>
                         <Route path="/forum/post/:category_id/:category_name/:category_item_id/:category_item_name" element={< Post/>}/>
                         <Route path="/forum/post/:category_id/:category_name/:category_item_id/:category_item_name/:post_id/:post_title" element={< PostItems/>}/>
