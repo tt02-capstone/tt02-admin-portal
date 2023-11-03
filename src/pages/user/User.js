@@ -21,6 +21,9 @@ import WalletModal from "./WalletModal";
 import { updateLocalWallet } from '../../redux/localRedux';
 import { updateVendorWallet } from '../../redux/vendorRedux';
 import TransactionsModal from "./TransactionsModal";
+import { getSubscriptions, getSubscription } from "../../redux/dataRedux";
+import SubscriptionModal from "./SubscriptionModal";
+import { sub } from "date-fns";
 
 
 export default function User() {
@@ -64,6 +67,93 @@ export default function User() {
     const onClickTab = (tab) => {
         setCurrentTab(tab.key);
     };
+
+    const [isSubModalOpen, setIsSubModalOpen] = useState(false);
+    const [operation, setOperation] = useState("SUBSCRIBE");
+    const [subscriptionInfo, setSubscriptionInfo] = useState({
+        plan: "Monthly",
+        expiry: "2023-12-31",
+        nextBillingDate: "2023-12-31",
+        autoRenewal: true,
+        status: "Active"
+      });
+    const [isSubscribed, setIsSubscribed] = useState(true);
+
+    function onClickCancelManageSubButton() {
+        setIsSubModalOpen(false);
+      }
+    
+    async function onClickManageSubButton(user_id, user_type) {
+        setIsSubModalOpen(true);
+        // try {
+            
+        //     const response = await getSubscription(user_id, user_type);
+    
+        //     if (response.status) {
+        //       const details = response.data;
+        //       setSubscriptionDetails(response.data);
+        //       if (details == "active") {
+        //         setIsSubscribed(true);
+        //       }
+              
+        //     } else {
+        //       toast.error(response.data.errorMessage, {
+        //         position: toast.POSITION.TOP_RIGHT,
+        //         autoClose: 1500
+        //       });
+        //     }
+        //   } catch (error) {
+        //     toast.error(error, {
+        //       position: toast.POSITION.TOP_RIGHT,
+        //       autoClose: 1500
+        //     });
+        //   }
+        if (isSubscribed) {
+            setOperation("REMOVE");
+        } else {
+            setOperation("ADD");
+        }
+    }
+
+      async function onClickSubmitSubscription(subscriptionFormDetails) {
+        try {
+
+            if (operation == "REMOVE") {
+
+        //   const response = await unsubscribe(user.vendor.vendor_id, "VENDOR");
+        //   if (response.status) {
+        //     setIsSubscribed(false);
+        //   } else {
+        //     toast.error(response.data.errorMessage, {
+        //       position: toast.POSITION.TOP_RIGHT,
+        //       autoClose: 1500
+        //     });
+        //   }
+
+            } else if (operation == "ADD") {
+        //   const response = await subscribe(user.vendor.vendor_id, "VENDOR", subscriptionDetails.subscriptionType, subscriptionDetails.autoRenew);
+        //   if (response.status) {
+        //     setIsSubscribed(true);
+        //   } else {
+        //     toast.error(response.data.errorMessage, {
+        //       position: toast.POSITION.TOP_RIGHT,
+        //       autoClose: 1500
+        //     });
+        //   }
+            }
+    
+
+    
+    
+        } catch (error) {
+          toast.error(error, {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1500
+          });
+        }
+    
+    
+      }
 
     // admin users table pagination
     const [getAdminData, setGetAdminData] = useState(true);
@@ -424,6 +514,14 @@ export default function User() {
             ...getColumnSearchProps('poc_mobile_num'),
         },
         {
+            title: 'Subscription Status',
+            dataIndex: 'subscription_status',
+            key: 'subscription_status',
+            sorter: (a, b) => (a.subscription_status) > b.subscription_status,
+            ...getColumnSearchProps('subscription_status'),
+            
+        },
+        {
             title: 'Wallet Balance',
             dataIndex: 'wallet_balance',
             key: 'wallet_balance',
@@ -443,6 +541,7 @@ export default function User() {
                 let actions = [];
 
                 actions.push(
+                    <div>
                     <Popover content={content(record.vendor_id, "VENDOR", record.wallet_balance)} title="Additional Actions" trigger="click" key={3}>
                         <CustomButton
                     text="Manage Wallet"
@@ -450,6 +549,14 @@ export default function User() {
                    />
 
                     </Popover>
+
+                    <CustomButton
+                    text="Manage Subscription"
+                    style={{marginRight: '10px'}}
+                    onClick={() => onClickManageSubButton(record.vendor_id, "VENDOR")}
+                   />
+                    
+                    </div>
                   );   
 
                 return actions;
@@ -462,6 +569,7 @@ export default function User() {
         if (getVendorData) { // if we want to fetch the most updated data
             const fetchData = async () => {
                 const response = await getAllVendors();
+                //const subscription_response = await getSubscriptions(admin.user_id);
                 if (response.status) {
                     console.log(response.data)
                     var tempData = response.data.map((val) => ({
@@ -1067,6 +1175,16 @@ export default function User() {
                         onCancelTransactionsModal={onCancelTransactionsModal}
 
                     />
+
+                    {isSubModalOpen &&
+                        <SubscriptionModal
+                            operation={operation}
+                            subscriptionDetails={subscriptionInfo}
+                            isSubModalOpen={isSubModalOpen}
+                            onClickSubmitSubscription={onClickSubmitSubscription}
+                            onClickCancelManageSubButton={onClickCancelManageSubButton}
+                        />
+                    } 
                 </Content>
             </Layout>
 
