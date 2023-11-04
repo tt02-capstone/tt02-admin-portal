@@ -17,7 +17,7 @@ export default function SubscriptionModal(props) {
         
           if (props.subscriptionDetails.autoRenewal) {
             
-            initialValues.autoRenew = props.subscriptionDetails.autoRenewal;
+            initialValues.autoRenew = props.subscriptionDetails.auto_renewal;
             console.log(initialValues)
           }
     }
@@ -31,7 +31,7 @@ export default function SubscriptionModal(props) {
     if (props.subscriptionDetails) {
         form.setFieldsValue({
             subscriptionType: props.subscriptionDetails.plan,
-            autoRenew: props.subscriptionDetails.autoRenewal,
+            autoRenew: props.subscriptionDetails.auto_renewal,
           });
     }
 
@@ -87,8 +87,8 @@ export default function SubscriptionModal(props) {
                     >
                     
                     <Select>
-                            <Option value='MONTHLY'>Monthly</Option>
-                            <Option value='YEARLY'>Yearly</Option>
+                            <Option value='Monthly'>Monthly</Option>
+                            <Option value='Yearly'>Yearly</Option>
                     </Select>
                     </Form.Item>
 

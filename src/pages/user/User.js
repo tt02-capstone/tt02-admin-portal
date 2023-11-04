@@ -21,9 +21,9 @@ import WalletModal from "./WalletModal";
 import { updateLocalWallet } from '../../redux/localRedux';
 import { updateVendorWallet } from '../../redux/vendorRedux';
 import TransactionsModal from "./TransactionsModal";
-import { getSubscriptions, getSubscription } from "../../redux/dataRedux";
+import { getSubscriptionStatuses, getSubscription, unsubscribe, subscribe } from "../../redux/dataRedux";
 import SubscriptionModal from "./SubscriptionModal";
-import { sub } from "date-fns";
+import { set, sub } from "date-fns";
 
 
 export default function User() {
@@ -69,50 +69,55 @@ export default function User() {
     };
 
     const [isSubModalOpen, setIsSubModalOpen] = useState(false);
-    const [operation, setOperation] = useState("SUBSCRIBE");
-    const [subscriptionInfo, setSubscriptionInfo] = useState({
-        plan: "Monthly",
-        expiry: "2023-12-31",
-        nextBillingDate: "2023-12-31",
-        autoRenewal: true,
-        status: "Active"
-      });
-    const [isSubscribed, setIsSubscribed] = useState(true);
+    const [operation, setOperation] = useState("");
+    const [subscriptionInfo, setSubscriptionInfo] = useState({});
+    const [isSubscribed, setIsSubscribed] = useState(false);
 
     function onClickCancelManageSubButton() {
         setIsSubModalOpen(false);
       }
     
-    async function onClickManageSubButton(user_id, user_type) {
-        setIsSubModalOpen(true);
-        // try {
+    async function onClickManageSubButton(user_id, user_type, status) {
+        
+        try {
+
+            setCurrentId(user_id);
+            setCurrentType(user_type);
             
-        //     const response = await getSubscription(user_id, user_type);
+            if (status === "active") {
+                const response = await getSubscription(user_id, user_type);
     
-        //     if (response.status) {
-        //       const details = response.data;
-        //       setSubscriptionDetails(response.data);
-        //       if (details == "active") {
-        //         setIsSubscribed(true);
-        //       }
-              
-        //     } else {
-        //       toast.error(response.data.errorMessage, {
-        //         position: toast.POSITION.TOP_RIGHT,
-        //         autoClose: 1500
-        //       });
-        //     }
-        //   } catch (error) {
-        //     toast.error(error, {
-        //       position: toast.POSITION.TOP_RIGHT,
-        //       autoClose: 1500
-        //     });
-        //   }
-        if (isSubscribed) {
-            setOperation("REMOVE");
-        } else {
-            setOperation("ADD");
-        }
+                if (response.status) {
+                const details = response.data;
+                console.log(details)
+                setSubscriptionInfo(response.data);
+                setIsSubscribed(true);
+                setOperation("REMOVE");
+
+                
+                
+                } else {
+                toast.error(response.data.errorMessage, {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 1500
+                });
+                }
+            } else {
+                setOperation("ADD");
+            }
+
+            
+            
+            
+          } catch (error) {
+            toast.error(error, {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 1500
+            });
+          }
+
+          setIsSubModalOpen(true);
+        
     }
 
       async function onClickSubmitSubscription(subscriptionFormDetails) {
@@ -120,26 +125,39 @@ export default function User() {
 
             if (operation == "REMOVE") {
 
-        //   const response = await unsubscribe(user.vendor.vendor_id, "VENDOR");
-        //   if (response.status) {
-        //     setIsSubscribed(false);
-        //   } else {
-        //     toast.error(response.data.errorMessage, {
-        //       position: toast.POSITION.TOP_RIGHT,
-        //       autoClose: 1500
-        //     });
-        //   }
+            const response = await unsubscribe(subscriptionInfo.subscription_id);
+            if (response.status) {
+                setIsSubscribed(false);
+                setIsSubModalOpen(false);
+                if (currentType === "LOCAL") {
+                    setGetLocalData(true)
+                } else if (currentType === "VENDOR") {
+                    setGetVendorData(true);
+                }
+                
+            } else {
+                toast.error(response.data.errorMessage, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+                });
+            }
 
             } else if (operation == "ADD") {
-        //   const response = await subscribe(user.vendor.vendor_id, "VENDOR", subscriptionDetails.subscriptionType, subscriptionDetails.autoRenew);
-        //   if (response.status) {
-        //     setIsSubscribed(true);
-        //   } else {
-        //     toast.error(response.data.errorMessage, {
-        //       position: toast.POSITION.TOP_RIGHT,
-        //       autoClose: 1500
-        //     });
-        //   }
+          const response = await subscribe(currentId, currentType, subscriptionFormDetails.subscriptionType, subscriptionFormDetails.autoRenew);
+          if (response.status) {
+            setIsSubscribed(true);
+            setIsSubModalOpen(false);
+            if (currentType === "LOCAL") {
+                setGetLocalData(true)
+            } else if (currentType === "VENDOR") {
+                setGetVendorData(true);
+            }
+          } else {
+            toast.error(response.data.errorMessage, {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 1500
+            });
+          }
             }
     
 
@@ -553,7 +571,7 @@ export default function User() {
                     <CustomButton
                     text="Manage Subscription"
                     style={{marginRight: '10px'}}
-                    onClick={() => onClickManageSubButton(record.vendor_id, "VENDOR")}
+                    onClick={() => onClickManageSubButton(record.vendor_id, "VENDOR", record.subscription_status)}
                    />
                     
                     </div>
@@ -569,12 +587,14 @@ export default function User() {
         if (getVendorData) { // if we want to fetch the most updated data
             const fetchData = async () => {
                 const response = await getAllVendors();
-                //const subscription_response = await getSubscriptions(admin.user_id);
-                if (response.status) {
+                const subscription_response = await getSubscriptionStatuses("VENDOR");
+                console.log(subscription_response.data)
+                if (response.status && subscription_response.status) {
                     console.log(response.data)
-                    var tempData = response.data.map((val) => ({
+                    var tempData = response.data.map((val, index) => ({
                         ...val, 
                         key: val.vendor_id,
+                        subscription_status: subscription_response.data[index]
                     }));
                     setVendorData(tempData);
                     setGetVendorData(false);

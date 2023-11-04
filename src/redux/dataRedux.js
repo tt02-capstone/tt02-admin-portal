@@ -12,9 +12,10 @@ export async function getData(vendor_id) {
     }
 }
 
-export async function subscribe(vendor_id, user_type, subscription_type, auto_renew) {
+export async function subscribe(user_id, user_type, subscription_type, auto_renew) {
     try {
-        const response = await dataApi.post(`/subscribe/${vendor_id}/${user_type}/${subscription_type}/${auto_renew}`);
+        const response = await dataApi.post(`/subscribe/${user_id}/${user_type}/${subscription_type}/${auto_renew}`);
+        console.log(response)
         return handleApiErrors(response);
     } catch (error) {
         console.error("Error : ", error);
@@ -24,7 +25,7 @@ export async function subscribe(vendor_id, user_type, subscription_type, auto_re
 
 export async function getSubscription(vendor_id, user_type) {
     try {
-        const response = await dataApi.get(`/subscribe/${vendor_id}/${user_type}`);
+        const response = await dataApi.get(`/getSubscription/${vendor_id}/${user_type}`);
         return handleApiErrors(response);
     } catch (error) {
         console.error("Error : ", error);
@@ -52,9 +53,9 @@ export async function updateSubscription(vendor_id, user_type, subscription_type
     }
 }
 
-export async function unsubscribe(vendor_id, user_type) {
+export async function unsubscribe(subscription_id) {
     try {
-        const response = await dataApi.delete(`/subscribe/${vendor_id}/${user_type}`);
+        const response = await dataApi.delete(`/cancelSubscription/${subscription_id}`);
         return handleApiErrors(response);
     } catch (error) {
         console.error("Error : ", error);
@@ -63,9 +64,9 @@ export async function unsubscribe(vendor_id, user_type) {
 }
 
 
-export async function getSubscriptions(user_type) {
+export async function getSubscriptionStatuses(user_type) {
     try {
-        const response = await dataApi.get(`/getSubscriptions/${user_type}`);
+        const response = await dataApi.get(`/getSubscriptionStatuses/${user_type}`);
         return handleApiErrors(response);
     } catch (error) {
         console.error("Error : ", error);
