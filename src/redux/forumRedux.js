@@ -1,4 +1,4 @@
-import { categoryApi, categoryItemApi, postApi, commentApi, reportApi } from "./api";
+import { categoryApi, categoryItemApi, postApi, commentApi, reportApi, badgeApi } from "./api";
 import { handleApiErrors } from "../helper/errorCatching";
 
 export async function createCategoryItem(categoryId, categoryItemToCreate) {
@@ -258,5 +258,15 @@ export async function autoApprovePostReport(postId) {
     } catch (error) {
         console.error("forumRedux autoApprovePostReport Error : ", error);
         return {status: false, data: error.message};
+    }
+}
+
+export async function getPrimaryBadge(userId) {
+    try {
+        const response = await badgeApi.get(`/getPrimaryBadge/${userId}`);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("forumRedux getPrimaryBadge Error : ", error);
+        return { status: false, data: error.message };
     }
 }

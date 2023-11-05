@@ -3,7 +3,7 @@ import { React, useEffect, useState } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, useParams, Link } from 'react-router-dom';
-import { createComment, deleteComment, getPost, updateComment, getAllPostComment, upvoteComment, downvoteComment, autoApproveCommentReport, autoApprovePostReport } from '../../redux/forumRedux';
+import { createComment, deleteComment, getPost, updateComment, getAllPostComment, upvoteComment, downvoteComment, autoApproveCommentReport, autoApprovePostReport, getPrimaryBadge } from '../../redux/forumRedux';
 import { PaperClipOutlined, ArrowUpOutlined , ArrowDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { downvote, upvote } from '../../redux/forumRedux';
@@ -31,6 +31,10 @@ export default function PostItems() {
     const [comments, setComments] = useState([]);
     const [triggerComment, setTriggerComment] = useState(true);
     const [newComment, setNewComment] = useState("");
+
+    // badge 
+    const [postBadge, setPostBadge] = useState();
+    const [commentBadge, setCommentBadge] = useState();
 
     const forumBreadCrumb = [
         {
@@ -88,8 +92,8 @@ export default function PostItems() {
                     downvote_list: item.downvoted_user_id_list,
                     is_published : item.is_published
                 }
-                setPost(formatItem)
-                console.log(formatItem)
+                setPost(formatItem);
+                get_post_badge(user.user_id);
             } else {
                 console.log("Post not fetched!");
             }
@@ -526,11 +530,30 @@ export default function PostItems() {
                 }
             ]
             setTabs(tabInfo)
+            get_comment_badge(user_id)
         } else {
             console.log('user profile not fetched')
         }
 
         setOpen(true)
+    }
+
+    const get_post_badge = async (user_id) => {
+        const response = await getPrimaryBadge(user_id);
+        if (response.status) {
+            setPostBadge(response.data);
+        } else {
+            console.log('No badge found for this user!');
+        }
+    }
+
+    const get_comment_badge = async (user_id) => {
+        const response = await getPrimaryBadge(user_id);
+        if (response.status) {
+            setCommentBadge(response.data);
+        } else {
+            console.log('No badge found for this user!');
+        }
     }
 
     const [open, setOpen] = useState(false)
@@ -555,7 +578,12 @@ export default function PostItems() {
                             <div style={{display:'flex'}}>
                                 <Image size='small' src={userProfile.profile_pic ? userProfile.profile_pic : 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg'} wrapped/>
                                 <div style={{marginLeft: 15}}>
-                                    <Header>{userProfile.name}</Header>
+                                    <div style={{display: "flex"}}>
+                                        <Header>{userProfile.name}</Header>
+                                        {commentBadge && (
+                                            <Tag color='green' style={{marginLeft:12, height:23, fontWeight:"bold"}}>{commentBadge.badge_type}</Tag>
+                                        )}
+                                    </div>
                                     <p style={{fontWeight:"bold"}}> Recent Forum Activity </p>
                                     <Tab menu={{ pointing: true }} panes={tabs}  style={{width:750}} />
                                 </div>
@@ -583,13 +611,16 @@ export default function PostItems() {
                                 <div>
                                     <Link style={{color:'black'}} onClick={() => viewProfile(post.postUser.user_id)}>
                                         {post.postUser.name}
+                                        {postBadge && (
+                                            <Tag color='green' style={{marginLeft:10, height:23, fontWeight:"bold", marginBottom:5 }}>{postBadge.badge_type}</Tag>
+                                        )}
+                                        {post.is_published ? (
+                                            <Tag style={{marginLeft:6, height:23, fontWeight:"bold", marginBottom:5 }} color={'geekblue'}>PUBLISHED</Tag>
+                                        ) : (
+                                            <Tag style={{marginLeft:6, height:23, fontWeight:"bold", marginBottom:5 }} color={'volcano'}>UNPUBLISHED</Tag>
+                                        )}
                                     </Link>
                                     <div style={{ fontSize: '14px', color: '#666' }}>Posted on: {moment(post.publish_time).format('L')} {moment(post.publish_time).format('LT')}</div>
-                                    {post.is_published ? (
-                                        <Tag color={'geekblue'}>PUBLISHED</Tag>
-                                        ) : (
-                                        <Tag color={'volcano'}>UNPUBLISHED</Tag>
-                                    )}
                                 </div>
                             }
                             description={
@@ -677,22 +708,23 @@ export default function PostItems() {
                             </div>
                         )}
 
-                        <Content style={styles.replyInput}>
-                            <Input
-                                placeholder="Type a comment..."
-                                value={newComment}
-                                onChange={(e) => setNewComment(e.target.value)}
-                                onPressEnter={create_comment}
-                                style={{ flex: 1, marginRight: '10px', height: '40px' }}
-                            />
-                            <Button
-                                type="submit"
-                                content="Comment"
-                                color='yellow'
-                                onClick={create_comment}
-                            />
-                        </Content>
-                                
+                        { post.is_published && (
+                            <Content style={styles.replyInput}>
+                                <Input
+                                    placeholder="Type a comment..."
+                                    value={newComment}
+                                    onChange={(e) => setNewComment(e.target.value)}
+                                    onPressEnter={create_comment}
+                                    style={{ flex: 1, marginRight: '10px', height: '40px' }}
+                                />
+                                <Button
+                                    type="submit"
+                                    content="Comment"
+                                    color='yellow'
+                                    onClick={create_comment}
+                                />
+                            </Content>
+                        )}   
                     </Card>
                 )}
                 <ToastContainer />
