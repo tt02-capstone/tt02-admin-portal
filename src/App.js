@@ -11,7 +11,7 @@ import {
     HomeOutlined,
     UserOutlined,
     UsergroupAddOutlined,
-    MoneyCollectOutlined, FormOutlined, SolutionOutlined, ExclamationCircleOutlined, WechatOutlined
+    MoneyCollectOutlined, FormOutlined, SolutionOutlined, ExclamationCircleOutlined, WechatOutlined,BarChartOutlined,
 } from '@ant-design/icons';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Footer} from "antd/es/layout/layout";
@@ -35,6 +35,7 @@ import Post from "./pages/forum/post";
 import PostItems from "./pages/forum/postItem";
 import SupportTicketManagement from "./pages/support/SupportTicketManagement";
 import ManageForumReport from "./pages/forum/manageForumReport";
+import DataDashboard from "./pages/data/DataDashboard";
 
 export function AppLayout() {
 
@@ -55,6 +56,7 @@ export function AppLayout() {
       {key: '/booking', label: 'Bookings', icon: <MoneyCollectOutlined />,},
       {key: '/pendingApplications', label: 'Pending Requests', icon: <FileOutlined />},
       {key: '/supportTicket', label: 'Support Tickets', icon: <SolutionOutlined />,},
+      {key: '/datadashboard', label: 'Data Dashboard', icon: <BarChartOutlined/>},
       {key: '/', label: 'Logout',icon: <LogoutIcon />,}
   ];
 
@@ -101,6 +103,7 @@ export function AppLayout() {
                         <Route path="/forum/post/:category_id/:category_name/:category_item_id/:category_item_name" element={< Post/>}/>
                         <Route path="/forum/post/:category_id/:category_name/:category_item_id/:category_item_name/:post_id/:post_title" element={< PostItems/>}/>
                         <Route path="/supportTicket" element={<SupportTicketManagement />}/>
+                        <Route path="/datadashboard" element={<DataDashboard />}/>
                         <Route path="*" element={<Home/>}/>
                     </>) : (<>
                         <Route path="/" element={<Login/>}/>
