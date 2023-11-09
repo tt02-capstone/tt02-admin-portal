@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DownOutlined, SmileOutlined, DashboardOutlined } from '@ant-design/icons';
-import { Dropdown, Button, Menu } from 'antd';
+import {Dropdown, Button, Menu, Layout, Typography, Select} from 'antd';
 import 'chartjs-adapter-date-fns'; // Import the date adapter
-
 import CustomButton from "../../components/CustomButton";
+import CustomHeader from "../../components/CustomHeader";
+import {Content} from "antd/es/layout/layout";
+import { PlatformBookingsTimeSeries } from './PlatformBookingsTimeSeries';
+import { PlatformRevenueTimeSeries } from './PlatformRevenueTimeSeries';
 import { Chart as ChartJS, LineController,LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend,TimeScale} from 'chart.js';
 import { Bar, Line } from 'react-chartjs-2';
-import { getData, subscribe, getSubscription } from "../../redux/dataRedux";
+import { getData, subscribe, getSubscription, getPlatformData } from "../../redux/dataRedux";
 import { set } from 'date-fns';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -23,169 +26,158 @@ ChartJS.register(
   Legend
 );
 
+const TOTAL_BOOKINGS_OVER_TIME = "Platform Bookings Over Time";
+const REVENUE_OVER_TIME = "Platform Revenue Over Time";
+const BOOKINGS_BREAKDOWN = "Bookings Breakdown by Activity, Nationality, Age";
+const REVENUE_BREAKDOWN = "Revenue Breakdown by Activity, Nationality, Age";
+const CUSTOMER_RETENTION = "Customer Retention (Number of Repeat Bookings Over Time)";
+
 const DataDashboard = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [data, setData] = useState([]);
+  const [selectedDataUseCase, setSelectedDataUseCase] = useState(TOTAL_BOOKINGS_OVER_TIME);
+
+  const dataBreadCrumb = [
+    {
+        title: 'Dashboard',
+    }
+];
 
   useEffect(() => {
     // Fetch user subscription status here
     const callGetData = async () => {
-      try {
-        // Replace this with your API call to fetch user subscription status
-        console.log(user)
-        const response = await getData('3');
-        if (response.status) {
-          
-          setData(response.data)
+        try {
 
-      } else {
-          console.log("Wat");
-          
-      }
-        
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+            let dataUseCase = selectedDataUseCase
+
+            if (!dataUseCase) {
+              dataUseCase = TOTAL_BOOKINGS_OVER_TIME;
+              setSelectedDataUseCase(TOTAL_BOOKINGS_OVER_TIME);
+            }
+
+            // Replace this with your API call to fetch user subscription status
+            const response = await getPlatformData(dataUseCase,  new Date(2023, 0, 1) , new Date(2023, 9, 31));
+            if (response.status) {
+                console.log(response.data)
+                setData(response.data)
+
+            } else {
+                console.log("Wat");
+
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
     };
 
     callGetData();
-  }, []);
+}, [selectedDataUseCase]);
 
-  /* const data = ; */
+const items = [
+  {
+      label: TOTAL_BOOKINGS_OVER_TIME,
+      value: TOTAL_BOOKINGS_OVER_TIME
+  },
 
-  const options = {
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
+  {
+      label: REVENUE_OVER_TIME,
+      value: REVENUE_OVER_TIME
 
-  const items = [
-    {
-      key: '1',
-      label: (
-        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-          1st menu item
-        </a>
-      ),
-    },
-    {
-      key: '2',
-      label: (
-        <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-          2nd menu item (disabled)
-        </a>
-      ),
-      icon: <SmileOutlined />,
-      disabled: true,
-    },
-    {
-      key: '3',
-      label: (
-        <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-          3rd menu item (disabled)
-        </a>
-      ),
-      disabled: true,
-    },
-    {
-      key: '4',
-      danger: true,
-      label: 'a danger item',
-    },
-  ];
+  },
+  {
+      label: REVENUE_BREAKDOWN,
+      value: REVENUE_BREAKDOWN
 
-  const aggregateDataByMonth = (data) => {
-    const aggregatedData = new Map(); // Use a Map to store aggregated data by month
-  
-    // Loop through the data and aggregate by month
-    data.forEach((item) => {
-      const [date, count] = item;
-      const monthKey = date.substr(0, 7); // Extract yyyy-MM part of the date
-  
-      if (aggregatedData.has(monthKey)) {
-        // Increment the count for the existing month
-        aggregatedData.set(monthKey, aggregatedData.get(monthKey) + count);
-      } else {
-        // Initialize the count for a new month
-        aggregatedData.set(monthKey, count);
-      }
-    });
-  
-    // Convert the aggregated Map back to an array of [month, count] pairs
-    const aggregatedArray = Array.from(aggregatedData, ([month, count]) => [month, count]);
-  
-    // Sort the array by month if needed
-    aggregatedArray.sort((a, b) => a[0].localeCompare(b[0]));
-  
-    return aggregatedArray;
-  };
-  
-  // Usage:
-  const aggregatedData = aggregateDataByMonth(data);
-  
+  },
+  {
+      label: BOOKINGS_BREAKDOWN,
+      value: BOOKINGS_BREAKDOWN
 
-  const lineData = {
-    labels: aggregatedData.map(item => item[0]), // Convert dates to strings
-    datasets: [
-      {
-        label: 'Number of Bookings',
-        data: aggregatedData.map(item => item[1]),
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-        fill: false,
-      },
-    ],
-  };
+  },
 
-  console.log(data)
+  {
+    label: CUSTOMER_RETENTION,
+    value: CUSTOMER_RETENTION
 
-  console.log(data.map(item => item[1]))
+},
 
-  const chartOptions = {
-    scales: {
-      x: {
-        type: 'time',
-        time: {
-          unit: 'month',
-          displayFormats: {
-            month: 'yyyy-MM',
-          },
-        },
-      },
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
-
-  
-
-  return (
-    <div>
-      
-        <div>
-        <Dropdown menu={{
-            items,
-          }}>
-          <Button>
-            Choose an Option
-          </Button>
-
-          
-        </Dropdown>
-        
-        <Line data={lineData} 
-        options={chartOptions}/>
-        
-        </div>
+];
 
 
-          
- 
-    </div>
-  );
+const handleChangeDataUseCase = (value) => {
+  console.log(value); // { value: "lucy", label: "Lucy (101)" }
+  setSelectedDataUseCase(value.value)
+};
+// Usage:
+
+const returnChart = () => {
+  if(selectedDataUseCase === TOTAL_BOOKINGS_OVER_TIME) {
+      return  <PlatformBookingsTimeSeries data={data}/>
+  } else if (selectedDataUseCase === REVENUE_OVER_TIME) {
+    return <PlatformRevenueTimeSeries data={data}/>
+  }
+}
+
+return (
+  <Layout style={styles.layout}>
+      <CustomHeader items={dataBreadCrumb}/>
+      <Content style={styles.content}>
+          <div>
+              
+                  <div>
+                     
+
+                      <div style={styles.container}>
+                          <Typography.Title level={5} style={{marginRight: '10px'}}>Chart Type: </Typography.Title>
+                          <Select
+                              labelInValue
+                              defaultValue={items[0]}
+                              style={{width: 400}}
+                              onChange={handleChangeDataUseCase}
+                              options={items}
+                          />
+                      </div>
+
+
+                      <br></br>
+                      <br></br>
+                      {returnChart()}
+                       <ToastContainer />
+
+                  </div>
+              
+          </div>
+      </Content>
+  </Layout>
+);
+
 };
 
 export default DataDashboard;
+
+const styles = {
+layout: {
+  minHeight: '100vh',
+  minWidth: '90vw',
+  backgroundColor: 'white'
+},
+content: {
+  margin: '1vh 3vh 1vh 3vh',
+  marginTop: -10,
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginLeft: 57,
+},
+container: {
+  display: 'flex',
+  alignItems: 'center'
+},
+line: {
+  position: 'relative',
+  margin: 'auto',
+  maxWidth: '80vw',
+  height: '300px',
+  width: '100%'
+}
+}

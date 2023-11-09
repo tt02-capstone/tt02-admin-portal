@@ -12,6 +12,21 @@ export async function getData(vendor_id) {
     }
 }
 
+export async function getPlatformData(data_usecase, start_date, end_date) {
+    try {
+        console.log(data_usecase, start_date, end_date)
+        const requestBody = {
+            'start_date': start_date,
+            'end_date': end_date
+        };
+        const response = await dataApi.post(`/getPlatformData/${data_usecase}`, requestBody);
+        return handleApiErrors(response);
+    } catch (error) {
+        console.error("Error : ", error);
+        return {status: false, data: error.message};
+    }
+}
+
 export async function subscribe(user_id, user_type, subscription_type, auto_renew) {
     try {
         const response = await dataApi.post(`/subscribe/${user_id}/${user_type}/${subscription_type}/${auto_renew}`);
