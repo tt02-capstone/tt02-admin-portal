@@ -289,12 +289,12 @@ export const PlatformRevenueTimeSeries = (props) => {
         setSelectedYAxis(value.value)
     };
 
-    // useEffect(() => {
-    //     const chart = chartRef.current;
+    useEffect(() => {
+        const chart = chartRef.current;
 
-    //     console.log(chart)
+        console.log(chart)
     
-    //   }, []);
+      }, []);
 
 
     return (
