@@ -188,7 +188,7 @@ export default function ForumCategoryItems() {
             <CustomHeader items={forumBreadCrumb} />
             <Content style={styles.content}>
                 <div style={{ display: 'flex' }}>
-                    <div style={{ fontWeight: "bold", fontSize: 26 }}>
+                    <div style={{ fontWeight: "bold", fontSize: 26,  marginTop:10 }}>
                         {category_name} Category Items
                     </div>
 
@@ -210,19 +210,19 @@ export default function ForumCategoryItems() {
 
                 <br /><br />
 
-                <div style={{ display: 'flex', flexWrap: 'wrap', width: 1800 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', width: 1500 }}>
                     {categoryItems.map((item, index) => (
                         <Card
                             style={{
-                                width: 500,
-                                height: 630,
+                                width: 400,
+                                height: 530,
                                 marginLeft: '-5px',
                                 marginRight: '50px',
                                 marginBottom: '50px'
                             }}
                             cover={
                                 <Link style={{ color: '#FFA53F', marginLeft: '17px' }} to={`/forum/post/${category_id}/${category_name}/${item.category_item_id}/${item.name}`}>
-                                    <img alt={item.name} src={item.image} style={{ width: 500, height: 500 }} />
+                                    <img alt={item.name} src={item.image} style={{ width: 400, height: 400 }} />
                                 </Link>
                             }
                             bordered={false}

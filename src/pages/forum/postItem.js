@@ -375,7 +375,7 @@ export default function PostItems() {
                             <>
                                 <Comment.Action
                                         onClick={() => { onUpvoteComment(comment.comment_id);}}
-                                        style= {{ color: (comment.upvoted_user_id_list && comment.upvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black")}} >
+                                        style= {{ color: (comment.upvoted_user_id_list && comment.upvoted_user_id_list.includes(user.user_id) ? "red" : "black")}} >
                                         <ArrowUpOutlined/>
                                 </Comment.Action>
 
@@ -383,7 +383,7 @@ export default function PostItems() {
 
                                 <Comment.Action
                                     onClick={() => { onDownvoteComment(comment.comment_id); }}
-                                    style= {{ color: (comment.downvoted_user_id_list && comment.downvoted_user_id_list.includes(user.user_id) ? "#FFA53F" : "black")}} >
+                                    style= {{ color: (comment.downvoted_user_id_list && comment.downvoted_user_id_list.includes(user.user_id) ? "red" : "black")}} >
                                     <ArrowDownOutlined/>
                                 </Comment.Action>
                             </>
@@ -596,11 +596,11 @@ export default function PostItems() {
 
                 <Card
                     style={{
-                        width: '100%',
-                        height: 260,
+                        width: '98%',
                         marginLeft: '-5px',
                         marginRight: '50px',
-                        fontSize: 20
+                        fontSize: 20,
+                        height: '24%'
                     }}
                     bordered={false}
                 >
@@ -621,6 +621,9 @@ export default function PostItems() {
                                         )}
                                     </Link>
                                     <div style={{ fontSize: '16px', color: '#666' }}>Posted on: {moment(post.publish_time).format('L')} {moment(post.publish_time).format('LT')}</div>
+                                
+                                
+                                
                                 </div>
                             }
                             description={
@@ -632,7 +635,7 @@ export default function PostItems() {
                     )}
 
                     { post && (
-                        <div style={{display: 'flex'}}>
+                        <div style={{display: 'flex', marginTop:-60}}>
                             { post.post_image && (
                                 <>
                                     <p style={{ marginTop: '80px', marginLeft: '60px', color:'#FFA53F', fontWeight:"bold", fontSize:'18px'}}>
@@ -669,13 +672,13 @@ export default function PostItems() {
                                     </Link>
                                 )}
                                 
-                                <Link style={{ color: (post.upvote_list && post.upvote_list.includes(user.user_id) ? "#FFA53F" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onUpvotePost(post.post_id)} > 
+                                <Link style={{ color: (post.upvote_list && post.upvote_list.includes(user.user_id) ? "red" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onUpvotePost(post.post_id)} > 
                                     <ArrowUpOutlined />
                                 </Link>
                                 
                                 <p style={{marginLeft:10, marginRight:10, marginTop: 6, fontSize:13, fontWeight:'bold'}}> {post.upvote_list.length} </p>
                             
-                                <Link style={{ color: (post.downvote_list && post.downvote_list.includes(user.user_id) ? "#FFA53F" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onDownvotePost(post.post_id)}>  
+                                <Link style={{ color: (post.downvote_list && post.downvote_list.includes(user.user_id) ? "red" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onDownvotePost(post.post_id)}>  
                                     <ArrowDownOutlined />
                                 </Link>
                             </div>
