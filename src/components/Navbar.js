@@ -16,7 +16,7 @@ function Navbar(props) {
                 setCollapsed(collapsed)
             }}
             collapsible collapsed={collapsed} 
-            style={{backgroundColor: '#FFA53F'}}
+            style={{backgroundColor: '#FFA53F', height: "150vh"}}
         >
             <Menu
                 theme="light"
