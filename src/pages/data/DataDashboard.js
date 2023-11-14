@@ -134,59 +134,47 @@ async function onClickSubmitExport(exportDetails) {
 
       console.log(exportDetails);
 
-      if (exportDetails.fileType == "pdf") {
-
-          html2canvas(chartRef.current).then((canvas) => {
-              const imgData = canvas.toDataURL("image/png");
-              const pdf = new jsPDF("landscape");
-              pdf.addImage(imgData, "PNG", 10, 10, 190, 100);
-              pdf.save(exportDetails.fileName + ".pdf");
-            });
-
-      } else if (exportDetails.fileType == "csv") {
-
-          if (selectedDataUseCase == TOTAL_BOOKINGS_OVER_TIME) {
-              const header = "Date,Country";
-
-              const csv = data.map((row) => row.join(",")).join("\n");
-
-              const csvContent = header + "\n" + csv;
-
-              const blob = new Blob([csvContent], { type: "text/csv" });
-
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.style.display = "none";
-              a.href = url;
-              a.download = `${exportDetails.fileName}.csv`;
-
-              document.body.appendChild(a);
-              a.click();
-
-              document.body.removeChild(a);
-              URL.revokeObjectURL(url);
-          }
-
-
-
-      } else if (exportDetails.fileType == "png") {
-          html2canvas(chartRef.current).then((canvas) => {
-              const imgData = canvas.toDataURL(`image/${exportDetails.fileType}`);
-              const a = document.createElement("a");
-              a.href = imgData;
-              a.download = `${exportDetails.fileName}.${exportDetails.fileType}`;
-              a.click();
-            });
-      } else if (exportDetails.fileType == "jpeg") {
-          html2canvas(chartRef.current).then((canvas) => {
-              const imgData = canvas.toDataURL(`image/${exportDetails.fileType}`);
-              const a = document.createElement("a");
-              a.href = imgData;
-              a.download = `${exportDetails.fileName}.${exportDetails.fileType}`;
-              a.click();
-            });
-
-      }
+      html2canvas(chartRef.current).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("landscape");
+        const header = exportDetails.reportTitle;
+        const footer = exportDetails.reportDescription;
+        const margin = 10; // Margin for header and footer
+    
+        // Add header text
+        pdf.setFontSize(12);
+        pdf.text(header, pdf.internal.pageSize.getWidth() / 2, margin, { align: 'center' });
+    
+        const chartWidth = canvas.width;
+        const chartHeight = canvas.height;
+        const pdfWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
+        const pdfHeight = pdf.internal.pageSize.getHeight() - 2 * margin;
+    
+        // Calculate scaling factor
+        const scaleX = pdfWidth / chartWidth;
+        const scaleY = pdfHeight / chartHeight;
+        const scaleFactor = Math.min(scaleX, scaleY);
+    
+        // Calculate scaled dimensions
+        const imgWidth = chartWidth * scaleFactor;
+        const imgHeight = chartHeight * scaleFactor;
+    
+        // Calculate position to center the image
+        const x = margin + (pdfWidth - imgWidth) / 2;
+        const y = margin + (pdfHeight - imgHeight) / 2;
+    
+        pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+    
+        // Footer position
+        const footerY = pdf.internal.pageSize.getHeight() - margin;
+    
+        // Add footer text
+        pdf.setFontSize(10);
+        pdf.text(footer, pdf.internal.pageSize.getWidth() / 2, footerY, { align: 'center' });
+        pdf.save(exportDetails.reportName + ".pdf");
+    });
+    
+    
 
       setIsExportModalOpen(false);
 

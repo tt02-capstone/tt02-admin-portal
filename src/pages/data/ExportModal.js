@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, Space, Button, Select, Switch, InputNumber, Upload, TimePicker } from "antd";
+import { Modal, Form,  Input, Space, Button, Select, Switch, InputNumber, Upload, TimePicker } from "antd";
 import { MinusCircleOutlined, PlusOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -9,7 +9,7 @@ export default function ExportModal(props) {
     const { Option } = Select;
     let initialValues = {};
     console.log(props)
-
+    const { TextArea } = Input;
 
     return(
         <div>
@@ -34,29 +34,34 @@ export default function ExportModal(props) {
                     
                    
                     <div>
-                        <Form.Item
-                    label="Export As"
-                    labelAlign="left"
-                    name="fileType"
-                    rules={[{ required: true, message: 'Please select the file type' }]}
-                    >
                     
-                    <Select>
-                            <Option value='pdf'>PDF</Option>
-                            <Option value='csv'>CSV</Option>
-                            <Option value='png'>PNG</Option>
-                            <Option value='jpeg'>JPEG</Option>
-                    </Select>
-                    </Form.Item>
 
                     <Form.Item
-                        label="File Name"
-                        name="fileName"
-                        placeholder="File Name"
-                        rules={[{ required: true, message: 'Please indicate the file name' }]}
+                        label="Report Name"
+                        name="reportName"
+                        placeholder="Report Name"
+                        rules={[{ required: true, message: 'Please indicate the report name' }]}
                     >
                          <Input/>
                     </Form.Item>
+
+                    <Form.Item
+                            label="Report Title"
+                            name="reportTitle"
+                            placeholder="Report Title"
+                            
+                        >
+                            <Input/>
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Report Description"
+                            name="reportDescription"
+                            placeholder="Report Description"
+                            
+                        >
+                             <TextArea rows={4} placeholder="Enter description here" />
+                        </Form.Item>
                   
                     </div>
 
