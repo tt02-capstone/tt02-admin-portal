@@ -1,4 +1,4 @@
-import { Layout, Card, Avatar, Image, Input, Tag, Modal as AntModal } from 'antd';
+import { Layout, Card, Avatar, Image, Input, Tag, Modal as AntdModal } from 'antd';
 import { React, useEffect, useState } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
