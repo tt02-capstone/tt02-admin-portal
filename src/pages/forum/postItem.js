@@ -614,11 +614,11 @@ export default function PostItems() {
 
                 <Card
                     style={{
-                        width: '98%',
+                        width: '97%',
                         marginLeft: '-5px',
                         marginRight: '50px',
                         fontSize: 20,
-                        height: '24%'
+                        height: '21%'
                     }}
                     bordered={false}
                 >
@@ -639,8 +639,6 @@ export default function PostItems() {
                                         )}
                                     </Link>
                                     <div style={{ fontSize: '16px', color: '#666' }}>Posted on: {moment(post.publish_time).format('L')} {moment(post.publish_time).format('LT')}</div>
-
-
 
                                 </div>
                             }
@@ -728,6 +726,12 @@ export default function PostItems() {
                                     </Comment.Group>
                                 </div>
                             )}
+                        
+                        {post && comments.length == 0 && (
+                                <div style={{ marginBottom: -20 , marginLeft:530}}>
+                                    <div style={{ color: '#FFA53F', fontWeight: 'bold', fontSize: 30, marginTop: 40 }}> ---- NO COMMENTS ----</div>
+                                </div>
+                        )}
 
                         {post.is_published && (
                             <Content style={styles.replyInput}>

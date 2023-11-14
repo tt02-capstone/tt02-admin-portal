@@ -192,8 +192,6 @@ export default function ManageForumReport() {
             title: 'Reason Type',
             dataIndex: 'reason_type',
             key: 'reason_type',
-            sorter: (a, b) => a.reason_type.localeCompare(b.reason_type),
-            ...getColumnSearchProps('reason_type'),
             render: (reason_type) => {
                 let tagColor = 'default';
                 switch (reason_type) {
@@ -213,7 +211,22 @@ export default function ManageForumReport() {
                 return (
                     <Tag color={tagColor}>{reason_type}</Tag>
                 );
-            }
+            }, 
+            filters: [
+                {
+                    text: 'Other',
+                    value: 'OTHER',
+                },
+                {
+                    text: 'Offensive Behaviour',
+                    value: 'OFFENSIVE_BEHAVIOUR',
+                },
+                {
+                    text: 'Inappropriate Content',
+                    value: 'INAPPROPRIATE_CONTENT',
+                },
+            ],
+            onFilter: (value, record) => record.reason_type === value,
         },
         {
             title: 'Reason',
@@ -304,8 +317,6 @@ export default function ManageForumReport() {
             title: 'Reason Type',
             dataIndex: 'reason_type',
             key: 'reason_type',
-            sorter: (a, b) => a.reason_type.localeCompare(b.reason_type),
-            ...getColumnSearchProps('reason_type'),
             render: (reason_type) => {
                 let tagColor = 'default';
                 switch (reason_type) {
@@ -325,7 +336,22 @@ export default function ManageForumReport() {
                 return (
                     <Tag color={tagColor}>{reason_type}</Tag>
                 );
-            }
+            }, 
+            filters: [
+                {
+                    text: 'Other',
+                    value: 'OTHER',
+                },
+                {
+                    text: 'Offensive Behaviour',
+                    value: 'OFFENSIVE_BEHAVIOUR',
+                },
+                {
+                    text: 'Inappropriate Content',
+                    value: 'INAPPROPRIATE_CONTENT',
+                },
+            ],
+            onFilter: (value, record) => record.reason_type === value,
         },
         {
             title: 'Reason',
