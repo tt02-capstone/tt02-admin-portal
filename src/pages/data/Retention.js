@@ -38,9 +38,9 @@ const WEEKLY = 'weekly';
 const YEARLY = 'yearly';
 const MONTHLY = 'monthly';
 const NUMBER_OF_REPEATED_BOOKINGS = "Number of Repeated Bookings";
-const NUMBER_OF_BOOKINGS_LOCAL = "Number of Bookings by Local";
-const NUMBER_OF_BOOKINGS_TOURIST = "Number of Bookings by Tourist";
-const NUMBER_OF_BOOKINGS_BY_COUNTRY = "Number of Bookings by Country";
+const NUMBER_OF_BOOKINGS_LOCAL = "Number of Repeated Bookings by Local";
+const NUMBER_OF_BOOKINGS_TOURIST = "Number of Repeated Bookings by Tourist";
+const NUMBER_OF_BOOKINGS_BY_COUNTRY = "Number of Repeated Bookings by Country";
 
 
 export const Retention = (props) => {
@@ -173,6 +173,7 @@ export const Retention = (props) => {
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
                 fill: false,
+                backgroundColor: 'rgba(75, 192, 192, 1)',
             },
         ];
     } else if (selectedYAxis === NUMBER_OF_BOOKINGS_LOCAL) {
@@ -185,6 +186,7 @@ export const Retention = (props) => {
                 borderColor: getRandomColor(0), // You can assign a specific color for Local bookings
                 borderWidth: 1,
                 fill: false,
+                backgroundColor: getRandomColor(0), // You can assign a specific color for Local bookings
             },
         ];
     } else if (selectedYAxis === NUMBER_OF_BOOKINGS_TOURIST) {
@@ -199,6 +201,7 @@ export const Retention = (props) => {
                 borderColor: getRandomColor(0), // You can assign a specific color for Tourist bookings
                 borderWidth: 1,
                 fill: false,
+                backgroundColor: getRandomColor(0), // You can assign a specific color for Tourist bookings
             },
         ];
     } else if (selectedYAxis === NUMBER_OF_BOOKINGS_BY_COUNTRY) {
@@ -210,6 +213,7 @@ export const Retention = (props) => {
             borderColor: getRandomColor(uniqueCountries.indexOf(country)),
             borderWidth: 1,
             fill: false,
+            backgroundColor: getRandomColor(uniqueCountries.indexOf(country)),
         }));
         console.log(dataset)
     }
@@ -300,46 +304,47 @@ export const Retention = (props) => {
 
     return (
         <>
+            <div ref={chartRef}>
+                <Row style={{marginRight: 50}}>
+                    <Col style={{marginLeft: 'auto', marginRight: 16}}>
+                        <div style={styles.container}>
+                            <Typography.Title level={5} style={{marginRight: '10px'}}>X Axis: </Typography.Title>
+                            <Select
+                                labelInValue
+                                defaultValue={itemsXAxis[0]}
+                                style={{width: 120}}
+                                onChange={handleChangeXAxis}
+                                options={itemsXAxis}
+                            />
 
-            <Row style={{marginRight: 50}}>
-                <Col style={{marginLeft: 'auto', marginRight: 16}}>
-                    <div style={styles.container}>
-                        <Typography.Title level={5} style={{marginRight: '10px'}}>X Axis: </Typography.Title>
-                        <Select
-                            labelInValue
-                            defaultValue={itemsXAxis[0]}
-                            style={{width: 120}}
-                            onChange={handleChangeXAxis}
-                            options={itemsXAxis}
-                        />
+                        </div>
+                    </Col>
+                    <Col>
+                        <div style={styles.container}>
+                            <Typography.Title level={5} style={{marginRight: '10px'}}>Y Axis: </Typography.Title>
+                            <Select
+                                labelInValue
+                                defaultValue={itemsYAxis[0]}
+                                style={{width: 400}}
+                                onChange={handleChangeYAxis}
+                                options={itemsYAxis}
+                            />
+                        </div>
+                    </Col>
 
-                    </div>
-                </Col>
-                <Col>
-                    <div style={styles.container}>
-                        <Typography.Title level={5} style={{marginRight: '10px'}}>Y Axis: </Typography.Title>
-                        <Select
-                            labelInValue
-                            defaultValue={itemsYAxis[0]}
-                            style={{width: 300}}
-                            onChange={handleChangeYAxis}
-                            options={itemsYAxis}
-                        />
-                    </div>
-                </Col>
+                </Row>
 
-            </Row>
+                <br></br>
 
-            <br></br>
+                <div style={styles.line}>
+                    <Bar
+                        data={barData}
+                        options={getChartOptions()}
+                    />
+                </div>
 
-            <div ref={chartRef} style={styles.line}>
-                <Bar
-                    data={barData}
-                    options={getChartOptions()}
-                />
+                <br></br>
             </div>
-
-            <br></br>
             <Row style={{marginLeft: 30, marginTop: 20}}>
                 <Table
                     dataSource={data.map((row, index) =>

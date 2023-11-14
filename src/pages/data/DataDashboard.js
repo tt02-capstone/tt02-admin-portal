@@ -197,19 +197,24 @@ const handleChangeDataUseCase = (value) => {
 };
 // Usage:
 
-function onCalendarChange(dates) {
-  console.log("onCalendarChange", dates);
-  if (dates[0] !== null) {
-      const start_time = moment(dates[0].$d);
-      setStartDate(new Date(start_time))
+    function onCalendarChange(dates) {
+        console.log("onCalendarChange", dates);
+        if (dates === null) {
+            setStartDate(new Date(2023, 0, 1));
+            setEndDate(new Date(2023, 9, 31));
+            return
+        }
 
-  }
+        if (dates[0] !== null) {
+            const start_time = moment(dates[0].$d);
+            setStartDate(new Date(start_time))
+        }
 
-  if (dates[1] !== null) {
-      const end_time = moment(dates[1].$d)
-      setEndDate(new Date(end_time))
-  }
-}
+        if (dates[1] !== null) {
+            const end_time = moment(dates[1].$d)
+            setEndDate(new Date(end_time))
+        }
+    }
 
 const returnChart = () => {
   if(selectedDataUseCase === TOTAL_BOOKINGS_OVER_TIME) {
