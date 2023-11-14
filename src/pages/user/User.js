@@ -548,7 +548,15 @@ export default function User() {
             key: 'subscription_status',
             sorter: (a, b) => (a.subscription_status) > b.subscription_status,
             ...getColumnSearchProps('subscription_status'),
-            
+            render: (text) => {
+                if (text === 'active') {
+                    return 'Subscribed';
+                } else if (text === 'Never subscribed') {
+                    return 'Not Subscribed';
+                } else {
+                    return text;
+                }
+            },
         },
         {
             title: 'Wallet Balance',
@@ -558,7 +566,7 @@ export default function User() {
             ...getColumnSearchProps('wallet_balance'),
             render: (text, record) => {
                 return `$${parseFloat(record.wallet_balance).toFixed(2)}`;
-              },
+            },
             
         }, 
        
@@ -573,15 +581,15 @@ export default function User() {
                     <div>
                     <Popover content={content(record.vendor_id, "VENDOR", record.wallet_balance)} title="Additional Actions" trigger="click" key={3}>
                         <CustomButton
-                    text="Manage Wallet"
-                    style={{marginRight: '10px'}}
+                    text="Wallet"
+                    style={{marginRight: '10px', width: 120, fontSize: 14}}
                    />
 
                     </Popover>
 
                     <CustomButton
-                    text="Manage Subscription"
-                    style={{marginRight: '10px'}}
+                    text="Subscription"
+                    style={{marginTop: 10, marginRight: '10px', width: 120, fontSize: 14}}
                     onClick={() => onClickManageSubButton(record.vendor_id, "VENDOR", record.subscription_status)}
                    />
                     
