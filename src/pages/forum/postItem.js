@@ -1,10 +1,10 @@
-import { Layout, Card, Avatar, Image, Input, Tag } from 'antd';
+import { Layout, Card, Avatar, Image, Input, Tag, Modal as AntdModal } from 'antd';
 import { React, useEffect, useState } from 'react';
 import CustomHeader from "../../components/CustomHeader";
 import { Content } from "antd/es/layout/layout";
 import { Navigate, useParams, Link } from 'react-router-dom';
 import { createComment, deleteComment, getPost, updateComment, getAllPostComment, upvoteComment, downvoteComment, autoApproveCommentReport, autoApprovePostReport, getPrimaryBadge } from '../../redux/forumRedux';
-import { PaperClipOutlined, ArrowUpOutlined , ArrowDownOutlined } from '@ant-design/icons';
+import { PaperClipOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { downvote, upvote } from '../../redux/forumRedux';
 import { ToastContainer, toast } from 'react-toastify';
@@ -70,7 +70,7 @@ export default function PostItems() {
             if (response.status) {
                 let item = response.data
                 const user = item.internal_staff_user || item.local_user || item.tourist_user || item.vendor_staff_user;
-                
+
                 let fileName = ""
                 const url = item.post_image_list[0]
                 if (typeof url !== "undefined") {
@@ -87,10 +87,10 @@ export default function PostItems() {
                     publish_time: item.publish_time,
                     updated_time: item.updated_time,
                     post_image: item.post_image_list[0],
-                    img_file : fileName,
+                    img_file: fileName,
                     upvote_list: item.upvoted_user_id_list,
                     downvote_list: item.downvoted_user_id_list,
-                    is_published : item.is_published
+                    is_published: item.is_published
                 }
                 setPost(formatItem);
                 get_post_badge(user.user_id);
@@ -151,14 +151,14 @@ export default function PostItems() {
             fetchData(post_id);
             setTriggerComment(false);
         }
-    }, [post_id,triggerComment]);
+    }, [post_id, triggerComment]);
 
     async function reply_comment(values) {
         const replyObj = {
             content: values.content
         };
 
-        let response = await createComment(post_id, values.parent_comment_id , user.user_id, replyObj);
+        let response = await createComment(post_id, values.parent_comment_id, user.user_id, replyObj);
 
         if (response.status) {
             toast.success('Reply Successful!', {
@@ -203,7 +203,22 @@ export default function PostItems() {
         }
     }
 
-    async function remove_comment(commentIdToDelete) {
+    const [isDeleteConfirmationVisible, setDeleteConfirmationVisible] = useState(false);
+    const [commentIdToDelete, setCommentIdToDelete] = useState('');
+    const handleDelete = (commentIdToDelete) => {
+        openDeleteConfirmation(commentIdToDelete);
+    }
+
+    const openDeleteConfirmation = (commentIdToDelete) => {
+        setCommentIdToDelete(commentIdToDelete);
+        setDeleteConfirmationVisible(true);
+    };
+
+    const closeDeleteConfirmation = () => {
+        setDeleteConfirmationVisible(false);
+    };
+
+    async function remove_comment() {
         let response = await deleteComment(commentIdToDelete);
         if (response.status) {
             toast.success('Comment Deleted!', {
@@ -216,16 +231,16 @@ export default function PostItems() {
         } else {
             const temp_comment = {
                 comment_id: commentIdToDelete,
-                content: '[deleted]', 
-                updated_time : new Date(), 
-                is_published : false
+                content: '[deleted]',
+                updated_time: new Date(),
+                is_published: false
             };
 
             const response = await updateComment(temp_comment); // to update any comments w child to be 'deleted'
             if (response.status) {
                 setTriggerPost(true);
                 setTriggerComment(true);
-                
+
                 toast.success('Comment cannot be deleted, but is modified!!', {
                     position: toast.POSITION.TOP_RIGHT,
                     autoClose: 1500
@@ -237,13 +252,16 @@ export default function PostItems() {
                 });
             }
         }
+
+        setCommentIdToDelete('');
+        closeDeleteConfirmation();
     }
 
     async function edit_comment(values) {
         const commentObj = {
             comment_id: values.comment_id,
             content: values.content,
-            is_published : true
+            is_published: true
         };
 
         let response = await updateComment(commentObj);
@@ -309,7 +327,7 @@ export default function PostItems() {
         let comment = props.data;
         const [hideReply, setHideReply] = useState(true); // to hide and display the REPLY text area
         const [hideEdit, setHideEdit] = useState(true); // to hide and display the EDIT text area
-        
+
         const [userReply, setUserReply] = useState(""); // REPLY CONTENT FIELD
         const [editComment, setEditComment] = useState(""); // EDIT CONTENT FIELD
 
@@ -323,7 +341,7 @@ export default function PostItems() {
         } else {
             commenter = comment.internal_staff_user;
             commenter.profile_pic = "http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg"
-        }  
+        }
 
 
         return (
@@ -331,65 +349,65 @@ export default function PostItems() {
                 <Comment.Avatar src={commenter.profile_pic} />
                 <Comment.Content>
                     <Link onClick={() => viewProfile(commenter.user_id)}>
-                        <Comment.Author as="a" style={{fontSize:18}}>{commenter.name}</Comment.Author>
+                        <Comment.Author as="a" style={{ fontSize: 18 }}>{commenter.name}</Comment.Author>
                     </Link>
-                    <Comment.Metadata style={{fontSize:18}}>
+                    <Comment.Metadata style={{ fontSize: 18 }}>
                         <div> {moment(comment.publish_time).format('L LT')}</div>
-                        { comment.is_published && commenter.user_id !== user.user_id && commenter.user_type !== "INTERNAL_STAFF" && (   // user can report any comment except for theirs + admin 
+                        {comment.is_published && commenter.user_id !== user.user_id && commenter.user_type !== "INTERNAL_STAFF" && (   // user can report any comment except for theirs + admin 
                             <>
-                            <Comment.Action
-                                onClick={() => report_comment(comment.comment_id) }
-                                style={{ color:'#FFA53F', marginLeft:4, fontWeight:'bold'}}>
-                                Report
-                            </Comment.Action>
+                                <Comment.Action
+                                    onClick={() => report_comment(comment.comment_id)}
+                                    style={{ color: '#FFA53F', marginLeft: 4, fontWeight: 'bold' }}>
+                                    Report
+                                </Comment.Action>
                             </>
-                        )} 
+                        )}
                     </Comment.Metadata>
-                    <Comment.Text style={{fontSize:18}}>
+                    <Comment.Text style={{ fontSize: 18 }}>
                         {comment.content}
                     </Comment.Text>
                     <Comment.Actions>
-                        <div style={{display:'flex'}}>
-                        
-                        { comment.is_published && ( // cnnt reply to a reported comment 
-                            <Comment.Action style={{ color:'#FFA53F', fontWeight:'bold'}}
-                                onClick={() => { setHideReply(!hideReply); setHideEdit(true);}}>
-                                Reply
-                            </Comment.Action>
-                        )}
+                        <div style={{ display: 'flex' }}>
 
-                        { commenter.user_id === user.user_id && comment.is_published  && (   // only the user that commented can edit / delete  
-                            <>
-                            <Comment.Action style={{ color:'#FFA53F', fontWeight:'bold'}}
-                                onClick={() => { setHideEdit(!hideEdit); setHideReply(true);}}>
-                                Edit
-                            </Comment.Action>
-                            <Comment.Action style={{ color:'#FFA53F', fontWeight:'bold'}}
-                                onClick={() => { remove_comment(comment.comment_id);}}>
-                                Delete
-                            </Comment.Action>
-                            </>
-                        )} 
-
-                        { comment.is_published && ( // remove upvote and downvote for reported comment  
-                            <>
-                                <Comment.Action
-                                        onClick={() => { onUpvoteComment(comment.comment_id);}}
-                                        style= {{ color: (comment.upvoted_user_id_list && comment.upvoted_user_id_list.includes(user.user_id) ? "red" : "black")}} >
-                                        <ArrowUpOutlined/>
+                            {comment.is_published && ( // cnnt reply to a reported comment 
+                                <Comment.Action style={{ color: '#FFA53F', fontWeight: 'bold' }}
+                                    onClick={() => { setHideReply(!hideReply); setHideEdit(true); }}>
+                                    Reply
                                 </Comment.Action>
+                            )}
 
-                                <div style={{marginRight:10}}> {comment.upvoted_user_id_list.length} </div>
+                            {commenter.user_id === user.user_id && comment.is_published && (   // only the user that commented can edit / delete  
+                                <>
+                                    <Comment.Action style={{ color: '#FFA53F', fontWeight: 'bold' }}
+                                        onClick={() => { setHideEdit(!hideEdit); setHideReply(true); }}>
+                                        Edit
+                                    </Comment.Action>
+                                    <Comment.Action style={{ color: '#FFA53F', fontWeight: 'bold' }}
+                                        onClick={() => { handleDelete(comment.comment_id); }}>
+                                        Delete
+                                    </Comment.Action>
+                                </>
+                            )}
 
-                                <Comment.Action
-                                    onClick={() => { onDownvoteComment(comment.comment_id); }}
-                                    style= {{ color: (comment.downvoted_user_id_list && comment.downvoted_user_id_list.includes(user.user_id) ? "red" : "black")}} >
-                                    <ArrowDownOutlined/>
-                                </Comment.Action>
-                            </>
-                        )}
+                            {comment.is_published && ( // remove upvote and downvote for reported comment  
+                                <>
+                                    <Comment.Action
+                                        onClick={() => { onUpvoteComment(comment.comment_id); }}
+                                        style={{ color: (comment.upvoted_user_id_list && comment.upvoted_user_id_list.includes(user.user_id) ? "red" : "black") }} >
+                                        <ArrowUpOutlined />
+                                    </Comment.Action>
 
-                        <div style={{marginLeft:2, color:'#grey', fontWeight:'bold'}}> {comment.child_comment_list.length} Replies </div>
+                                    <div style={{ marginRight: 10 }}> {comment.upvoted_user_id_list.length} </div>
+
+                                    <Comment.Action
+                                        onClick={() => { onDownvoteComment(comment.comment_id); }}
+                                        style={{ color: (comment.downvoted_user_id_list && comment.downvoted_user_id_list.includes(user.user_id) ? "red" : "black") }} >
+                                        <ArrowDownOutlined />
+                                    </Comment.Action>
+                                </>
+                            )}
+
+                            <div style={{ marginLeft: 2, color: '#grey', fontWeight: 'bold' }}> {comment.child_comment_list.length} Replies </div>
                         </div>
 
                         <Form // form to reply to a comment 
@@ -403,7 +421,7 @@ export default function PostItems() {
                                     parent_comment_id: comment.comment_id,
                                     content: userReply
                                 };
-                                
+
                                 reply_comment(reply);
                                 setUserReply("");
                                 setHideReply(true);
@@ -433,7 +451,7 @@ export default function PostItems() {
                                     comment_id: comment.comment_id,
                                     content: editComment
                                 };
-                                
+
                                 edit_comment(new_comment);
                                 setEditComment("");
                                 setHideEdit(true);
@@ -452,12 +470,12 @@ export default function PostItems() {
                             />
                         </Form>
                     </Comment.Actions>
-                    <div style={{marginBottom: -18}}>
+                    <div style={{ marginBottom: -18 }}>
                         <Comment.Group>
                             {comment.parent_comment == null && comment.child_comment_list.length > 0 &&
                                 comment.child_comment_list.map((e, i) => {
                                     return <DataComment data={e} />;
-                            })}
+                                })}
                         </Comment.Group>
                     </div>
                 </Comment.Content>
@@ -497,36 +515,36 @@ export default function PostItems() {
 
             const postList = response.data.post_list.length > 0 ? (
                 response.data.post_list.map((post) => (
-                    <Card key={post.post_id} style={{marginBottom:10}}> 
-                        <h3 style={{fontSize:15}}>{post.title}</h3>
-                        <p style={{fontSize:13}}>{post.content}</p>
-                        <p style={{fontSize:12, color:'grey'}}> posted on: {moment(post.publish_time).format('L LT')} </p>
+                    <Card key={post.post_id} style={{ marginBottom: 10 }}>
+                        <h3 style={{ fontSize: 15 }}>{post.title}</h3>
+                        <p style={{ fontSize: 13 }}>{post.content}</p>
+                        <p style={{ fontSize: 12, color: 'grey' }}> posted on: {moment(post.publish_time).format('L LT')} </p>
                     </Card>
                 )))
-            : (
-                <div> No post created! </div>
-            );
+                : (
+                    <div> No post created! </div>
+                );
 
             const commentList = response.data.comment_list.length > 0 ? (
                 response.data.comment_list.map((comment) => (
-                    <Card key={comment.comment_id} style={{marginBottom:10}}> 
-                        <h3 style={{fontSize:15}} >{comment.content}</h3>
-                        <p style={{fontSize:12, color:'grey'}}> commented on: {moment(comment.publish_time).format('L LT')} </p>
+                    <Card key={comment.comment_id} style={{ marginBottom: 10 }}>
+                        <h3 style={{ fontSize: 15 }} >{comment.content}</h3>
+                        <p style={{ fontSize: 12, color: 'grey' }}> commented on: {moment(comment.publish_time).format('L LT')} </p>
                     </Card>
                 )))
-            : (
-                <div> No comments posted! </div>
-            );
-            
+                : (
+                    <div> No comments posted! </div>
+                );
+
 
             const tabInfo = [
                 {
-                  menuItem: 'Post(s)',
-                  render: () => <Tab.Pane attached={false}> {postList}</Tab.Pane>,
+                    menuItem: 'Post(s)',
+                    render: () => <Tab.Pane attached={false}> {postList}</Tab.Pane>,
                 },
                 {
-                  menuItem: 'Comment(s)',
-                  render: () => <Tab.Pane attached={false}>{commentList}</Tab.Pane>,
+                    menuItem: 'Comment(s)',
+                    render: () => <Tab.Pane attached={false}>{commentList}</Tab.Pane>,
                 }
             ]
             setTabs(tabInfo)
@@ -562,34 +580,34 @@ export default function PostItems() {
 
     return user ? (
         <Layout style={styles.layout}>
-            { reportPostTitle ? <CustomHeader items={reportCrumb} /> : <CustomHeader items={forumBreadCrumb} />}
+            {reportPostTitle ? <CustomHeader items={reportCrumb} /> : <CustomHeader items={forumBreadCrumb} />}
             {/* <CustomHeader items={forumBreadCrumb} /> */}
             <Content style={styles.content}>
-                { userProfile && tabs && (
+                {userProfile && tabs && (
                     <Modal
-                    onClose={() => setOpen(false)}
-                    onOpen={() => setOpen(true)}
-                    open={open}
+                        onClose={() => setOpen(false)}
+                        onOpen={() => setOpen(true)}
+                        open={open}
                     >
 
-                    <Modal.Header>User Profile</Modal.Header>
-                    <Modal.Content>
-                        <Modal.Description style={{marginLeft: 0}}>
-                            <div style={{display:'flex'}}>
-                                <Image size='small' src={userProfile.profile_pic ? userProfile.profile_pic : 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg'} wrapped/>
-                                <div style={{marginLeft: 15}}>
-                                    <div style={{display: "flex"}}>
-                                        <Header>{userProfile.name}</Header>
-                                        {commentBadge && (
-                                            <Tag color='green' style={{marginLeft:12, height:23, fontWeight:"bold"}}>{commentBadge.badge_type}</Tag>
-                                        )}
+                        <Modal.Header>User Profile</Modal.Header>
+                        <Modal.Content>
+                            <Modal.Description style={{ marginLeft: 0 }}>
+                                <div style={{ display: 'flex' }}>
+                                    <Image size='small' src={userProfile.profile_pic ? userProfile.profile_pic : 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg'} wrapped />
+                                    <div style={{ marginLeft: 15 }}>
+                                        <div style={{ display: "flex" }}>
+                                            <Header>{userProfile.name}</Header>
+                                            {commentBadge && (
+                                                <Tag color='green' style={{ marginLeft: 12, height: 23, fontWeight: "bold" }}>{commentBadge.badge_type}</Tag>
+                                            )}
+                                        </div>
+                                        <p style={{ fontWeight: "bold" }}> Recent Forum Activity </p>
+                                        <Tab menu={{ pointing: true }} panes={tabs} style={{ width: 750 }} />
                                     </div>
-                                    <p style={{fontWeight:"bold"}}> Recent Forum Activity </p>
-                                    <Tab menu={{ pointing: true }} panes={tabs}  style={{width:750}} />
                                 </div>
-                            </div>
-                        </Modal.Description>
-                    </Modal.Content>
+                            </Modal.Description>
+                        </Modal.Content>
 
                     </Modal>
                 )}
@@ -609,47 +627,47 @@ export default function PostItems() {
                             avatar={<Avatar size="large" src={`${post.postUser.profile_pic ? post.postUser.profile_pic : 'http://tt02.s3-ap-southeast-1.amazonaws.com/user/default_profile.jpg'}`} />}
                             title={
                                 <div>
-                                    <Link style={{color:'black', fontSize:18}} onClick={() => viewProfile(post.postUser.user_id)}>
+                                    <Link style={{ color: 'black', fontSize: 18 }} onClick={() => viewProfile(post.postUser.user_id)}>
                                         {post.postUser.name}
                                         {postBadge && (
-                                            <Tag color='green' style={{marginLeft:10, height:23, fontWeight:"bold", marginBottom:5 }}>{postBadge.badge_type}</Tag>
+                                            <Tag color='green' style={{ marginLeft: 10, height: 23, fontWeight: "bold", marginBottom: 5 }}>{postBadge.badge_type}</Tag>
                                         )}
                                         {post.is_published ? (
-                                            <Tag style={{marginLeft:6, height:23, fontWeight:"bold", marginBottom:5 }} color={'geekblue'}>PUBLISHED</Tag>
+                                            <Tag style={{ marginLeft: 6, height: 23, fontWeight: "bold", marginBottom: 5 }} color={'geekblue'}>PUBLISHED</Tag>
                                         ) : (
-                                            <Tag style={{marginLeft:6, height:23, fontWeight:"bold", marginBottom:5 }} color={'volcano'}>UNPUBLISHED</Tag>
+                                            <Tag style={{ marginLeft: 6, height: 23, fontWeight: "bold", marginBottom: 5 }} color={'volcano'}>UNPUBLISHED</Tag>
                                         )}
                                     </Link>
                                     <div style={{ fontSize: '16px', color: '#666' }}>Posted on: {moment(post.publish_time).format('L')} {moment(post.publish_time).format('LT')}</div>
-                                
-                                
-                                
+
+
+
                                 </div>
                             }
                             description={
-                                <div style={{ fontSize: '20px', color: '#666', marginTop:'15px' }}>
+                                <div style={{ fontSize: '20px', color: '#666', marginTop: '15px' }}>
                                     {post.content}
                                 </div>
                             }
                         />
                     )}
 
-                    { post && (
-                        <div style={{display: 'flex', marginTop:-60}}>
-                            { post.post_image && (
+                    {post && (
+                        <div style={{ display: 'flex', marginTop: -60 }}>
+                            {post.post_image && (
                                 <>
-                                    <p style={{ marginTop: '80px', marginLeft: '60px', color:'#FFA53F', fontWeight:"bold", fontSize:'18px'}}>
+                                    <p style={{ marginTop: '80px', marginLeft: '60px', color: '#FFA53F', fontWeight: "bold", fontSize: '18px' }}>
                                         <PaperClipOutlined />
                                     </p>
-                                    
-                                    {/* display image attachment if there is any */}        
-                                    <Link 
+
+                                    {/* display image attachment if there is any */}
+                                    <Link
                                         type="text"
                                         onClick={() => setVisible(true)}
-                                        style={{ marginTop: '82px', marginLeft: '5px', color:'#FFA53F', fontWeight:"bold", fontSize:'15px'}}>
+                                        style={{ marginTop: '82px', marginLeft: '5px', color: '#FFA53F', fontWeight: "bold", fontSize: '15px' }}>
                                         {post.img_file}
                                     </Link>
-                                    
+
                                     <Image
                                         width={200}
                                         style={{ display: 'none' }}
@@ -665,20 +683,20 @@ export default function PostItems() {
                                 </>
                             )}
 
-                            <div style={{ marginLeft: 'auto', marginTop: '80px', marginRight: 30, display:'flex'}}>
-                                { post.is_published && (
-                                    <Link style = {{ color: '#FFA53F', fontWeight:'bold', fontSize:'15px', marginRight:20, marginTop:4 }} onClick={() => report_post(post.post_id) }>
-                                        Report 
+                            <div style={{ marginLeft: 'auto', marginTop: '80px', marginRight: 30, display: 'flex' }}>
+                                {post.is_published && (
+                                    <Link style={{ color: '#FFA53F', fontWeight: 'bold', fontSize: '15px', marginRight: 20, marginTop: 4 }} onClick={() => report_post(post.post_id)}>
+                                        Report
                                     </Link>
                                 )}
-                                
-                                <Link style={{ color: (post.upvote_list && post.upvote_list.includes(user.user_id) ? "red" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onUpvotePost(post.post_id)} > 
+
+                                <Link style={{ color: (post.upvote_list && post.upvote_list.includes(user.user_id) ? "red" : "black"), fontWeight: "bold", fontSize: '20px' }} onClick={() => onUpvotePost(post.post_id)} >
                                     <ArrowUpOutlined />
                                 </Link>
-                                
-                                <p style={{marginLeft:10, marginRight:10, marginTop: 6, fontSize:13, fontWeight:'bold'}}> {post.upvote_list.length} </p>
-                            
-                                <Link style={{ color: (post.downvote_list && post.downvote_list.includes(user.user_id) ? "red" : "black") , fontWeight:"bold", fontSize:'20px'}} onClick={() => onDownvotePost(post.post_id)}>  
+
+                                <p style={{ marginLeft: 10, marginRight: 10, marginTop: 6, fontSize: 13, fontWeight: 'bold' }}> {post.upvote_list.length} </p>
+
+                                <Link style={{ color: (post.downvote_list && post.downvote_list.includes(user.user_id) ? "red" : "black"), fontWeight: "bold", fontSize: '20px' }} onClick={() => onDownvotePost(post.post_id)}>
                                     <ArrowDownOutlined />
                                 </Link>
                             </div>
@@ -686,16 +704,16 @@ export default function PostItems() {
                     )}
                 </Card>
 
-                { post && (
+                {post && (
                     <Card style={{
-                            width: '100%',
-                            height: 250,
-                            marginLeft: '-5px',
-                            marginRight: '50px',
-                            marginTop: '5px',
-                            fontSize: 20,
-                            border:'none'
-                        }}
+                        width: '100%',
+                        height: 250,
+                        marginLeft: '-5px',
+                        marginRight: '50px',
+                        marginTop: '5px',
+                        fontSize: 20,
+                        border: 'none'
+                    }}
                     >
                         {/* Display comments here */}
                         <Header as="h3" dividing>
@@ -703,15 +721,15 @@ export default function PostItems() {
                         </Header>
 
                         {post && comments &&
-                            comments.map((comment) => 
-                            <div style={{ marginBottom: -20 }}>
-                                <Comment.Group>
-                                    <DataComment data={comment} />
-                                </Comment.Group>
-                            </div>
-                        )}
+                            comments.map((comment) =>
+                                <div style={{ marginBottom: -20 }}>
+                                    <Comment.Group>
+                                        <DataComment data={comment} />
+                                    </Comment.Group>
+                                </div>
+                            )}
 
-                        { post.is_published && (
+                        {post.is_published && (
                             <Content style={styles.replyInput}>
                                 <Input
                                     placeholder="Type a comment..."
@@ -727,9 +745,19 @@ export default function PostItems() {
                                     onClick={create_comment}
                                 />
                             </Content>
-                        )}   
+                        )}
                     </Card>
                 )}
+                <AntdModal
+                    title="Confirm Delete"
+                    visible={isDeleteConfirmationVisible}
+                    onOk={() => remove_comment()}
+                    onCancel={closeDeleteConfirmation}
+                    okButtonProps={{ style: { fontWeight: "bold" } }}
+                    cancelButtonProps={{ style: { fontWeight: "bold" } }}
+                >
+                    <p>Are you sure you want to delete this comment?</p>
+                </AntdModal>
                 <ToastContainer />
             </Content>
         </Layout>
