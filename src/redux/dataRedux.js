@@ -70,7 +70,7 @@ export async function updateSubscription(vendor_id, user_type, subscription_type
 
 export async function unsubscribe(subscription_id) {
     try {
-        const response = await dataApi.delete(`/cancelSubscription/${subscription_id}`);
+        const response = await dataApi.delete(`/removeSubscription/${subscription_id}`);
         return handleApiErrors(response);
     } catch (error) {
         console.error("Error : ", error);

@@ -88,11 +88,11 @@ export default function User() {
                 const response = await getSubscription(user_id, user_type);
     
                 if (response.status) {
-                const details = response.data;
-                console.log(details)
-                setSubscriptionInfo(response.data);
-                setIsSubscribed(true);
-                setOperation("REMOVE");
+                    const details = response.data;
+                    console.log(details)
+                    setSubscriptionInfo(response.data);
+                    setIsSubscribed(true);
+                    setOperation("REMOVE");
 
                 
                 
@@ -127,6 +127,7 @@ export default function User() {
 
             const response = await unsubscribe(subscriptionInfo.subscription_id);
             if (response.status) {
+                console.log(response.data)
                 setIsSubscribed(false);
                 setIsSubModalOpen(false);
                 if (currentType === "LOCAL") {
@@ -134,6 +135,11 @@ export default function User() {
                 } else if (currentType === "VENDOR") {
                     setGetVendorData(true);
                 }
+
+                toast.success("Successfully Removed Vendor from Subscription Service", {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 1500
+                    });
                 
             } else {
                 toast.error(response.data.errorMessage, {
@@ -152,6 +158,11 @@ export default function User() {
             } else if (currentType === "VENDOR") {
                 setGetVendorData(true);
             }
+
+            toast.success("Successfully Added Vendor to Subscription Service", {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+                });
           } else {
             toast.error(response.data.errorMessage, {
               position: toast.POSITION.TOP_RIGHT,
