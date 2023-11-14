@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {Dropdown, Button, Menu, Layout, Select, Typography} from 'antd';
+import {Dropdown, Button, Menu, Layout, Select, Typography, Table, Row, Col} from 'antd';
 import 'chartjs-adapter-date-fns'; // Import the date adapter
 
 import {
@@ -15,6 +15,7 @@ import {
     TimeScale
 } from 'chart.js';
 import {Bar, Line} from 'react-chartjs-2';
+import moment from "moment";
 
 
 ChartJS.register(
@@ -29,9 +30,9 @@ ChartJS.register(
     Legend
 );
 
-const WEEKLY = 'weekly';
-const YEARLY = 'yearly';
-const MONTHLY = 'monthly';
+const WEEKLY = 'Week';
+const YEARLY = 'Year';
+const MONTHLY = 'Month';
 const NUMBER_OF_BOOKINGS = "Number of Bookings";
 const NUMBER_OF_BOOKINGS_LOCAL = "Number of Bookings by Local";
 const NUMBER_OF_BOOKINGS_TOURIST = "Number of Bookings by Tourist";
@@ -45,6 +46,7 @@ export const PlatformBookingsTimeSeries = (props) => {
     const [selectedXAxis, setSelectedXAxis] = useState(MONTHLY);
     const [selectedYAxis, setSelectedYAxis] = useState(NUMBER_OF_BOOKINGS);
     const [selectedDataset, setSelectedDataset] = useState([{}]);
+    const [yData, setYData] = useState([]);
 
 
     const itemsXAxis = [
@@ -115,12 +117,15 @@ export const PlatformBookingsTimeSeries = (props) => {
         data.forEach((item) => {
           const [date, country] = item; // ["2023-05-17", "CountryName"]
           let xAxisKey;
-          if (selectedXAxis === MONTHLY) {
-            xAxisKey = date.substr(0, 7); // Extract yyyy-MM part of the date
-          } else if (selectedXAxis === YEARLY) {
-            xAxisKey = date.substr(0, 4); // Extract yyyy part of the date
-          }
-      
+            if (selectedXAxis === MONTHLY) {
+                xAxisKey = date.substr(0, 7); // Extract yyyy-MM part of the date
+            } else if (selectedXAxis === YEARLY) {
+                xAxisKey = date.substr(0, 4); // Extract yyyy part of the date
+            } else if (selectedXAxis === WEEKLY) {
+                const currdate = moment(date)
+                xAxisKey = currdate.clone().startOf('week').format('YYYY-MM-DD').toString()
+                console.log(xAxisKey)
+            }
           if (!aggregatedData.has(xAxisKey)) {
             // Initialize data for the date
             aggregatedData.set(xAxisKey, { Date: xAxisKey, Count: 0, Countries: {} });
@@ -168,6 +173,7 @@ export const PlatformBookingsTimeSeries = (props) => {
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
                 fill: false,
+                backgroundColor: 'rgba(75, 192, 192, 1)',
             },
         ]; 
       } else if (selectedYAxis === NUMBER_OF_BOOKINGS_LOCAL) {
@@ -180,6 +186,7 @@ export const PlatformBookingsTimeSeries = (props) => {
               borderColor: getRandomColor(0), // You can assign a specific color for Local bookings
               borderWidth: 1,
               fill: false,
+                backgroundColor: getRandomColor(0), // You can assign a specific color for Local bookings
             },
           ];
       } else if (selectedYAxis === NUMBER_OF_BOOKINGS_TOURIST) {
@@ -194,6 +201,8 @@ export const PlatformBookingsTimeSeries = (props) => {
               borderColor: getRandomColor(0), // You can assign a specific color for Tourist bookings
               borderWidth: 1,
               fill: false,
+              backgroundColor: getRandomColor(0), // You can assign a specific color for Tourist bookings
+
             },
           ];
       } else if (selectedYAxis === NUMBER_OF_BOOKINGS_BY_COUNTRY) {
@@ -205,6 +214,7 @@ export const PlatformBookingsTimeSeries = (props) => {
             borderColor: getRandomColor(uniqueCountries.indexOf(country)),
             borderWidth: 1,
             fill: false,
+            backgroundColor: getRandomColor(uniqueCountries.indexOf(country)),
         }));
       }
     
@@ -230,7 +240,7 @@ export const PlatformBookingsTimeSeries = (props) => {
                     unit: 'month',
                     displayFormats: {
                         month: 'yyyy-MM',
-                        week: 'YYYY [W]WW', // Adjust the format for weeks
+                        week: 'yyyy-MM-dd', // Adjust the format for weeks
                         year: 'yyyy',
                     },
                 },
@@ -240,6 +250,56 @@ export const PlatformBookingsTimeSeries = (props) => {
             },
         },
     };
+
+    const columns = [
+        {
+            title: selectedXAxis,
+            dataIndex: 'month',
+            key: 'month',
+        },
+        {
+            title: selectedYAxis === NUMBER_OF_BOOKINGS_BY_COUNTRY? NUMBER_OF_BOOKINGS : selectedYAxis,
+            dataIndex: 'total',
+            key: 'total',
+        },
+    ];
+
+    const expandedRowRender = (record) => {
+        const nestedcolumns = [
+            {
+                title: 'Country',
+                dataIndex: 'country',
+                key: 'country',
+            },
+            {
+                title: 'Number of Bookings',
+                dataIndex: 'count',
+                key: 'count',
+            },
+        ];
+
+        const mappedNestedData = record.nestedData.map(([country, count], index) => ({
+            key: index,
+            country,
+            count,
+        }));
+
+        return (
+            <Table
+                columns={nestedcolumns}
+                dataSource={mappedNestedData}
+                pagination={false}
+                size="small"
+            />
+        );
+    };
+
+    const tableData = yData.map(([month, total, countries], index) => ({
+        key: index,
+        month,
+        total,
+        nestedData: countries,
+    }));
 
     const getChartOptions = () => {
         const chartOptions = {
@@ -266,7 +326,39 @@ export const PlatformBookingsTimeSeries = (props) => {
     const handleChangeYAxis = (value) => {
         console.log(value); // { value: "lucy", label: "Lucy (101)" }
         setSelectedYAxis(value.value)
+        updateYaxisDropdown(value.value)
     };
+
+    useEffect(() => {
+        updateYaxisDropdown(selectedYAxis);
+    }, [selectedXAxis]);
+
+    const updateYaxisDropdown = (yaxis) => {
+        console.log("In y axis", yaxis)
+        let newData = []
+        newData = aggregatedData
+        if (yaxis === NUMBER_OF_BOOKINGS) {
+            newData = aggregatedData
+        } else if (yaxis === NUMBER_OF_BOOKINGS_LOCAL) {
+            newData = aggregatedData.filter(item => {
+                console.log(item)
+                const countries = Object.keys(item[2]);
+                return countries.includes("Singapore");
+            });
+            console.log(newData)
+
+        } else if (yaxis === NUMBER_OF_BOOKINGS_TOURIST) {
+            newData = aggregatedData.filter(item => {
+                const countries = Object.keys(item[2]);
+                return !countries.includes("Singapore");
+            });
+        } else if (yaxis === NUMBER_OF_BOOKINGS_BY_COUNTRY) {
+            newData = aggregatedData
+        }
+
+        setYData(newData)
+
+    }
 
     useEffect(() => {
         const chart = chartRef.current;
@@ -280,40 +372,60 @@ export const PlatformBookingsTimeSeries = (props) => {
 
     return (
         <>
+            <div ref={chartRef}>
+                <Row style={{marginRight: 50}}>
+                    <Col style={{marginLeft: 'auto', marginRight: 16}}>
+                        <div style={styles.container}>
+                            <Typography.Title level={5} style={{marginRight: '10px'}}>X Axis: </Typography.Title>
+                            <Select
+                                labelInValue
+                                defaultValue={itemsXAxis[0]}
+                                style={{width: 120}}
+                                onChange={handleChangeXAxis}
+                                options={itemsXAxis}
+                            />
 
-            <div style={styles.container}>
-                <Typography.Title level={5} style={{marginRight: '10px'}}>X Axis: </Typography.Title>
-                <Select
-                    labelInValue
-                    defaultValue={itemsXAxis[0]}
-                    style={{width: 120}}
-                    onChange={handleChangeXAxis}
-                    options={itemsXAxis}
-                />
+                        </div>
+                    </Col>
+                    <Col>
+                        <div style={styles.container}>
+                            <Typography.Title level={5} style={{marginRight: '10px'}}>Y Axis: </Typography.Title>
+                            <Select
+                                labelInValue
+                                defaultValue={itemsYAxis[0]}
+                                style={{width: 300}}
+                                onChange={handleChangeYAxis}
+                                options={itemsYAxis}
+                            />
+                        </div>
+                    </Col>
+
+                </Row>
+
+                <br></br>
+
+                <div  style={styles.line}>
+                    <Line
+
+                        data={lineData}
+                        options={getChartOptions()}
+                    />
+                </div>
+
+
+
+                <br></br>
 
             </div>
-            <br></br>
-
-            <div style={styles.container}>
-                <Typography.Title level={5} style={{marginRight: '10px'}}>Y Axis: </Typography.Title>
-                <Select
-                    labelInValue
-                    defaultValue={itemsYAxis[0]}
-                    style={{width: 400}}
-                    onChange={handleChangeYAxis}
-                    options={itemsYAxis}
+            <Row style={{marginLeft: 30, marginTop: 20, width: '100%'}}>
+                <Table dataSource={tableData} columns={columns} bordered
+                       style={{
+                           width: '90%',
+                       }}
+                       expandable={{expandedRowRender}}
+                       className="ant-table ant-table-bordered ant-table-striped"
                 />
-
-            </div>
-
-
-            <div ref={chartRef}  style={styles.line}>
-                <Line
-                    
-                    data={lineData}
-                    options={getChartOptions()}
-                />
-            </div>
+            </Row>
         </>
     );
 };
