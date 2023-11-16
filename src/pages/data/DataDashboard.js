@@ -40,9 +40,9 @@ ChartJS.register(
 
 const TOTAL_BOOKINGS_OVER_TIME = "Platform Bookings Over Time";
 const REVENUE_OVER_TIME = "Platform Revenue Over Time";
-const BOOKINGS_BREAKDOWN = "Platform Bookings Breakdown by Category, Nationality, Status";
-const REVENUE_BREAKDOWN = "Platform Revenue Breakdown by Category, Nationality, Status";
-const CUSTOMER_RETENTION = "Customer Retention (Number of Repeat Bookings Over Time)";
+const BOOKINGS_BREAKDOWN = "Platform Bookings Breakdown";
+const REVENUE_BREAKDOWN = "Platform Revenue Breakdown";
+const CUSTOMER_RETENTION = "Customer Retention Over Time";
 
 const DataDashboard = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
@@ -138,41 +138,44 @@ async function onClickSubmitExport(exportDetails) {
         const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF("landscape");
         const header = exportDetails.reportTitle;
-        const footer = exportDetails.reportDescription;
-        const margin = 10; // Margin for header and footer
+        const footer = exportDetails.reportDescription; 
+        const margin = 10;
+        const headerHeight = 20; 
     
-        // Add header text
         pdf.setFontSize(12);
-        pdf.text(header, pdf.internal.pageSize.getWidth() / 2, margin, { align: 'center' });
+        const headerY = margin + headerHeight / 2;
+        pdf.text(header, pdf.internal.pageSize.getWidth() / 2, headerY, { align: 'center' });
     
-        const chartWidth = canvas.width;
-        const chartHeight = canvas.height;
-        const pdfWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-        const pdfHeight = pdf.internal.pageSize.getHeight() - 2 * margin;
+        const chartAspectRatio = canvas.width / canvas.height;
     
-        // Calculate scaling factor
-        const scaleX = pdfWidth / chartWidth;
-        const scaleY = pdfHeight / chartHeight;
-        const scaleFactor = Math.min(scaleX, scaleY);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        
+        let imgWidth, imgHeight, x, y;
     
-        // Calculate scaled dimensions
-        const imgWidth = chartWidth * scaleFactor;
-        const imgHeight = chartHeight * scaleFactor;
-    
-        // Calculate position to center the image
-        const x = margin + (pdfWidth - imgWidth) / 2;
-        const y = margin + (pdfHeight - imgHeight) / 2;
+        if (chartAspectRatio > 1) {
+            imgWidth = pdfWidth;
+            imgHeight = imgWidth / chartAspectRatio;
+            x = 0;
+            y = margin + headerHeight; 
+        } else {
+            imgHeight = pdfHeight - (margin * 2 + headerHeight); 
+            imgWidth = imgHeight * chartAspectRatio;
+            x = (pdfWidth - imgWidth) / 2; 
+            y = margin + headerHeight; 
+        }
     
         pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
     
-        // Footer position
-        const footerY = pdf.internal.pageSize.getHeight() - margin;
+        
+        const footerY = y + imgHeight + 10; 
     
-        // Add footer text
         pdf.setFontSize(10);
         pdf.text(footer, pdf.internal.pageSize.getWidth() / 2, footerY, { align: 'center' });
+    
         pdf.save(exportDetails.reportName + ".pdf");
     });
+    
     
     
 
