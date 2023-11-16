@@ -206,10 +206,10 @@ export const PlatformBookingsTimeSeries = (props) => {
             },
           ];
       } else if (selectedYAxis === NUMBER_OF_BOOKINGS_BY_COUNTRY) {
-        dataset = aggregatedData[0][2].map(([country]) => ({
+        dataset = uniqueCountries.map((country) => ({
             label: `Number of Bookings in ${country}`,
             data: aggregatedData.map((item) =>
-            item[2].find(([c]) => c === country) ? item[2].find(([c]) => c === country)[1] : 0
+                item[2].find(([c]) => c === country) ? item[2].find(([c]) => c === country)[1] : 0
             ),
             borderColor: getRandomColor(uniqueCountries.indexOf(country)),
             borderWidth: 1,

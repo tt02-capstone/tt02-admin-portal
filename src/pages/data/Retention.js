@@ -34,9 +34,9 @@ ChartJS.register(
     Legend
 );
 
-const WEEKLY = 'weekly';
-const YEARLY = 'yearly';
-const MONTHLY = 'monthly';
+const WEEKLY = 'Week';
+const YEARLY = 'Year';
+const MONTHLY = 'Month';
 const NUMBER_OF_REPEATED_BOOKINGS = "Number of Repeated Bookings";
 const NUMBER_OF_BOOKINGS_LOCAL = "Number of Repeated Bookings by Local";
 const NUMBER_OF_BOOKINGS_TOURIST = "Number of Repeated Bookings by Tourist";
@@ -205,8 +205,8 @@ export const Retention = (props) => {
             },
         ];
     } else if (selectedYAxis === NUMBER_OF_BOOKINGS_BY_COUNTRY) {
-        dataset = aggregatedData[0][2].map(([country]) => ({
-            label: `Number of Repeated Bookings from ${country}`,
+        dataset = uniqueCountries.map((country) => ({
+            label: `Number of Bookings in ${country}`,
             data: aggregatedData.map((item) =>
                 item[2].find(([c]) => c === country) ? item[2].find(([c]) => c === country)[1] : 0
             ),
@@ -251,21 +251,53 @@ export const Retention = (props) => {
 
     const columns = [
         {
-            title: 'Date',
-            dataIndex: 0,
-            key: 'date',
+            title: selectedXAxis,
+            dataIndex: 'month',
+            key: 'month',
         },
         {
-            title: 'Total Number of Repeat Bookings',
-            dataIndex: 1,
-            key: 'nth_booking',
-        },
-        {
-            title: 'Country',
-            dataIndex: 3,
-            key: 'country',
+            title: 'Total',
+            dataIndex: 'total',
+            key: 'total',
         },
     ];
+
+    const expandedRowRender = (record) => {
+        const nestedcolumns = [
+            {
+                title: 'Country',
+                dataIndex: 'country',
+                key: 'country',
+            },
+            {
+                title: 'Number of Repeated Bookings',
+                dataIndex: 'count',
+                key: 'count',
+            },
+        ];
+
+        const mappedNestedData = record.nestedData.map(([country, count], index) => ({
+            key: index,
+            country,
+            count,
+        }));
+
+        return (
+            <Table
+                columns={nestedcolumns}
+                dataSource={mappedNestedData}
+                pagination={false}
+                size="small"
+            />
+        );
+    };
+
+    const tableData = aggregatedData.map(([month, total, countries], index) => ({
+        key: index,
+        month,
+        total,
+        nestedData: countries,
+    }));
 
     const getChartOptions = () => {
         const chartOptions = {
@@ -346,12 +378,12 @@ export const Retention = (props) => {
                 <br></br>
             </div>
             <Row style={{marginLeft: 30, marginTop: 20}}>
-                <Table
-                    dataSource={data.map((row, index) =>
-                        ({key: index, ...row})
-                    )}
-                    columns={columns}
-                    style={{ width: '90%' }} // Set the width to 100%
+            <Table dataSource={tableData} columns={columns} bordered
+                       style={{
+                           width: '90%',
+                       }}
+                       expandable={{expandedRowRender}}
+                       className="ant-table ant-table-bordered ant-table-striped"
                 />
             </Row>
         </>

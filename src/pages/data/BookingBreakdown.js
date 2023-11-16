@@ -121,16 +121,16 @@ const styles = {
         flexDirection: 'row',
         height: 450,
         width: 450,
-        margin: '0 20px', // Increase the margin to add spacing between charts
+        margin: '0 20px', 
     },
     chart: {
         flex: 1,
-        margin: '0 20px', // Increase the margin to add spacing between charts
+        margin: '0 20px', 
 
     },
     gridContainer: {
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr', // Creates a 2x2 grid
-        gap: '20px', // Adjust the gap as needed for spacing
+        gridTemplateColumns: '1fr 1fr', 
+        gap: '20px', 
     }
 };
