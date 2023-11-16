@@ -37,8 +37,8 @@ const NUMBER_OF_BOOKINGS = "Number of Bookings";
 const NUMBER_OF_BOOKINGS_LOCAL = "Number of Bookings by Local";
 const NUMBER_OF_BOOKINGS_TOURIST = "Number of Bookings by Tourist";
 const NUMBER_OF_BOOKINGS_BY_COUNTRY = "Number of Bookings by Country";
-
-
+const NUMBER_OF_BOOKINGS_BY_CATEGORY = "Number of Bookings by Category";
+const NUMBER_OF_BOOKINGS_BY_VENDOR = "Number of Bookings by Vendor";
 
 export const PlatformBookingsTimeSeries = (props) => {
     const chartRef = props.chartRef;
@@ -82,7 +82,15 @@ export const PlatformBookingsTimeSeries = (props) => {
             value: NUMBER_OF_BOOKINGS_BY_COUNTRY,
             label: NUMBER_OF_BOOKINGS_BY_COUNTRY,
         },
-
+        {
+            value: NUMBER_OF_BOOKINGS_BY_CATEGORY,
+            label: NUMBER_OF_BOOKINGS_BY_CATEGORY,
+        },
+        {
+            value: NUMBER_OF_BOOKINGS_BY_VENDOR,
+            label: NUMBER_OF_BOOKINGS_BY_VENDOR,
+        },
+       
     ];
 
     const getRandomColor = (index) => {
@@ -111,42 +119,66 @@ export const PlatformBookingsTimeSeries = (props) => {
 
 
       const aggregateDatafromDropdown = (data) => {
-        const aggregatedData = new Map(); // Use a Map to store aggregated data by date
+        const aggregatedData = new Map(); 
       
-        // Loop through the data and aggregate by date
+
         data.forEach((item) => {
-          const [date, country] = item; // ["2023-05-17", "CountryName"]
+          const [date, country, category, subcategory, vendor] = item; 
           let xAxisKey;
             if (selectedXAxis === MONTHLY) {
-                xAxisKey = date.substr(0, 7); // Extract yyyy-MM part of the date
+                xAxisKey = date.substr(0, 7); 
             } else if (selectedXAxis === YEARLY) {
-                xAxisKey = date.substr(0, 4); // Extract yyyy part of the date
+                xAxisKey = date.substr(0, 4); 
             } else if (selectedXAxis === WEEKLY) {
                 const currdate = moment(date)
                 xAxisKey = currdate.clone().startOf('week').format('YYYY-MM-DD').toString()
                 console.log(xAxisKey)
             }
           if (!aggregatedData.has(xAxisKey)) {
-            // Initialize data for the date
-            aggregatedData.set(xAxisKey, { Date: xAxisKey, Count: 0, Countries: {} });
+
+            aggregatedData.set(xAxisKey, { Date: xAxisKey, Count: 0, Countries: {}, Categories: {}, Subcategories: {}, Vendors: {} });
           }
       
-          // Increment the count for the date
+
           aggregatedData.get(xAxisKey).Count++;
       
-          // Increment the count for the country within the date
+
           if (!aggregatedData.get(xAxisKey).Countries[country]) {
             aggregatedData.get(xAxisKey).Countries[country] = 1;
           } else {
             aggregatedData.get(xAxisKey).Countries[country]++;
           }
+
+          if (!aggregatedData.get(xAxisKey).Categories[category]) {
+            aggregatedData.get(xAxisKey).Categories[category] = 1;
+          } else {
+            aggregatedData.get(xAxisKey).Categories[category]++;
+          }
+
+          if (!aggregatedData.get(xAxisKey).Subcategories[subcategory]) {
+            aggregatedData.get(xAxisKey).Subcategories[subcategory] = 1;
+          } else {
+                aggregatedData.get(xAxisKey).Subcategories[subcategory]++;
+            }
+
+            if (!aggregatedData.get(xAxisKey).Vendors[vendor]) {
+                aggregatedData.get(xAxisKey).Vendors[vendor] = 1;
+            }
+            else {
+                aggregatedData.get(xAxisKey).Vendors[vendor]++;
+            }
+
         });
       
-        // Convert the aggregated Map back to an array of lists
+
         const aggregatedArray = Array.from(aggregatedData.values()).map((value) => [
           value.Date,
           value.Count,
           Object.entries(value.Countries).map(([country, count]) => [country, count]),
+            Object.entries(value.Categories).map(([category, count]) => [category, count]),
+            Object.entries(value.Subcategories).map(([subcategory, count]) => [subcategory, count]),
+            Object.entries(value.Vendors).map(([vendor, count]) => [vendor, count]),
+
         ]);
       
         console.log(aggregatedArray);
@@ -158,13 +190,17 @@ export const PlatformBookingsTimeSeries = (props) => {
       
       
       
-    // Usage:
+
     console.log(data)
     const aggregatedData = aggregateDatafromDropdown(data);
 
     let dataset = [];
 
     const uniqueCountries = [...new Set(aggregatedData.flatMap((item) => item[2].map(([country]) => country)))];
+    const uniqueCategories = [...new Set(aggregatedData.flatMap((item) => item[3].map(([category]) => category)))];
+    const uniqueSubcategories = [...new Set(aggregatedData.flatMap((item) => item[4].map(([subcategory]) => subcategory)))];
+    const uniqueVendors = [...new Set(aggregatedData.flatMap((item) => item[5].map(([vendor]) => vendor)))];
+
     if (selectedYAxis === NUMBER_OF_BOOKINGS) {
         dataset = [
             {
@@ -216,13 +252,36 @@ export const PlatformBookingsTimeSeries = (props) => {
             fill: false,
             backgroundColor: getRandomColor(uniqueCountries.indexOf(country)),
         }));
-      }
+      } else if (selectedYAxis === NUMBER_OF_BOOKINGS_BY_CATEGORY) {
+        dataset = uniqueCategories.map((category) => ({
+
+            label: `Number of Bookings in ${category}`,
+            data: aggregatedData.map((item) =>
+                item[3].find(([c]) => c === category) ? item[3].find(([c]) => c === category)[1] : 0
+            ),
+            borderColor: getRandomColor(uniqueCategories.indexOf(category)),
+            borderWidth: 1,
+            fill: false,
+            backgroundColor: getRandomColor(uniqueCategories.indexOf(category)),
+        }));
+        } else if (selectedYAxis === NUMBER_OF_BOOKINGS_BY_VENDOR) {
+            dataset = uniqueVendors.map((vendor) => ({
+                label: `Number of Bookings in ${vendor}`,
+                data: aggregatedData.map((item) =>
+                    item[5].find(([c]) => c === vendor) ? item[5].find(([c]) => c === vendor)[1] : 0
+                ),
+                borderColor: getRandomColor(uniqueVendors.indexOf(vendor)),
+                borderWidth: 1,
+                fill: false,
+                backgroundColor: getRandomColor(uniqueVendors.indexOf(vendor)),
+            }));
+        }
     
 
     
 
     const lineData = {
-        labels: aggregatedData.map((item) => item[0]), // Convert dates to strings
+        labels: aggregatedData.map((item) => item[0]), 
         datasets: dataset,
         };
 
@@ -265,41 +324,117 @@ export const PlatformBookingsTimeSeries = (props) => {
     ];
 
     const expandedRowRender = (record) => {
-        const nestedcolumns = [
-            {
-                title: 'Country',
-                dataIndex: 'country',
-                key: 'country',
-            },
-            {
-                title: 'Number of Bookings',
-                dataIndex: 'count',
-                key: 'count',
-            },
-        ];
+        if (selectedYAxis == NUMBER_OF_BOOKINGS_BY_COUNTRY) {
+            const nestedcolumns = [
+                {
+                    title: 'Country',
+                    dataIndex: 'country',
+                    key: 'country',
+                },
+                {
+                    title: 'Number of Bookings',
+                    dataIndex: 'count',
+                    key: 'count',
+                },
+            ];
+    
+            const mappedNestedData = record.nestedData.map(([country, count], index) => ({
+                key: index,
+                country,
+                count,
+            }));
 
-        const mappedNestedData = record.nestedData.map(([country, count], index) => ({
-            key: index,
-            country,
-            count,
-        }));
+            return (
+                <Table
+                    columns={nestedcolumns}
+                    dataSource={mappedNestedData}
+                    pagination={false}
+                    size="small"
+                />
+            );
+        } else if (selectedYAxis == NUMBER_OF_BOOKINGS_BY_CATEGORY) {
+            const nestedcolumns = [
+                {
+                    title: 'Category',
+                    dataIndex: 'category',
+                    key: 'category',
+                },
+                {
+                    title: 'Number of Bookings',
+                    dataIndex: 'count',
+                    key: 'count',
+                },
+            ];
+    
+            const mappedNestedData = record.nestedData.map(([category, count], index) => ({
+                key: index,
+                category,
+                count,
+            }));
 
-        return (
-            <Table
-                columns={nestedcolumns}
-                dataSource={mappedNestedData}
-                pagination={false}
-                size="small"
-            />
-        );
+            return (
+                <Table
+                    columns={nestedcolumns}
+                    dataSource={mappedNestedData}
+                    pagination={false}
+                    size="small"
+                />
+            );
+        } else if (selectedYAxis == NUMBER_OF_BOOKINGS_BY_VENDOR) {
+            const nestedcolumns = [
+                {
+                    title: 'Vendor',
+                    dataIndex: 'vendor',
+                    key: 'vendor',
+                },
+                {
+                    title: 'Number of Bookings',
+                    dataIndex: 'count',
+                    key: 'vendor',
+                },
+            ];
+    
+            const mappedNestedData = record.nestedData.map(([vendor, count], index) => ({
+                key: index,
+                vendor,
+                count,
+            }));
+
+            return (
+                <Table
+                    columns={nestedcolumns}
+                    dataSource={mappedNestedData}
+                    pagination={false}
+                    size="small"
+                />
+            );
+        }
+        
+
+        
     };
 
-    const tableData = yData.map(([month, total, countries], index) => ({
-        key: index,
-        month,
-        total,
-        nestedData: countries,
-    }));
+    const tableData = yData.map(([month, total, countries, categories, subcategories, vendors], index) => {
+        let nestedData;
+    
+ 
+        if (selectedYAxis === NUMBER_OF_BOOKINGS_BY_COUNTRY) {
+            nestedData = countries;
+        } else if (selectedYAxis === NUMBER_OF_BOOKINGS_BY_CATEGORY) {
+            nestedData = categories
+        } else if (selectedYAxis === NUMBER_OF_BOOKINGS_BY_VENDOR) {
+
+            nestedData = vendors;
+        }
+    
+        return {
+            key: index,
+            month,
+            total,
+            nestedData, 
+        };
+    });
+    
 
     const getChartOptions = () => {
         const chartOptions = {

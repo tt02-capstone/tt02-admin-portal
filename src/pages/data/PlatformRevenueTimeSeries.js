@@ -37,8 +37,9 @@ const TOTAL_REVENUE = "Total Revenue";
 const TOTAL_REVENUE_LOCAL = "Total Revenue from Local";
 const TOTAL_REVENUE_TOURIST = "Total Revenue from  Tourist";
 const TOTAL_REVENUE_BY_COUNTRY = "Total Revenue from  Country";
-// TOTAL_REVENUE_BY_VENDOR
-// TOTAL_REVENUE_BY_VENDOR_CATEGORY
+const TOTAL_REVENUE_BY_CATEGORY = "Total Revenue from Category";
+const TOTAL_REVENUE_BY_VENDOR = "Total Revenue from  Vendor";
+
 
 
 export const PlatformRevenueTimeSeries = (props) => {
@@ -82,6 +83,14 @@ export const PlatformRevenueTimeSeries = (props) => {
             value: TOTAL_REVENUE_BY_COUNTRY,
             label: TOTAL_REVENUE_BY_COUNTRY,
         },
+        {
+            value: TOTAL_REVENUE_BY_CATEGORY,
+            label: TOTAL_REVENUE_BY_CATEGORY,
+        },
+        {
+            value: TOTAL_REVENUE_BY_VENDOR,
+            label: TOTAL_REVENUE_BY_VENDOR,
+        }
 
     ];
 
@@ -111,16 +120,16 @@ export const PlatformRevenueTimeSeries = (props) => {
 
 
     const aggregateDatafromDropdown = (data) => {
-        const aggregatedData = new Map(); // Use a Map to store aggregated data by date
+        const aggregatedData = new Map(); 
 
-        // Loop through the data and aggregate by date
+
         data.forEach((item) => {
-            const [date, country, revenue] = item; // ["2023-05-17", "CountryName"]
+            const [date, country, revenue, category, subcategory, vendor] = item; 
             let xAxisKey;
             if (selectedXAxis === MONTHLY) {
-                xAxisKey = date.substr(0, 7); // Extract yyyy-MM part of the date
+                xAxisKey = date.substr(0, 7); 
             } else if (selectedXAxis === YEARLY) {
-                xAxisKey = date.substr(0, 4); // Extract yyyy part of the date
+                xAxisKey = date.substr(0, 4); 
             } else if (selectedXAxis === WEEKLY) {
                 const currdate = moment(date)
                 xAxisKey = currdate.clone().startOf('week').format('YYYY-MM-DD').toString()
@@ -128,36 +137,47 @@ export const PlatformRevenueTimeSeries = (props) => {
             }
 
             if (!aggregatedData.has(xAxisKey)) {
-                // Initialize data for the date
-                aggregatedData.set(xAxisKey, {Date: xAxisKey, Revenue: 0, Count: 0, Countries: {}});
+
+                aggregatedData.set(xAxisKey, {Date: xAxisKey, Revenue: 0, Count: 0, Countries: {} , Categories: {}, Subcategories: {}, Vendors: {}});
             }
 
-            // Increment the count for the date
+
             aggregatedData.get(xAxisKey).Revenue += parseFloat(revenue);
             aggregatedData.get(xAxisKey).Count++;
 
-            // Increment the count for the country within the date
+
             if (!aggregatedData.get(xAxisKey).Countries[country]) {
                 aggregatedData.get(xAxisKey).Countries[country] = {Count: 1, Revenue: parseFloat(revenue)};
             } else {
                 aggregatedData.get(xAxisKey).Countries[country].Count++;
                 aggregatedData.get(xAxisKey).Countries[country].Revenue += parseFloat(revenue);
             }
+
+            if (!aggregatedData.get(xAxisKey).Categories[category]) {
+                aggregatedData.get(xAxisKey).Categories[category] = {Count: 1, Revenue: parseFloat(revenue)};
+            } else {
+                aggregatedData.get(xAxisKey).Categories[category].Count++;
+                aggregatedData.get(xAxisKey).Categories[category].Revenue += parseFloat(revenue);
+            }
+
+            if (!aggregatedData.get(xAxisKey).Subcategories[subcategory]) {
+                aggregatedData.get(xAxisKey).Subcategories[subcategory] = {Count: 1, Revenue: parseFloat(revenue)};
+            } else {
+                aggregatedData.get(xAxisKey).Subcategories[subcategory].Count++;
+                aggregatedData.get(xAxisKey).Subcategories[subcategory].Revenue += parseFloat(revenue);
+            }
+
+            if (!aggregatedData.get(xAxisKey).Vendors[vendor]) {
+                aggregatedData.get(xAxisKey).Vendors[vendor] = {Count: 1, Revenue: parseFloat(revenue)};
+            } else {
+                aggregatedData.get(xAxisKey).Vendors[vendor].Count++;
+                aggregatedData.get(xAxisKey).Vendors[vendor].Revenue += parseFloat(revenue);
+            }
         });
 
         console.log(Array.from(aggregatedData.values()))
 
-        //console.log(Array.from(aggregatedData.values()).map((value) => []))
 
-        // Convert the aggregated Map back to an array of lists
-        // const aggregatedArray = Array.from(aggregatedData.values()).map((value) => [
-        //   value.Date,
-        //   value.Count,
-        //   value.Revenue,
-        //   Object.entries(value.Countries).map(([country, count]) => [country, count]),
-        // ]);
-
-        //console.log(aggregatedArray);
         return Array.from(aggregatedData.values());
     };
 
@@ -171,6 +191,8 @@ export const PlatformRevenueTimeSeries = (props) => {
 
     //const uniqueCountries = [...new Set(aggregatedData.flatMap((item) => item[2].map(([country]) => country)))];
     const uniqueCountries = [...new Set(data.map((item) => item[1]))];
+    const uniqueCategories = [...new Set(data.map((item) => item[3]))];
+    const uniqueVendors = [...new Set(data.map((item) => item[5]))];
     console.log(uniqueCountries);
     if (selectedYAxis === TOTAL_REVENUE) {
         dataset = [
@@ -221,7 +243,7 @@ export const PlatformRevenueTimeSeries = (props) => {
     } else if (selectedYAxis === TOTAL_REVENUE_BY_COUNTRY) {
         dataset = uniqueCountries.map((country) => {
             return {
-                label: `Total Revenue in ${country}`,
+                label: `Total Revenue from ${country}`,
                 data: aggregatedData.map((item) => {
                     const countryData = item.Countries[country];
                     return countryData ? countryData.Revenue : 0;
@@ -232,11 +254,39 @@ export const PlatformRevenueTimeSeries = (props) => {
                 backgroundColor: getRandomColor(uniqueCountries.indexOf(country)),
             };
         });
+    } else if (selectedYAxis === TOTAL_REVENUE_BY_CATEGORY) {
+        dataset = uniqueCategories.map((category) => {
+            return {
+                label: `Total Revenue from ${category}`,
+                data: aggregatedData.map((item) => {
+                    const categoryData = item.Categories[category];
+                    return categoryData ? categoryData.Revenue : 0;
+                }),
+                borderColor: getRandomColor(uniqueCategories.indexOf(category)),
+                borderWidth: 1,
+                fill: false,
+                backgroundColor: getRandomColor(uniqueCategories.indexOf(category)),
+            };
+        });
+    } else if (selectedYAxis === TOTAL_REVENUE_BY_VENDOR) {
+        dataset = uniqueVendors.map((vendor) => {
+            return {
+                label: `Total Revenue from ${vendor}`,
+                data: aggregatedData.map((item) => {
+                    const vendorData = item.Vendors[vendor];
+                    return vendorData ? vendorData.Revenue : 0;
+                }),
+                borderColor: getRandomColor(uniqueVendors.indexOf(vendor)),
+                borderWidth: 1,
+                fill: false,
+                backgroundColor: getRandomColor(uniqueVendors.indexOf(vendor)),
+            };
+        });
     }
 
 
     const lineData = {
-        labels: aggregatedData.map((item) => item.Date), // Convert dates to strings
+        labels: aggregatedData.map((item) => item.Date), 
         datasets: dataset,
     };
 
@@ -283,12 +333,12 @@ export const PlatformRevenueTimeSeries = (props) => {
     };
 
     const handleChangeXAxis = (value) => {
-        console.log(value); // { value: "lucy", label: "Lucy (101)" }
+        console.log(value); 
         setSelectedXAxis(value.value)
     };
 
     const handleChangeYAxis = (value) => {
-        console.log(value); // { value: "lucy", label: "Lucy (101)" }
+        console.log(value); 
         setSelectedYAxis(value.value)
         updateYaxisDropdown(value.value)
     };
@@ -333,39 +383,111 @@ export const PlatformRevenueTimeSeries = (props) => {
     }, []);
 
     const expandedRowRender = (record) => {
-        const nestedColumns = [
-            {
-                title: 'Country',
-                dataIndex: 'country',
-                key: 'country',
-            },
-            {
-                title: 'Revenue',
-                dataIndex: 'revenue',
-                key: 'revenue',
-            },
-            {
-                title: 'Number of Bookings',
-                dataIndex: 'count',
-                key: 'count',
-            },
-        ];
-
-        const mappedCountries = Object.entries(record.Countries).map(([country, data], index) => ({
-            key: index,
-            country,
-            count: data.Count,
-            revenue: data.Revenue,
-        }));
-
-        return (
-            <Table
-                columns={nestedColumns}
-                dataSource={mappedCountries}
-                pagination={false}
-                size="small"
-            />
-        );
+        if (selectedYAxis == TOTAL_REVENUE_BY_COUNTRY) {
+            const nestedColumns = [
+                {
+                    title: 'Country',
+                    dataIndex: 'country',
+                    key: 'country',
+                },
+                {
+                    title: 'Revenue',
+                    dataIndex: 'revenue',
+                    key: 'revenue',
+                },
+                {
+                    title: 'Number of Bookings',
+                    dataIndex: 'count',
+                    key: 'count',
+                },
+            ];
+    
+            const mappedCountries = Object.entries(record.Countries).map(([country, data], index) => ({
+                key: index,
+                country,
+                count: data.Count,
+                revenue: data.Revenue,
+            }));
+    
+            return (
+                <Table
+                    columns={nestedColumns}
+                    dataSource={mappedCountries}
+                    pagination={false}
+                    size="small"
+                />
+            );
+        } else if (selectedYAxis == TOTAL_REVENUE_BY_CATEGORY) {
+            const nestedColumns = [
+                {
+                    title: 'Category',
+                    dataIndex: 'category',
+                    key: 'category',
+                },
+                {
+                    title: 'Revenue',
+                    dataIndex: 'revenue',
+                    key: 'revenue',
+                },
+                {
+                    title: 'Number of Bookings',
+                    dataIndex: 'count',
+                    key: 'count',
+                },
+            ];
+    
+            const mappedCategories = Object.entries(record.Categories).map(([category, data], index) => ({
+                key: index,
+                category,
+                count: data.Count,
+                revenue: data.Revenue,
+            }));
+    
+            return (
+                <Table
+                    columns={nestedColumns}
+                    dataSource={mappedCategories}
+                    pagination={false}
+                    size="small"
+                />
+            );
+        } else if (selectedYAxis == TOTAL_REVENUE_BY_VENDOR) {
+            console.log(record)
+            const nestedColumns = [
+                {
+                    title: 'Vendor',
+                    dataIndex: 'vendor',
+                    key: 'vendor',
+                },
+                {
+                    title: 'Revenue',
+                    dataIndex: 'revenue',
+                    key: 'revenue',
+                },
+                {
+                    title: 'Number of Bookings',
+                    dataIndex: 'count',
+                    key: 'count',
+                },
+            ];
+    
+            const mappedVendors = Object.entries(record.Vendors).map(([vendor, data], index) => ({
+                key: index,
+                vendor,
+                count: data.Count,
+                revenue: data.Revenue,
+            }));
+    
+            return (
+                <Table
+                    columns={nestedColumns}
+                    dataSource={mappedVendors}
+                    pagination={false}
+                    size="small"
+                />
+            );
+        }
+        
     };
 
     const columns = [
@@ -386,12 +508,15 @@ export const PlatformRevenueTimeSeries = (props) => {
         },
     ];
 
-    const tableData = yData.map(({Date, Revenue, Count, Countries}, index) => ({
+    const tableData = yData.map(({Date, Revenue, Count, Countries, Categories, Subcategories, Vendors}, index) => ({
         key: index,
         Date,
         Revenue: Revenue.toFixed(2),
         Count,
         Countries,
+        Categories,
+        Subcategories,
+        Vendors
     }));
 
 
