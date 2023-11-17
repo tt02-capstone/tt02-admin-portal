@@ -34,7 +34,7 @@ const WEEKLY = 'Week';
 const YEARLY = 'Year';
 const MONTHLY = 'Month';
 const TOTAL_REVENUE = "Total Revenue";
-const TOTAL_REVENUE_LOCAL = "Total Revenue from Local";
+const TOTAL_REVENUE_SEGMENT = "Total Revenue from Customer Segment";
 const TOTAL_REVENUE_TOURIST = "Total Revenue from  Tourist";
 const TOTAL_REVENUE_BY_COUNTRY = "Total Revenue from  Country";
 const TOTAL_REVENUE_BY_CATEGORY = "Total Revenue from Category";
@@ -72,12 +72,8 @@ export const PlatformRevenueTimeSeries = (props) => {
             label: TOTAL_REVENUE,
         },
         {
-            value: TOTAL_REVENUE_LOCAL,
-            label: TOTAL_REVENUE_LOCAL,
-        },
-        {
-            value: TOTAL_REVENUE_TOURIST,
-            label: TOTAL_REVENUE_TOURIST,
+            value: TOTAL_REVENUE_SEGMENT,
+            label: TOTAL_REVENUE_SEGMENT,
         },
         {
             value: TOTAL_REVENUE_BY_COUNTRY,
@@ -205,23 +201,46 @@ export const PlatformRevenueTimeSeries = (props) => {
                 backgroundColor: 'rgba(75, 192, 192, 1)',
             },
         ];
-    } else if (selectedYAxis === TOTAL_REVENUE_LOCAL) {
-        dataset = [
-            {
-                label: `Total Revenue from Local`,
-                data: aggregatedData.map((item) => {
-                    if (item.Countries && item.Countries.Singapore) {
-                        return item.Countries.Singapore.Revenue || 0; // Use 0 if Revenue is null or undefined
-                    } else {
-                        return 0; // Handle the case where item.Countries.Singapore is null or undefined
-                    }
-                }),
-                borderColor: getRandomColor(0), // You can assign a specific color for Local bookings
-                borderWidth: 1,
-                fill: false,
-                backgroundColor: getRandomColor(0), // You can assign a specific color for Local bookings
-            },
-        ];
+    } else if (selectedYAxis === TOTAL_REVENUE_SEGMENT) {
+
+        let localDataset = {
+            label: `Total Revenue from Local`,
+            data: aggregatedData.map((item) => {
+                if (item.Countries && item.Countries.Singapore) {
+                    return item.Countries.Singapore.Revenue || 0; // Use 0 if Revenue is null or undefined
+                } else {
+                    return 0; // Handle the case where item.Countries.Singapore is null or undefined
+                }
+                }
+                
+            ),
+            borderColor: getRandomColor(0), 
+            borderWidth: 1,
+            fill: false,
+            backgroundColor: getRandomColor(0), 
+        };
+        
+        let touristDataset = {
+            label: `Total Revenue from Tourist`,
+            data: aggregatedData.map((item) => {
+                if (item.Countries && item.Countries.Singapore) {
+                    const touristRevenue = item.Revenue - (item.Countries.Singapore.Revenue || 0);
+                    return touristRevenue; 
+                } else {
+                    return item.Revenue; 
+                }
+            }),
+            borderColor: getRandomColor(1), 
+            borderWidth: 1,
+            fill: false,
+            backgroundColor: getRandomColor(1), 
+        };
+        
+
+        let combinedDataset = [localDataset, touristDataset];
+
+        dataset = combinedDataset
+    
     } else if (selectedYAxis === TOTAL_REVENUE_TOURIST) {
         dataset = [
             {
@@ -229,15 +248,15 @@ export const PlatformRevenueTimeSeries = (props) => {
                 data: aggregatedData.map((item) => {
                     if (item.Countries && item.Countries.Singapore) {
                         const touristRevenue = item.Revenue - (item.Countries.Singapore.Revenue || 0);
-                        return touristRevenue; // Use 0 if Revenue is null or undefined
+                        return touristRevenue; 
                     } else {
-                        return item.Revenue; // Handle the case where item.Countries.Singapore is null or undefined
+                        return item.Revenue; 
                     }
                 }),
-                borderColor: getRandomColor(0), // You can assign a specific color for Tourist bookings
+                borderColor: getRandomColor(0), 
                 borderWidth: 1,
                 fill: false,
-                backgroundColor: getRandomColor(0), // You can assign a specific color for Tourist bookings
+                backgroundColor: getRandomColor(0), 
             },
         ];
     } else if (selectedYAxis === TOTAL_REVENUE_BY_COUNTRY) {
@@ -354,7 +373,7 @@ export const PlatformRevenueTimeSeries = (props) => {
         newData = aggregatedData
         if (yaxis === TOTAL_REVENUE) {
             newData = aggregatedData
-        } else if (yaxis === TOTAL_REVENUE_LOCAL) {
+        } else if (yaxis === TOTAL_REVENUE_SEGMENT) {
             newData = aggregatedData.filter(item => {
                 console.log(item)
                 const countries = Object.keys(item.Countries);
@@ -406,7 +425,7 @@ export const PlatformRevenueTimeSeries = (props) => {
                 key: index,
                 country,
                 count: data.Count,
-                revenue: data.Revenue,
+                revenue: data.Revenue.toFixed(2),
             }));
     
             return (
@@ -440,7 +459,7 @@ export const PlatformRevenueTimeSeries = (props) => {
                 key: index,
                 category,
                 count: data.Count,
-                revenue: data.Revenue,
+                revenue: data.Revenue.toFixed(2),
             }));
     
             return (
@@ -475,13 +494,74 @@ export const PlatformRevenueTimeSeries = (props) => {
                 key: index,
                 vendor,
                 count: data.Count,
-                revenue: data.Revenue,
+                revenue: data.Revenue.toFixed(2),
             }));
     
             return (
                 <Table
                     columns={nestedColumns}
                     dataSource={mappedVendors}
+                    pagination={false}
+                    size="small"
+                />
+            );
+        } else if (selectedYAxis == TOTAL_REVENUE_SEGMENT) {
+            const nestedColumns = [
+                {
+                    title: 'Customer Segment',
+                    dataIndex: 'segment',
+                    key: 'segment',
+                },
+                {
+                    title: 'Revenue',
+                    dataIndex: 'revenue',
+                    key: 'revenue',
+                },
+                {
+                    title: 'Number of Bookings',
+                    dataIndex: 'count',
+                    key: 'count',
+                },
+            ];
+
+            let localData = { count: 0, revenue: 0 };
+            let touristData = { count: 0, revenue: 0 };
+
+            Object.entries(record.Countries).forEach(([country, data]) => {
+                if (country === 'Singapore') {
+                    // Aggregate data for Local
+                    localData.count += data.Count;
+                    localData.revenue += data.Revenue;
+                } else {
+                    // Aggregate data for Tourist
+                    touristData.count += data.Count;
+                    touristData.revenue += data.Revenue;
+                }
+            });
+
+            const nestedData = [];
+            if (localData.count > 0) {
+                nestedData.push({
+                    key: 'local',
+                    segment: 'Local',
+                    count: localData.count,
+                    revenue: localData.revenue.toFixed(2),
+                });
+            }
+            if (touristData.count > 0) {
+                nestedData.push({
+                    key: 'tourist',
+                    segment: 'Tourist',
+                    count: touristData.count,
+                    revenue: touristData.revenue.toFixed(2),
+                });
+            }
+            
+    
+            return (
+                <Table
+                    columns={nestedColumns}
+                    dataSource={nestedData}
                     pagination={false}
                     size="small"
                 />
@@ -508,7 +588,7 @@ export const PlatformRevenueTimeSeries = (props) => {
         },
     ];
 
-    const tableData = yData.map(({Date, Revenue, Count, Countries, Categories, Subcategories, Vendors}, index) => ({
+    const tableData = aggregatedData.map(({Date, Revenue, Count, Countries, Categories, Subcategories, Vendors}, index) => ({
         key: index,
         Date,
         Revenue: Revenue.toFixed(2),
@@ -572,7 +652,7 @@ export const PlatformRevenueTimeSeries = (props) => {
                        style={{
                            width: '90%',
                        }}
-                       expandable={{expandedRowRender}}
+                       expandable={!(selectedYAxis == TOTAL_REVENUE)  ? { expandedRowRender } : undefined}
                        className="ant-table ant-table-bordered ant-table-striped"
                 />
             </Row>

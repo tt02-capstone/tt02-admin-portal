@@ -49,7 +49,7 @@ const DataDashboard = () => {
   const [data, setData] = useState([]);
   const [selectedDataUseCase, setSelectedDataUseCase] = useState(TOTAL_BOOKINGS_OVER_TIME);
   const [startDate, setStartDate] = useState(new Date(2023, 0, 1));
-  const [endDate, setEndDate] = useState( new Date(2023, 9, 31));
+  const [endDate, setEndDate] = useState( new Date());
   const [loading, setLoading] = useState(true);
   const chartRef = useRef(null);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
