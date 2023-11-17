@@ -119,8 +119,8 @@ const styles = {
     line: {
         display: 'flex',
         flexDirection: 'row',
-        height: 450,
-        width: 450,
+        height: 400,
+        width: 400,
         margin: '0 20px', // Increase the margin to add spacing between charts
     },
     chart: {
