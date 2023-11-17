@@ -406,7 +406,7 @@ export const PlatformRevenueTimeSeries = (props) => {
                 key: index,
                 country,
                 count: data.Count,
-                revenue: data.Revenue,
+                revenue: data.Revenue.toFixed(2),
             }));
     
             return (
@@ -440,7 +440,7 @@ export const PlatformRevenueTimeSeries = (props) => {
                 key: index,
                 category,
                 count: data.Count,
-                revenue: data.Revenue,
+                revenue: data.Revenue.toFixed(2),
             }));
     
             return (
@@ -475,7 +475,7 @@ export const PlatformRevenueTimeSeries = (props) => {
                 key: index,
                 vendor,
                 count: data.Count,
-                revenue: data.Revenue,
+                revenue: data.Revenue.toFixed(2),
             }));
     
             return (
@@ -486,7 +486,7 @@ export const PlatformRevenueTimeSeries = (props) => {
                     size="small"
                 />
             );
-        }
+        } 
         
     };
 
@@ -572,7 +572,7 @@ export const PlatformRevenueTimeSeries = (props) => {
                        style={{
                            width: '90%',
                        }}
-                       expandable={{expandedRowRender}}
+                       expandable={!((selectedYAxis == TOTAL_REVENUE) || (selectedYAxis == TOTAL_REVENUE_LOCAL) || (selectedYAxis == TOTAL_REVENUE_TOURIST))  ? { expandedRowRender } : undefined}
                        className="ant-table ant-table-bordered ant-table-striped"
                 />
             </Row>

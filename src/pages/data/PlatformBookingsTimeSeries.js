@@ -434,6 +434,8 @@ export const PlatformBookingsTimeSeries = (props) => {
             nestedData, 
         };
     });
+
+    console.log(tableData)
     
 
     const getChartOptions = () => {
@@ -557,7 +559,7 @@ export const PlatformBookingsTimeSeries = (props) => {
                        style={{
                            width: '90%',
                        }}
-                       expandable={{expandedRowRender}}
+                       expandable={!((selectedYAxis == NUMBER_OF_BOOKINGS) || (selectedYAxis == NUMBER_OF_BOOKINGS_LOCAL) || (selectedYAxis == NUMBER_OF_BOOKINGS_TOURIST))  ? { expandedRowRender } : undefined}
                        className="ant-table ant-table-bordered ant-table-striped"
                 />
             </Row>
