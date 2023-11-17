@@ -213,10 +213,10 @@ export const Retention = (props) => {
             data: aggregatedData.map((item) =>
                 item[2].find(([c]) => c === 'Singapore') ? item[2].find(([c]) => c === 'Singapore')[1] : 0
             ),
-            borderColor: getRandomColor(0), // Specific color for Local bookings
+            borderColor: getRandomColor(0), 
             borderWidth: 1,
             fill: false,
-            backgroundColor: getRandomColor(0), // Specific color for Local bookings
+            backgroundColor: getRandomColor(0), 
         };
         
         let touristDataset = {
@@ -226,18 +226,15 @@ export const Retention = (props) => {
                 const totalTouristCount = item[1] - (singaporeCount ? singaporeCount[1] : 0);
                 return totalTouristCount > 0 ? totalTouristCount : 0;
             }),
-            borderColor: getRandomColor(1), // Specific color for Tourist bookings
+            borderColor: getRandomColor(1), 
             borderWidth: 1,
             fill: false,
-            backgroundColor: getRandomColor(1), // Specific color for Tourist bookings
+            backgroundColor: getRandomColor(1), 
         };
         
-        // Combine both datasets
+
         let combinedDataset = [localDataset, touristDataset];
-        
-        // Now use combinedDataset in your chart configuration
-        // ... rest of your chart configuration ...
-        
+
         dataset = combinedDataset
     } else if (selectedYAxis === NUMBER_OF_BOOKINGS_TOURIST) {
         dataset = [
@@ -430,7 +427,7 @@ export const Retention = (props) => {
                 {
                     title: 'Number of Repeated Bookings',
                     dataIndex: 'count',
-                    key: 'vendor',
+                    key: 'count',
                 },
             ];
     
